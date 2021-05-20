@@ -1,33 +1,46 @@
-import { usePixiApp } from 'components/ui/Canvas/index'
-import { Graphics } from 'pixi.js'
-import { memo } from 'react'
+import { Container, Graphics } from 'pixi.js'
+import { memo, useMemo } from 'react'
+import { useCanvasContainer } from 'components/ui/Canvas/hooks'
+import useStatic from 'hooks/useStatic'
 
 export interface GridProps {
-  gap: number
-  width?: number
+  gap: number | [xGap: number, yGap: number]
+  width: number
+  height: number
+  lineWidth?: number
   color?: number
+  hidden?: boolean
 }
 
-function Grid({ gap, color = 0x000000, width: lineWidth = 1 }: GridProps) {
-  const app = usePixiApp()
-  const dx = app.renderer.height
-  const dy = app.renderer.width
+function Grid({ gap, color = 0x000000, lineWidth = 1, width, height, hidden }: GridProps) {
+  const parentContainer = useCanvasContainer()
+  const container = useStatic(() => new Container())
+  container.visible = !hidden
 
-  for (let i = lineWidth / 2; i <= dx; i += gap) {
-    const line = new Graphics()
-    line.lineStyle(lineWidth, color)
-    line.moveTo(0, i)
-    line.lineTo(dy, i)
-    app.viewport.addChild(line)
-  }
+  useMemo(() => {
+    container.removeChildren()
+    const [xGap, yGap] = typeof gap === 'number' ? [gap, gap] : gap
 
-  for (let i = lineWidth / 2; i <= dy; i += gap) {
-    const line = new Graphics()
-    line.lineStyle(lineWidth, color)
-    line.moveTo(i, 0)
-    line.lineTo(i, dx)
-    app.viewport.addChild(line)
-  }
+    for (let i = 0; i <= height; i += yGap) {
+      const line = new Graphics()
+      line.lineStyle(lineWidth, color)
+      line.moveTo(0, i)
+      line.lineTo(width, i)
+      container.addChild(line)
+    }
+
+    for (let i = 0; i <= width; i += xGap) {
+      const line = new Graphics()
+      line.lineStyle(lineWidth, color)
+      line.moveTo(i, 0)
+      line.lineTo(i, height)
+      container.addChild(line)
+    }
+  }, [color, container, gap, height, lineWidth, width])
+
+  useStatic(() => {
+    parentContainer.addChild(container)
+  })
 
   return null
 }
