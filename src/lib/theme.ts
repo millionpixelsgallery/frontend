@@ -6,7 +6,7 @@ const theme = {
   component: {
     NavLink: {
       activeLine: '#5E72EB',
-      hoverLine: '#8d9cea',
+      hoverLine: '#EAEAEA',
     },
   },
   color: {},
