@@ -99,6 +99,7 @@
       "react-app",
       "react-app/jest"
     ],
+    "ignorePatterns": ["*.stories.tsx"],
     "rules": {
       "eqeqeq": "off"
     }
@@ -197,7 +198,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,css,scss,html,graphql,md}": "prettier --write",
-    "./src/**/*.{js,jsx,ts,tsx}": "eslint --max-warnings 0"
+    "./src/**/*.{js,jsx,ts,tsx}, !*.stories.tsx": "eslint --max-warnings 0"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^6.2.9",
