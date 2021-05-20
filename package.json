@@ -58,6 +58,7 @@
     "lint-staged": "^11.0.0",
     "mini-css-extract-plugin": "0.11.3",
     "optimize-css-assets-webpack-plugin": "5.0.4",
+    "pixi-viewport": "^4.31.0",
     "pixi.js": "^6.0.4",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.2.1",
@@ -187,6 +188,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,css,scss,html,graphql,md}": "prettier --write"
+    "*.{js,jsx,ts,tsx,css,scss,html,graphql,md}": "prettier --write",
+    "*.{js,jsx,ts,tsx}": "eslint --max-warnings 0"
   }
 }
