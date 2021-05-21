@@ -5,13 +5,14 @@ export interface NavLinkProps extends NavLinkSCProps {
   className?: string
   style?: CSSProperties
   children: ReactNode
+  borderWidth?: number
   to: string
 }
 
 function NavLink({ className, style, children, ...rest }: NavLinkProps) {
   return (
     <NavLinkSC className={className} style={style} activeClassName='active' {...rest}>
-      <div className={'children'}>{children}</div>
+      {children}
     </NavLinkSC>
   )
 }

@@ -18,4 +18,5 @@ function createStory(args: ComponentProps<typeof NavLink>) {
 export const Default = createStory({
   to: '/route',
   children: 'lorem',
+  borderWidth: 80,
 })
