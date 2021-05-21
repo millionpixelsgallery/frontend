@@ -68,10 +68,11 @@ function Link({
   className,
   style,
   children,
-  native,
   ...rest
 }: LinkProps) {
-  if (native) {
+  if (rest.native) {
+    const { native, ...aProps } = rest
+
     return (
       <LinkSC
         as='a'
@@ -80,13 +81,13 @@ function Link({
         $underlined={underlined ?? underlineDefaults[type]}
         className={className}
         style={style}
-        {...rest}
+        {...aProps}
       >
         {children}
       </LinkSC>
     )
   }
-
+  const { native, ...linkProps } = rest
   return (
     <LinkSC
       $bold={bold ?? boldDefaults[type]}
@@ -94,7 +95,7 @@ function Link({
       $underlined={underlined ?? underlineDefaults[type]}
       className={className}
       style={style}
-      {...(rest as ReactRouterLinkProps)}
+      {...linkProps}
     >
       {children}
     </LinkSC>
