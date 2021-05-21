@@ -25,15 +25,34 @@ function createStory(args: ComponentProps<typeof Link>) {
 export const Primary = createStory({
   type: 'primary',
   children: 'This is a primary link',
-  to: `#${Math.random() * 10}`,
+  to: `#`,
 })
 export const Secondary = createStory({
   type: 'secondary',
   children: 'This is a secondary link',
-  to: `#${Math.random() * 10}`,
+  to: `#`,
 })
 export const White = createStory({
   type: 'white',
   children: 'This is a white link',
-  to: `#${Math.random() * 10}`,
+  to: `#`,
+})
+
+export const NativePrimary = createStory({
+  native: true,
+  type: 'primary',
+  children: 'This is a native primary link',
+  href: `#`,
+})
+export const NativeSecondary = createStory({
+  native: true,
+  type: 'secondary',
+  children: 'This is a native secondary link',
+  href: `#`,
+})
+export const NativeWhite = createStory({
+  native: true,
+  type: 'white',
+  children: 'This is a native white link',
+  href: `#`,
 })

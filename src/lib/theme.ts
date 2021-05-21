@@ -6,17 +6,17 @@ const theme = {
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',
-      primaryHover: '#7a8bea',
-      primaryVisited: '#3f53c7',
+      primaryHover: '#8a9dfd',
+      primaryVisited: '#5364b8',
 
       secondaryPrimary: '#84839e',
       secondaryActive: '#afafb6',
-      secondaryHover: '#95949e',
-      secondaryVisited: '#5c5c72',
+      secondaryHover: '#9c9abd',
+      secondaryVisited: '#72728e',
 
       whitePrimary: '#FFFFFF',
-      whiteHover: '#FFFFFF',
-      whiteActive: '#e2e2e2',
+      whiteHover: '#ececec',
+      whiteActive: '#d4d4d4',
       whiteVisited: '#FFFFFF',
     },
   },
