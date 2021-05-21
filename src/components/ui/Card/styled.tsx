@@ -7,45 +7,39 @@ export interface CardSCProps {
 }
 
 export const CardSC = styled.div<CardSCProps>`
+  background-color: ${({ theme }) => theme.color.card.background};
+  box-shadow: ${({ theme }) => `0 8px 20px ${theme.color.card.shadow}`};
+  border-radius: 28px;
 
+  border: ${({ type, theme }) =>
+    choose(type, {
+      default: `5px solid ${theme.color.card.default}`,
+      success: `5px solid ${theme.color.card.success}`,
+      error: `5px solid ${theme.color.card.error}`,
+    })};
+  
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: ${({ type }) =>
+    white-space: nowrap;    
+    background-color: ${({ type, theme }) =>
       choose(type, {
-        default: '#5E72EB;',
-        success: '#5DC499;',
-        error: '#fe504f;',
+        default: theme.color.card.default,
+        success: theme.color.card.success,
+        error: theme.color.card.error,
       })};
     font: normal normal 600 22px/32px Oswald;
     letter-spacing: 0.44px;
-    color: #FFFFFF;
+    color: ${({ theme }) => theme.color.card.title};
     text-transform: uppercase;
     text-align: center;
     border-radius: 20px 20px 0 0;
     padding-left: 10px;
     padding-right: 10px;
   };
-  
-  text-overflow: ellipsis;
-  position: relative;
-  padding: 32px 24px 24px;
-  background-color: #FFFFFF;
-  box-shadow: 0 8px 20px #0B074233;
-  border-radius: 28px;
-  opacity: 1;
-  
-  border: ${({ type }) =>
-    choose(type, {
-      default: '5px solid #5E72EB;',
-      success: '5px solid #5DC499;',
-      error: '5px solid #fe504f',
-    })};
 
+  .content {
+    padding: 10px 15px 15px 20px;
+  }
 `
 
