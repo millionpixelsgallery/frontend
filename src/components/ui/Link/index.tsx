@@ -1,6 +1,6 @@
-import { ComponentProps, CSSProperties, memo } from 'react'
+import { AnchorHTMLAttributes, CSSProperties, memo } from 'react'
 import { LinkSC } from './styled'
-import { Link as ReactRouterLink } from 'react-router-dom'
+import { LinkProps as ReactRouterLinkProps } from 'react-router-dom'
 import theme from 'lib/theme'
 
 export type LinkTypes = 'primary' | 'secondary' | 'white'
@@ -11,14 +11,21 @@ export type LinkColors = {
   visited: string
 }
 
-export interface LinkProps extends ComponentProps<typeof ReactRouterLink> {
+export type LinkProps = {
   className?: string
   style?: CSSProperties
   type?: LinkTypes
   underlined?: boolean
   bold?: boolean
   colors?: LinkColors
-}
+} & (
+  | ({
+      native?: false
+    } & ReactRouterLinkProps)
+  | ({
+      native: true
+    } & AnchorHTMLAttributes<HTMLAnchorElement>)
+)
 
 export const underlineDefaults: { [key in LinkTypes]: boolean } = {
   primary: true,
@@ -63,6 +70,24 @@ function Link({
   children,
   ...rest
 }: LinkProps) {
+  if (rest.native) {
+    const { native, ...aProps } = rest
+
+    return (
+      <LinkSC
+        as='a'
+        $bold={bold ?? boldDefaults[type]}
+        $colors={colors ?? colorsDefaults[type]}
+        $underlined={underlined ?? underlineDefaults[type]}
+        className={className}
+        style={style}
+        {...aProps}
+      >
+        {children}
+      </LinkSC>
+    )
+  }
+  const { native, ...linkProps } = rest
   return (
     <LinkSC
       $bold={bold ?? boldDefaults[type]}
@@ -70,7 +95,7 @@ function Link({
       $underlined={underlined ?? underlineDefaults[type]}
       className={className}
       style={style}
-      {...rest}
+      {...linkProps}
     >
       {children}
     </LinkSC>
