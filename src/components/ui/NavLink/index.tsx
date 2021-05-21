@@ -11,10 +11,8 @@ export interface NavLinkProps extends NavLinkSCProps {
 function NavLink({ className, style, children, ...rest }: NavLinkProps) {
   return (
     <NavLinkSC className={className} style={style} activeClassName='active' {...rest}>
-      <div>
-        <div className={'children'}>{children}</div>
-        <div className={'border'} />
-      </div>
+      <div className={'children'}>{children}</div>
+      <div className={'border'} />
     </NavLinkSC>
   )
 }

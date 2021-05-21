@@ -11,7 +11,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
   .children {
     text-transform: uppercase;
     letter-spacing: 0.63px;
-    font: normal normal normal ${({ theme }) => theme.pxToRem(18) + '/' + theme.pxToRem(26)};
+    font: normal normal normal 18px/26px;
     transition: 0.3s;
     padding: 0 3px;
   }
@@ -21,7 +21,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
     transition: 0.3s;
     border-radius: 40px;
     margin: 5px auto auto;
-    height: ${({ theme }) => theme.pxToRem(5)};
+    height: 5px;
   }
 
   &.active {
@@ -33,7 +33,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
     .border {
       width: 100%;
       transition: 0.3s;
-      background-color: ${({ theme }) => theme.component.NavLink.activeLine};
+      background-color: ${({ theme }) => theme.color.NavLink.activeLine};
     }
   }
 
@@ -41,7 +41,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
     &:hover {
       .border {
         width: 100%;
-        background-color: ${({ theme }) => theme.component.NavLink.hoverLine};
+        background-color: ${({ theme }) => theme.color.NavLink.hoverLine};
       }
     }
   }
