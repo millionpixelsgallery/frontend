@@ -1,11 +1,11 @@
 import { memo, useEffect } from 'react'
-import { usePixiApp } from 'components/ui/Canvas/index'
 import { Graphics } from 'pixi.js'
+import { useCanvasApp } from 'components/ui/Canvas/hooks'
 
 export interface SelectionProps {}
 
 function Selection() {
-  const app = usePixiApp()
+  const app = useCanvasApp()
 
   useEffect(() => {
     let visible = false
