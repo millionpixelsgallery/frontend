@@ -15,12 +15,13 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
     transition: 0.3s;
     padding: 0 3px;
   }
-
-  .border {
+  &::after {
+    content: '';
     width: 0;
     transition: 0.3s;
     border-radius: 40px;
     margin: 5px auto auto;
+    display: block;
     height: 5px;
   }
 
@@ -29,8 +30,8 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
       font-weight: 600;
       letter-spacing: 0.36px;
     }
-
-    .border {
+    &::after {
+      content: '';
       width: 100%;
       transition: 0.3s;
       background-color: ${({ theme }) => theme.color.NavLink.activeLine};
@@ -39,7 +40,8 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
 
   &:not(.active) {
     &:hover {
-      .border {
+      &::after {
+        content: '';
         width: 100%;
         background-color: ${({ theme }) => theme.color.NavLink.hoverLine};
       }
