@@ -1,18 +1,17 @@
 import { CSSProperties, memo, ReactNode } from 'react'
 import { NavLinkSC, NavLinkSCProps } from './styled'
-import cn from 'classnames'
 
 export interface NavLinkProps extends NavLinkSCProps {
   className?: string
   style?: CSSProperties
-  active?: boolean
   children: ReactNode
+  to: string
 }
 
-function NavLink({ className, style, active = false, children, ...rest }: NavLinkProps) {
+function NavLink({ className, style, children, ...rest }: NavLinkProps) {
   return (
-    <NavLinkSC className={className} style={style} {...rest}>
-      <div className={cn('item', { active: active })}>
+    <NavLinkSC className={className} style={style} activeClassName='active' {...rest}>
+      <div>
         <div className={'children'}>{children}</div>
         <div className={'border'} />
       </div>
