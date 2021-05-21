@@ -1,19 +1,16 @@
 import { ComponentProps } from 'react'
 import { Story } from '@storybook/react/types-6-0'
-import { BrowserRouter } from 'react-router-dom'
 import NavLink from './index'
 
-export default {
+const NavLinkStory = {
   title: 'NavLink',
   component: NavLink,
 }
 
+export default NavLinkStory
+
 function createStory(args: ComponentProps<typeof NavLink>) {
-  const template: Story<ComponentProps<typeof NavLink>> = (args) => (
-    <BrowserRouter>
-      <NavLink {...args} />
-    </BrowserRouter>
-  )
+  const template: Story<ComponentProps<typeof NavLink>> = (args) => <NavLink {...args} />
   template.args = args
   return template
 }

@@ -3,10 +3,12 @@ import { Story } from '@storybook/react/types-6-0'
 import { Col } from './index'
 import styled from 'styled-components'
 
-export default {
+const ColStory = {
   title: 'Grid/Col',
   component: Col,
 }
+
+export default ColStory
 
 const Box = styled.div`
   height: 150px;
