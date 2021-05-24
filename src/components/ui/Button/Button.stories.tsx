@@ -3,10 +3,12 @@ import { Story } from '@storybook/react/types-6-0'
 
 import Button from './index'
 
-export default {
+const ButtonStory = {
   title: 'Button',
   component: Button,
 }
+
+export default ButtonStory
 
 function createStory(args: ComponentProps<typeof Button>) {
   const template: Story<ComponentProps<typeof Button>> = (args) => <Button {...args} />
