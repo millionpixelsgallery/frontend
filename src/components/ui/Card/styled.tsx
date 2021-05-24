@@ -17,11 +17,11 @@ export const CardSC = styled.div<CardSCProps>`
       success: `5px solid ${theme.color.card.success}`,
       error: `5px solid ${theme.color.card.error}`,
     })};
-  
+
   .title {
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;    
+    white-space: nowrap;
     background-color: ${({ type, theme }) =>
       choose(type, {
         default: theme.color.card.default,
@@ -36,10 +36,9 @@ export const CardSC = styled.div<CardSCProps>`
     border-radius: 20px 20px 0 0;
     padding-left: 10px;
     padding-right: 10px;
-  };
+  }
 
   .content {
     padding: 10px 15px 15px 20px;
   }
 `
-

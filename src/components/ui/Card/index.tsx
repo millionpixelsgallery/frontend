@@ -13,14 +13,10 @@ export interface CardProps extends Omit<JSX.IntrinsicElements['div'], 'ref'> {
 function Card({ type = 'default', title, children, ...rest }: CardProps) {
   return (
     <CardSC type={type} {...rest}>
-      {(title && title?.length > 0) && (<div className={'title'}>{title}</div>)}
+      {title && title?.length > 0 && <div className={'title'}>{title}</div>}
       <div className={'content'}>{children}</div>
     </CardSC>
   )
 }
 
 export default memo(Card)
-
-
-
-

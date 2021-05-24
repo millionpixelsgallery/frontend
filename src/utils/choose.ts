@@ -21,7 +21,9 @@ function choose<T extends Case, V>(
     defaultValue = undefined as any
   }
   if (!Array.isArray(conditions)) {
-    return predicate in conditions! ? (<ConditionObject<T, V>>conditions)[predicate] : defaultValue
+    return predicate in conditions!
+      ? (conditions as ConditionObject<T, V>)[predicate]
+      : defaultValue
   }
   for (const [cases, value] of conditions) {
     if (Array.isArray(cases)) {
