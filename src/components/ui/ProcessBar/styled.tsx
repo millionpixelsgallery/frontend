@@ -10,7 +10,7 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
   text-transform: uppercase;
   font-family: 'Oswald', sans-serif;
   .step {
-    max-width: 102px;
+    max-width: 95px;
   }
   .step {
     &:not(:last-child) {
@@ -18,7 +18,7 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
         &:after {
           content: '';
           position: absolute;
-          width: 110px;
+          width: 100px;
           height: 5px;
           background-color: ${({ theme }) => theme.color.processBar.color};
           border-radius: 10px;
