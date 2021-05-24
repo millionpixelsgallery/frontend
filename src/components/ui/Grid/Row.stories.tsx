@@ -3,10 +3,12 @@ import { Story } from '@storybook/react/types-6-0'
 import { Row } from './index'
 import styled from 'styled-components'
 
-export default {
+const RowStory = {
   title: 'Grid/Row',
   component: Row,
 }
+
+export default RowStory
 
 const Box = styled.div`
   min-height: 150px;

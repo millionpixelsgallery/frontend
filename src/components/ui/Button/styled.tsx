@@ -126,8 +126,7 @@ export const ButtonSC = styled.button<ButtonSCProps>`
   color: inherit;
   background: none;
   transition: 0.4s;
-  font-size: ${({ theme, fontSize }) =>
-    fontSize !== undefined ? theme.pxToRem(fontSize) : 'inherit'};
+  font-size: ${({ fontSize }) => (fontSize !== undefined ? fontSize + 'px' : 'inherit')};
   height: ${({ $size }) => getButtonSize($size)};
   ${({ $width, $size }) => getWidth($width, $size)}
   ${({ theme, $type, $disabled, $size, $shadow }) =>
