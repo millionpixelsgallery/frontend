@@ -8,6 +8,10 @@ const theme = {
       activeLine: '#5E72EB',
       hoverLine: '#EAEAEA',
     },
+    radio: {
+      on: '#5E72EB',
+      off: '#010101',
+    },
   },
   px,
   when,

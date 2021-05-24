@@ -1,37 +1,24 @@
-import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, memo } from 'react'
 import { RadioSC, RadioSCProps } from './styled'
-import { ReactComponent as Checked } from './assets/checked.svg'
-import { ReactComponent as Unchecked } from './assets/unchecked.svg'
 
 export interface RadioProps extends Omit<JSX.IntrinsicElements['input'], 'ref'>, RadioSCProps {
   style?: CSSProperties
-  checked?: boolean
 }
 
-function Radio({ className, style, checked, onChange, ...inputProps }: RadioProps) {
-  const [controlledChecked, setControlledChecked] = useState(false)
-
-  const handleChange = useCallback(
-    (e) => {
-      setControlledChecked((value) => !value)
-      if (onChange) onChange(e)
-    },
-    [onChange]
-  )
-
-  useEffect(() => {
-    if (checked !== undefined) setControlledChecked(checked)
-  }, [checked])
-
+function Radio({ className, style, ...inputProps }: RadioProps) {
   return (
     <RadioSC className={className} style={style}>
-      <input
-        type='radio'
-        onChange={handleChange}
-        checked={checked ?? controlledChecked}
-        {...inputProps}
-      />
-      {checked ?? controlledChecked ? <Checked /> : <Unchecked />}
+      <input type='radio' {...inputProps} />
+      <svg
+        width='20'
+        height='20'
+        viewBox='0 0 22 22'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <rect x='1' y='1' width='20' height='20' rx='10' />
+        <circle cx='11' cy='11' r='5.5' />
+      </svg>
     </RadioSC>
   )
 }

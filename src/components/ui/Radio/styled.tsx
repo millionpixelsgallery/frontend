@@ -18,7 +18,31 @@ export const RadioSC = styled.div<RadioSCProps>`
     margin: 0;
   }
 
-  input[disabled] + svg {
+  rect {
+    transition: 0.2s;
+    stroke-width: 2px;
+    stroke: ${({ theme }) => theme.color.radio.off};
+    opacity: 0.54;
+  }
+
+  circle {
+    transition: 0.2s;
+    fill: ${({ theme }) => theme.color.radio.on};
+    opacity: 0;
+  }
+
+  input:checked + svg {
+    rect {
+      opacity: 1;
+      stroke: ${({ theme }) => theme.color.radio.on};
+    }
+
+    circle {
+      opacity: 1;
+    }
+  }
+
+  input:disabled + svg {
     rect {
       stroke: #8097b1;
     }
