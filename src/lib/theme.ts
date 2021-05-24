@@ -55,6 +55,10 @@ const theme = {
         text: '#FF9190',
       },
     },
+    radio: {
+      on: '#5E72EB',
+      off: '#010101',
+    },
   },
   px,
   when,
