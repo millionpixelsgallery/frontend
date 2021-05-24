@@ -8,6 +8,11 @@ const theme = {
       activeLine: '#5E72EB',
       hoverLine: '#EAEAEA',
     },
+    processBar: {
+      color: '#5E72EB',
+      inner: '#ffffff',
+      text: '#0b0742',
+    },
   },
   px,
   when,
