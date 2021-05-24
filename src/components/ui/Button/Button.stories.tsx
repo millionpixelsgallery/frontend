@@ -20,14 +20,12 @@ export const Default = createStory({
 
 export const Disabled = createStory({
   children: 'lorem',
-  shadow: true,
-  size: 'sm',
   disabled: true,
 })
 
-export const WithShadow = createStory({
+export const WithoutShadow = createStory({
   children: 'lorem',
-  shadow: true,
+  shadow: false,
 })
 
 export const Outlined = createStory({

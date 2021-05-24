@@ -11,7 +11,13 @@ export interface ButtonSCProps {
   $disabled: boolean
 }
 
-const getButtonType = (theme: ThemeType, $type: ButtonTypes, $disabled?: boolean): string => {
+const getButtonType = (
+  theme: ThemeType,
+  $type: ButtonTypes,
+  $disabled: boolean | undefined,
+  $shadow: boolean | undefined,
+  $size: ButtonSizes
+): string => {
   switch ($type) {
     case 'default':
       return `
@@ -20,6 +26,7 @@ const getButtonType = (theme: ThemeType, $type: ButtonTypes, $disabled?: boolean
         letter-spacing: 0px;
         font: normal normal normal 20px/24px RESIN;
         color: ${theme.color.button.default.text};
+        ${getShadow($shadow, $size, $disabled)}
         ${
           $disabled
             ? `background: ${theme.color.button.default.disabledBg}; opacity: 0.15;`
@@ -32,6 +39,7 @@ const getButtonType = (theme: ThemeType, $type: ButtonTypes, $disabled?: boolean
         letter-spacing: 0px;
         text-transform: uppercase;
         font: normal normal normal 20px/24px RESIN;
+        ${getShadow($shadow, $size, $disabled)}
         border: 2px solid ${theme.color.button.outlined.border};
         color: ${theme.color.button.outlined.text};
       `
@@ -41,6 +49,7 @@ const getButtonType = (theme: ThemeType, $type: ButtonTypes, $disabled?: boolean
         letter-spacing: 0px;
         text-transform: uppercase;
         font: normal normal normal 20px/24px RESIN;
+        ${getShadow($shadow, $size, $disabled)}
         border: 1px solid ${theme.color.button.outlined_orange.border};
         color: ${theme.color.button.outlined_orange.text};
       `
@@ -70,7 +79,12 @@ const getButtonSize = ($size: ButtonSizes): string => {
   }
 }
 
-const getShadow = ($shadow: boolean | undefined, $size: ButtonSizes, disabled: boolean): string => {
+const getShadow = (
+  $shadow: boolean | undefined,
+  $size: ButtonSizes,
+  disabled: boolean | undefined
+): string => {
+  if ($shadow === false) return ''
   switch ($size) {
     case 'lg':
       return `
@@ -115,7 +129,7 @@ export const ButtonSC = styled.button<ButtonSCProps>`
   font-size: ${({ theme, fontSize }) =>
     fontSize !== undefined ? theme.pxToRem(fontSize) : 'inherit'};
   height: ${({ $size }) => getButtonSize($size)};
-  ${({ $shadow, $size, $disabled }) => getShadow($shadow, $size, $disabled)}
   ${({ $width, $size }) => getWidth($width, $size)}
-  ${({ theme, $type, $disabled }) => getButtonType(theme, $type, $disabled)};
+  ${({ theme, $type, $disabled, $size, $shadow }) =>
+    getButtonType(theme, $type, $disabled, $shadow, $size)};
 `

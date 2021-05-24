@@ -5,6 +5,7 @@ export default createGlobalStyle`
   @font-face {
     font-family: 'RESIN';
     src: local('RESIN'), url('./fonts/RESIN.woff') format('woff');
+    font-display: swap;
   }
 
   body {
