@@ -2,7 +2,6 @@ import { ComponentProps } from 'react'
 import { Story } from '@storybook/react/types-6-0'
 
 import Link from './index'
-import { BrowserRouter } from 'react-router-dom'
 
 const storyData = {
   title: 'ui/Link',
@@ -12,11 +11,9 @@ export default storyData
 
 function createStory(args: ComponentProps<typeof Link>) {
   const template: Story<ComponentProps<typeof Link>> = (args) => (
-    <BrowserRouter>
-      <div style={{ backgroundColor: args.type === 'white' ? 'black' : 'inherit' }}>
-        <Link {...args} />
-      </div>
-    </BrowserRouter>
+    <div style={{ backgroundColor: args.type === 'white' ? 'black' : 'inherit' }}>
+      <Link {...args} />
+    </div>
   )
   template.args = args
   return template
