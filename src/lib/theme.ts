@@ -59,6 +59,10 @@ const theme = {
       on: '#5E72EB',
       off: '#010101',
     },
+    modal: {
+      border: '#5E72EB',
+      bg: 'rgba(11, 7, 65, 0.9)',
+    },
   },
   px,
   when,
