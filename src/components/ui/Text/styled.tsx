@@ -73,8 +73,10 @@ export const TextSC = styled.span<TextSCProps>`
 
   ${({ $color }) => getCSSValue('color', $color)}
   ${({ $weight }) => getCSSValue('font-weight', $weight)}
-  ${({ lineHeight, theme }) => getCSSValue('line-height', theme.px(lineHeight))}
-  ${({ letterSpacing, theme }) => getCSSValue('letter-spacing', theme.px(letterSpacing))}
-  ${({ $size, theme }) => getCSSValue('font-size', theme.px($size))}
+  ${({ lineHeight, theme }) =>
+    lineHeight !== undefined ? 'line-height:' + theme.px(lineHeight) : ''};
+  ${({ letterSpacing, theme }) =>
+    letterSpacing !== undefined ? 'letter-spacing:' + theme.px(letterSpacing) : ''};
+  ${({ $size, theme }) => ($size !== undefined ? 'font-size:' + theme.px($size) : '')};
   ${({ $block }) => ($block ? 'display: block;' : 'display: inline;')}
 `
