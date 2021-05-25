@@ -4,6 +4,11 @@ import when from 'utils/style/when'
 const theme = {
   component: {},
   color: {
+    typography: {
+      title: '#ff9190',
+      text: '#0b0742',
+      gray: '#0B07424D',
+    },
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',
