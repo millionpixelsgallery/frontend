@@ -12,9 +12,9 @@ export interface TextSCProps {
   letterSpacing: TextProps['letterSpacing']
 }
 
-const getCSSValue = (key: string, value: string | number | undefined, unit = '') => {
+const getCSSValue = (key: string, value: string | number | undefined) => {
   if (value === undefined) return ''
-  return `${key}:${value}${unit};`
+  return `${key}:${value};`
 }
 
 export const TextSC = styled.span<TextSCProps>`
@@ -73,8 +73,8 @@ export const TextSC = styled.span<TextSCProps>`
 
   ${({ $color }) => getCSSValue('color', $color)}
   ${({ $weight }) => getCSSValue('font-weight', $weight)}
-  ${({ lineHeight }) => getCSSValue('line-height', lineHeight, 'px')}
-  ${({ letterSpacing }) => getCSSValue('letter-spacing', letterSpacing, 'px')}
-  ${({ $size }) => getCSSValue('font-size', $size, 'px')}
+  ${({ lineHeight, theme }) => getCSSValue('line-height', theme.px(lineHeight))}
+  ${({ letterSpacing, theme }) => getCSSValue('letter-spacing', theme.px(letterSpacing))}
+  ${({ $size, theme }) => getCSSValue('font-size', theme.px($size))}
   ${({ $block }) => ($block ? 'display: block;' : 'display: inline;')}
 `

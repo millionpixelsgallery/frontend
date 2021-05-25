@@ -14,9 +14,9 @@ export interface TextProps extends Omit<JSX.IntrinsicElements['span'], 'ref'> {
   block?: boolean
   color?: string
   weight?: number
-  size?: number
-  lineHeight?: number
-  letterSpacing?: number
+  size?: number | string
+  lineHeight?: number | string
+  letterSpacing?: number | string
   as?: keyof JSX.IntrinsicElements
 }
 

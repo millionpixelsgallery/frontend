@@ -37,4 +37,5 @@ export const Custom = createStory({
   children:
     'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut corporis eum fugiat',
   color: 'red',
+  letterSpacing: '.2rem',
 })
