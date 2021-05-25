@@ -8,7 +8,7 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
-  useMemo,
+  useLayoutEffect,
   useState,
 } from 'react'
 import { ModalOverlaySC, ModalSC, ModalSCProps } from './styled'
@@ -16,7 +16,6 @@ import { createPortal } from 'react-dom'
 import { ReactComponent as BackSVG } from './assets/Back.svg'
 import { ReactComponent as CloseSVG } from './assets/Close.svg'
 import Button from 'components/ui/Button'
-import { usePageLoaded } from 'hooks/usePageLoaded'
 
 export interface ModalProps extends ModalSCProps {
   className?: string
@@ -44,11 +43,12 @@ function Modal({
   ...rest
 }: ModalProps) {
   const [visible, setVisible] = useState(false)
-  const pageLoaded = usePageLoaded()
-  const modalRoot = useMemo(
-    () => pageLoaded && document.getElementById('modal-root')!,
-    [pageLoaded]
-  )
+  const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null)
+
+  useLayoutEffect(() => {
+    setModalRoot(document.getElementById('modal-root')!)
+  }, [])
+
   const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
   const handleClose = useCallback(() => setVisible(false), [setVisible])
 
