@@ -6,7 +6,8 @@ const theme = {
   color: {
     typography: {
       title: '#ff9190',
-      text: '#0B0742',
+      text: '#0b0742',
+      gray: '#0B07424D',
     },
     link: {
       primaryPrimary: '#5e72eb',
