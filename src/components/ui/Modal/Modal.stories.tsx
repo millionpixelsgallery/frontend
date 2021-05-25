@@ -42,6 +42,5 @@ export const Default = createStory({
     </Button>
   ),
   closable: true,
-  showArrow: true,
   component: HelloWorld,
 })

@@ -26,7 +26,6 @@ export interface ModalProps extends ModalSCProps {
   onClose?: () => void
 
   onBack?: () => void
-  showArrow?: boolean
 
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
@@ -38,14 +37,14 @@ function Modal({
   style,
   closable = true,
   component,
-  showArrow,
   trigger,
   render,
   onBack,
   ...rest
 }: ModalProps) {
   const [visible, setVisible] = useState(false)
-  const modalRoot = useMemo(() => document.getElementById('modal-root')!, [])
+
+  const modalRoot = useMemo(() => visible && document.getElementById('modal-root')!, [visible])
   const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
   const handleClose = useCallback(() => setVisible(false), [setVisible])
 
@@ -57,7 +56,7 @@ function Modal({
         createPortal(
           <ModalOverlaySC hidden={!visible}>
             <ModalSC className={className} style={style} {...rest}>
-              {showArrow && (
+              {Boolean(onBack) && (
                 <Button type={'wrapper'} className={'back'} size={'content'} onClick={onBack}>
                   <BackSVG />
                 </Button>
