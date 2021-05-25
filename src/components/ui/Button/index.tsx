@@ -4,7 +4,8 @@ import { ButtonSC } from './styled'
 export type ButtonTypes = 'default' | 'outlined' | 'outlined_orange' | 'wrapper' | 'underline'
 export type ButtonSizes = 'sm' | 'md' | 'lg' | 'content'
 
-export interface ButtonProps {
+export interface ButtonProps
+  extends Omit<JSX.IntrinsicElements['button'], 'size' | 'type' | 'ref'> {
   className?: string
   style?: CSSProperties
   type?: ButtonTypes
