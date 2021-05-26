@@ -4,7 +4,7 @@ import { Story } from '@storybook/react/types-6-0'
 import Link from './index'
 
 const storyData = {
-  title: 'ui/Link',
+  title: 'Link',
   component: Link,
 }
 export default storyData
