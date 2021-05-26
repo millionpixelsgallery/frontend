@@ -30,6 +30,7 @@ export interface ModalProps extends ModalSCProps {
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
+  componentProps?: { [key: string]: any }
 }
 
 function Modal({
@@ -40,6 +41,7 @@ function Modal({
   trigger,
   render,
   onBack,
+  componentProps = {},
   ...rest
 }: ModalProps) {
   const [visible, setVisible] = useState(false)
@@ -74,6 +76,7 @@ function Modal({
                 ? render(handleVisibleChange)
                 : component
                 ? createElement<any>(component, {
+                    ...componentProps,
                     onClose: handleClose,
                     onBack,
                   })
