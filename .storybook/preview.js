@@ -4,6 +4,7 @@ export const decorators = [
   (Story) => (
     <GlobalProviders>
       <Story />
+      <div id={'modal-root'} />
     </GlobalProviders>
   ),
 ]

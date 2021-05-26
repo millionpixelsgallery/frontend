@@ -1,6 +1,8 @@
 import GlobalStyle from 'styles'
 import React, { ReactNode, ReactNodeArray } from 'react'
 import { ThemeProvider } from 'styled-components'
+import { BrowserRouter } from 'react-router-dom'
+
 import theme from 'lib/theme'
 
 export interface GlobalProps {
@@ -9,9 +11,11 @@ export interface GlobalProps {
 
 export default function GlobalProviders({ children }: GlobalProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
-      {children}
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <GlobalStyle />
+        {children}
+      </ThemeProvider>
+    </BrowserRouter>
   )
 }
