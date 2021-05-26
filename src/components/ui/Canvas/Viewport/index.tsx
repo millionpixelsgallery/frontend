@@ -18,7 +18,9 @@ function Viewport({ children, onZoomed }: ViewportProps) {
       worldWidth: app.renderer.width,
       worldHeight: app.renderer.height,
       interaction: app.renderer.plugins.interaction,
+      passiveWheel: false,
     })
+    viewport.name = 'viewport'
     app.stage.addChild(viewport)
     viewport
       .drag()

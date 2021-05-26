@@ -31,6 +31,10 @@ function Canvas({ children, width, height, options, ...restProps }: CanvasProps)
       ...options,
     })
 
+    if (process.env.NODE_ENV === 'development') {
+      Object.assign(window, { pixi })
+    }
+
     setApp(pixi)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

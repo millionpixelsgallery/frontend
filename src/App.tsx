@@ -4,6 +4,7 @@ import Viewport from 'components/ui/Canvas/Viewport'
 import { useCallback, useState } from 'react'
 import Rectangle from 'components/ui/Canvas/Rectangle'
 import useStatic from 'hooks/useStatic'
+import Selection from 'components/ui/Canvas/Selection'
 
 function App() {
   const [gridVisible, setGridVisible] = useState(false)
@@ -20,6 +21,7 @@ function App() {
           height={1000}
           hidden={!gridVisible}
         />
+        <Selection />
       </Viewport>
     </Canvas>
   )
