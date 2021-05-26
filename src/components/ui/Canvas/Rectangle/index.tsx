@@ -1,6 +1,6 @@
 import { memo } from 'react'
 import useStatic from 'hooks/useStatic'
-import { Texture, Sprite } from 'pixi.js'
+import { Graphics } from 'pixi.js'
 import { useCanvasContainer } from 'components/ui/Canvas/hooks'
 
 export interface RectangleProps {
@@ -9,20 +9,32 @@ export interface RectangleProps {
   y?: number
   width: number
   height: number
+  alpha?: number
+  borderColor?: number
+  borderWidth?: number
 }
 
-function Rectangle({ color = 0xffffff, x = 0, y = 0, width, height }: RectangleProps) {
+function Rectangle({
+  color = 0xffffff,
+  x = 0,
+  y = 0,
+  width,
+  height,
+  alpha = 1,
+  borderWidth,
+  borderColor,
+}: RectangleProps) {
   const container = useCanvasContainer()
 
-  const rect = useStatic(() => Sprite.from(Texture.WHITE))
+  const graphic = useStatic(() => new Graphics())
 
-  rect.tint = color
-  rect.x = x
-  rect.y = y
-  rect.width = width
-  rect.height = height
+  graphic.clear()
+  if (borderWidth) graphic.lineStyle(borderWidth, borderColor, 1, 0)
+  graphic.beginFill(color, alpha)
+  graphic.drawRect(x, y, width, height)
+  graphic.endFill()
 
-  useStatic(() => container.addChild(rect))
+  useStatic(() => container.addChild(graphic))
   return null
 }
 
