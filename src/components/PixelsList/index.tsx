@@ -1,5 +1,7 @@
 import { CSSProperties, memo } from 'react'
 import { PixelsListSC, PixelsListSCProps } from './styled'
+import PixelsDetailsRow from 'components/PixelsList/PixelsDetailsRow'
+import { padding } from 'utils/style/indents'
 
 export interface Coords {
   x: number
@@ -13,7 +15,7 @@ export interface PixelsData {
   position: Coords
   link?: string
   title?: string
-  saleTimer?: string
+  saleUntil?: string
 }
 
 export interface PixelsListProps extends PixelsListSCProps {
@@ -22,8 +24,21 @@ export interface PixelsListProps extends PixelsListSCProps {
   style?: CSSProperties
 }
 
-function PixelsList({ className, style, ...rest }: PixelsListProps) {
-  return <PixelsListSC className={className} style={style} {...rest} />
+function PixelsList({ data, className, style, ...rest }: PixelsListProps) {
+  return (
+    <PixelsListSC
+      className={className}
+      style={style}
+      $showFirstTopBorder={data && data.length === 1}
+      {...rest}
+    >
+      {data &&
+        Boolean(data.length) &&
+        data.map((pixels, i) => (
+          <PixelsDetailsRow key={i} data={pixels} style={padding(50, 0, 20)} />
+        ))}
+    </PixelsListSC>
+  )
 }
 
 export default memo(PixelsList)

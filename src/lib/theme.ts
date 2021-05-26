@@ -68,6 +68,9 @@ const theme = {
       border: '#5E72EB',
       bg: 'rgba(11, 7, 65, 0.9)',
     },
+    pixelsList: {
+      hrBorder: 'rgb(11,7,66, 0.15)',
+    },
   },
   px,
   when,

@@ -1,5 +1,5 @@
 import { CSSProperties, memo, useMemo } from 'react'
-import { DetailsRowSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
+import { PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
 import { PixelsData } from 'components/PixelsList/index'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
@@ -9,19 +9,17 @@ import Button from 'components/ui/Button'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: PixelsData
-  onEdit: () => void
-  onSell: () => void
+  onEdit?: () => void
+  onSell?: () => void
   className?: string
   style?: CSSProperties
 }
 
 function DetailsRow({ label, value }: { label: string; value: string }) {
   return (
-    <DetailsRowSC>
-      <Text>
-        <span className='label'>{label}:</span> {value}
-      </Text>
-    </DetailsRowSC>
+    <Text type='M'>
+      <Text type='MGray'>{label}:</Text> {value}
+    </Text>
   )
 }
 
@@ -37,13 +35,13 @@ function PixelsDetailsRow({
     () => `X${data.position.x}, Y${data.position.y}`,
     [data.position.x, data.position.y]
   )
-  const isOnSale = useMemo(() => Boolean(data.saleTimer), [data.saleTimer])
+  const isOnSale = useMemo(() => Boolean(data.saleUntil), [data.saleUntil])
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
       <Col>
         <Row>
-          <Row gap={25}>
+          <Row gap={25} grow={1}>
             <div className='your-photo'>
               <div>Your photo</div>
               [PHOTO]
@@ -59,7 +57,7 @@ function PixelsDetailsRow({
             {isOnSale && (
               <div className='timer'>
                 <div>On sale - time left:</div>
-                {data.saleTimer}
+                {data.saleUntil}
               </div>
             )}
           </Row>

@@ -1,6 +1,8 @@
 import { CSSProperties, memo } from 'react'
 import { PixelsDimensionsSC, PixelsDimensionsSCProps } from './styled'
 import { PixelsData } from 'components/PixelsList'
+import Area from 'components/ui/Area'
+import Text from 'components/ui/Text'
 
 export interface PixelsDimensionsProps extends PixelsDimensionsSCProps {
   width: PixelsData['width']
@@ -20,21 +22,21 @@ function PixelsDimensions({
   const totalArea = height * width
 
   return (
-    <PixelsDimensionsSC className={className} style={style} {...rest}>
-      <div className='width'>
-        <div>Width</div>
-        <div>{height}px</div>
-      </div>
-      <div>X</div>
-      <div className='height'>
-        <div>Height</div>
-        <div>{width}px</div>
-      </div>
-      <div>=</div>
-      <div className='total-area'>
-        <div>Total</div>
-        <div>{totalArea}px</div>
-      </div>
+    <PixelsDimensionsSC className={className} align='center' style={style} gap={gap} {...rest}>
+      <Area name='Width'>
+        <span className='bold-text'>{width}</span>
+        <Text type='S'>PX</Text>
+      </Area>
+      <div className='bold-text'>X</div>
+      <Area name='Height'>
+        <span className='bold-text'>{height}</span>
+        <Text type='S'>PX</Text>
+      </Area>
+      <div className='bold-text'>=</div>
+      <Area name='Total'>
+        <span className='bold-text'>{totalArea}</span>
+        <Text type='S'>PX</Text>
+      </Area>
     </PixelsDimensionsSC>
   )
 }
