@@ -1,4 +1,4 @@
-import { CSSProperties, memo } from 'react'
+import { CSSProperties, memo, useCallback } from 'react'
 import { ByPixelsSelectWalletSC, ByPixelsSelectWalletSCProps } from './styled'
 import Title from 'components/ui/Title'
 import { marginBottom, marginLeft, marginRight } from 'utils/style/indents'
@@ -9,13 +9,23 @@ import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
 import portis from './assets/portis.png'
 import torus from './assets/torus.png'
+import { Wallets } from 'components/ByPixels/index'
 
 export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   className?: string
   style?: CSSProperties
+  onSelect: (wallet: Wallets) => void
 }
 
-function ByPixelsSelectWallet({ className, style, ...rest }: ByPixelsSelectWalletProps) {
+function ByPixelsSelectWallet({ className, onSelect, style, ...rest }: ByPixelsSelectWalletProps) {
+  const handleSelect = useCallback(
+    (e) => {
+      const wallet: Wallets = e.currentTarget.dataset.wallet
+      onSelect(wallet)
+    },
+    [onSelect]
+  )
+
   return (
     <ByPixelsSelectWalletSC className={className} style={style} {...rest}>
       <Col align={'center'}>
@@ -30,13 +40,13 @@ function ByPixelsSelectWallet({ className, style, ...rest }: ByPixelsSelectWalle
         </Text>
         <Col gap={30} style={marginBottom(162)}>
           <Row gap={30}>
-            <Button type={'outlined'} width={200}>
+            <Button type={'outlined'} width={200} data-wallet={'metamask'} onClick={handleSelect}>
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
                 <img src={metamask} alt={'metamask'} style={marginRight(25)} />
                 <span>METAMASK</span>
               </Row>
             </Button>
-            <Button type={'outlined'} width={200}>
+            <Button type={'outlined'} width={200} data-wallet={'fortmatic'} onClick={handleSelect}>
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
                 <img src={fortmatic} alt={'fortmatic'} style={marginRight(25)} />
                 <span>Fortmatic</span>
@@ -44,13 +54,13 @@ function ByPixelsSelectWallet({ className, style, ...rest }: ByPixelsSelectWalle
             </Button>
           </Row>
           <Row gap={30}>
-            <Button type={'outlined'} width={200}>
+            <Button type={'outlined'} width={200} data-wallet={'portis'} onClick={handleSelect}>
               <Row align={'center'} justify={'start'} style={marginLeft(23)}>
                 <img src={portis} alt={'portis'} style={marginRight(36)} />
                 <span>Portis</span>
               </Row>
             </Button>
-            <Button type={'outlined'} width={200}>
+            <Button type={'outlined'} width={200} data-wallet={'torus'} onClick={handleSelect}>
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
                 <img src={torus} alt={'torus'} style={marginRight(29)} />
                 <span>TOrus</span>
@@ -58,7 +68,7 @@ function ByPixelsSelectWallet({ className, style, ...rest }: ByPixelsSelectWalle
             </Button>
           </Row>
         </Col>
-        <Text type={'S'} lineHeight={28} style={marginBottom(58)}>
+        <Text type={'S'} lineHeight={28}>
           * We do not own your private keys and cannot access your funds without your confirmation.
         </Text>
       </Col>

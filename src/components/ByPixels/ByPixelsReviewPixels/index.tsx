@@ -12,8 +12,8 @@ export interface ByPixelsReviewPixelsProps extends ByPixelsReviewPixelsSCProps {
 function ByPixelsReviewPixels({ className, style, children, ...rest }: ByPixelsReviewPixelsProps) {
   return (
     <ByPixelsReviewPixelsSC className={className} style={style} {...rest}>
-      <Col justify={'between'}>
-        <Col>
+      <Col justify={'between'} className={'full-height'}>
+        <Col align={'center'}>
           <Title>Review your pixels</Title>
         </Col>
         {children}
