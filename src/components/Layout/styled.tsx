@@ -12,6 +12,7 @@ export const LayoutSC = styled.div<LayoutSCProps>`
 
   .centerBlock {
     z-index: 2;
+    height: 100%;
   }    
   
   .square {
