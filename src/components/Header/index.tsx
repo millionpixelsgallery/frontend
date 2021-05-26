@@ -4,7 +4,8 @@ import SiteLogo from 'components/ui/SiteLogo'
 import Button from 'components/ui/Button'
 import { Row } from 'components/ui/Grid'
 import NavLink from 'components/ui/NavLink'
-import { marginRight } from 'utils/style/indents'
+import Link from 'components/ui/Link'
+import { marginBottom, marginRight } from 'utils/style/indents'
 
 export interface HeaderProps extends HeaderSCProps {
   className?: string
@@ -15,14 +16,14 @@ function Header({ className, style, ...rest }: HeaderProps) {
   return (
     <HeaderSC className={className} style={style} {...rest}>
         <Row className={'content'} justify='between' align='center'>
-          <SiteLogo/>
-          <Row>
+          <Link to="/"><SiteLogo/></Link>
+          <Row align='center'>
             <Row>
-              <NavLink to="/" style={marginRight(50)}> THE NFT GALLERY </NavLink>
-              <NavLink to="/" style={marginRight(50)}> MY Pixels </NavLink>
-              <NavLink to="/" style={marginRight(50)}> Marketplace </NavLink>
+              <NavLink to="/gallery" style={marginRight(50)}> THE NFT GALLERY </NavLink>
+              <NavLink to="/my-pixels" style={marginRight(50)}> MY Pixels </NavLink>
+              <NavLink to="/marketplace" style={marginRight(50)}> Marketplace </NavLink>
             </Row>
-            <Button size="lg">BUY PIXELS</Button>
+            <Button size="lg" width={150} style={marginBottom(12)}>BUY PIXELS</Button>
           </Row>
         </Row>
     </HeaderSC>)

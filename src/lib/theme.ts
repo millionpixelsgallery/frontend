@@ -9,6 +9,20 @@ const theme = {
       text: '#0b0742',
       gray: '#0B07424D',
     },
+    layout: {
+      square: {
+        background: '#F8F8F8',
+        shadow: '#0B074233',
+        border: '#5E72EB',
+      },
+      square333 : {
+        background: '#EAEAEA',
+      },
+      square100 : {
+        background: '#DDDDDD',
+      },
+      gradient: 'transparent linear-gradient(110deg, #FF9190 0%, #5E72EB 100%) 0% 0% no-repeat padding-box',
+    },
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',
