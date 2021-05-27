@@ -10,6 +10,32 @@ const theme = {
       gray: '#0B07424D',
       placeholder: 'rgba(11,7,66,0.3)',
     },
+    layout: {
+      square: {
+        background: '#F8F8F8',
+        shadow: '#0B074233',
+        border: '#5E72EB',
+      },
+      square333: {
+        background: '#EAEAEA',
+      },
+      square100: {
+        background: '#DDDDDD',
+      },
+      gradient:
+        'transparent linear-gradient(110deg, #FF9190 0%, #5E72EB 100%) 0% 0% no-repeat padding-box',
+    },
+    burger: {
+      color: '#5E72EB',
+    },
+    infoBlock: {
+      title: '#0B0742',
+      child: '#5E72EB',
+    },
+    infoBlockPx: {
+      title: '#0B0742',
+      child: '#5E72EB',
+    },
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',
@@ -68,6 +94,10 @@ const theme = {
     modal: {
       border: '#5E72EB',
       bg: 'rgba(11, 7, 65, 0.9)',
+    },
+    timer: {
+      name: '#5DC499',
+      time: '#5DC499',
     },
   },
   px,
