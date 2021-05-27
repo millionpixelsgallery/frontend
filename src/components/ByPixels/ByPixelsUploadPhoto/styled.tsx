@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { AreaSC } from 'components/ui/Area/styled'
+import { InputSC } from 'components/ui/Input/styled'
 
 export interface ByPixelsUploadPhotoSCProps {}
 
@@ -34,5 +35,9 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     &.uploadError {
       border: 2px dashed ${({ theme }) => theme.color.card.error};
     }
+  }
+  ${InputSC} {
+    color: ${({ theme }) => theme.color.link.primaryPrimary};
+    text-transform: uppercase;
   }
 `
