@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { ObjectShape } from 'yup/lib/object'
 
 export const formErrors = {
-  REQUIRED: 'Required field.',
+  INVALID_IMAGE_FORMAT: 'UNABLE TO UPLOAD the image - THIS FILE ISn’t COMPATIBLE:',
 }
 
 interface StringParams {
