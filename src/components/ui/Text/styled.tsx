@@ -10,6 +10,7 @@ export interface TextSCProps {
   $size: TextProps['size']
   lineHeight: TextProps['lineHeight']
   letterSpacing: TextProps['letterSpacing']
+  upperCase?: boolean
 }
 
 const getCSSValue = (key: string, value: string | number | undefined) => {
@@ -19,7 +20,7 @@ const getCSSValue = (key: string, value: string | number | undefined) => {
 
 export const TextSC = styled.span<TextSCProps>`
   font-family: 'Oswald', sans-serif;
-  text-transform: uppercase;
+  text-transform: ${({ upperCase = true }) => (upperCase ? 'uppercase' : 'none')};
 
   font-size: ${({ $type }) =>
     choose($type, {
