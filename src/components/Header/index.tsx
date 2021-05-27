@@ -18,9 +18,9 @@ function Header({ style }: HeaderProps) {
       <Link to="/"><SiteLogo/></Link>
       <Row align='center' gap={50}>
         <Row gap={50}>
-          <NavLink to="/gallery"> THE NFT GALLERY </NavLink>
-          <NavLink to="/my-pixels"> MY Pixels </NavLink>
-          <NavLink to="/marketplace"> Marketplace </NavLink>
+          <NavLink to="/gallery" className={'gallery'}> THE NFT GALLERY </NavLink>
+          <NavLink to="/my-pixels" className={'pixels'}> MY Pixels </NavLink>
+          <NavLink to="/marketplace" className={'marketplace'}> Marketplace </NavLink>
         </Row>
         <Button size="lg" width={150} style={marginBottom(12)}>BUY PIXELS</Button>
       </Row>

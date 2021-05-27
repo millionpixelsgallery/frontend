@@ -28,7 +28,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
 
   &.active {
     font-weight: 600;
-    letter-spacing: 0.36px;
+    letter-spacing: 0.63px;
     &::after {
       content: '';
       width: 100%;
