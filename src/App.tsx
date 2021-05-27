@@ -21,7 +21,7 @@ function App() {
           height={1000}
           hidden={!gridVisible}
         />
-        <Selection />
+        <Selection onChange={console.log} />
       </Viewport>
     </Canvas>
   )
