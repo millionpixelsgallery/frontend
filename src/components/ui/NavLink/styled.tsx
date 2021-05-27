@@ -12,7 +12,6 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
   text-transform: uppercase;
   letter-spacing: 0.63px;
   font: normal normal normal 18px/26px;
-  transition: 0.3s;
   padding: 0 3px;
   width: ${({ borderWidth }) => (borderWidth !== undefined ? borderWidth + 'px' : 'auto')};
   text-align: center;
@@ -28,7 +27,7 @@ export const NavLinkSC = styled(NavLink)<NavLinkSCProps>`
 
   &.active {
     font-weight: 600;
-    letter-spacing: 0.63px;
+    letter-spacing: 0.36px;
     &::after {
       content: '';
       width: 100%;

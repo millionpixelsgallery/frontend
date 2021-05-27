@@ -13,7 +13,9 @@ export interface InfoBlockPxProps extends Omit<JSX.IntrinsicElements['div'], 're
 function InfoBlockPx({ className, style, title, children }: InfoBlockPxProps) {
   return (
     <InfoBlockPxSC className={className} style={style} align='center'>
-      <Text className={'title'}>{title}</Text>
+      <Text className={'title'} uppercase={false}>
+        {title}
+      </Text>
       <Row>
         <Text className={'child'}>{children}</Text>
         <Burger />
