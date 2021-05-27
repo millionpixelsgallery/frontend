@@ -42,7 +42,7 @@ export const Calculate = ({
       </Area>
       <Text type={'XL'}>=</Text>
       <Area name={'TOTAL'}>
-        <Text type={'XL'}>{data.height + data.width}</Text>
+        <Text type={'XL'}>{data.height * data.width}</Text>
         <Text type={'S'}>px</Text>
       </Area>
     </Row>

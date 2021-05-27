@@ -21,8 +21,9 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     height: 100%;
   }
   .full-width-input {
+    width: 100%;
     ${AreaSC} {
-      width: 648px;
+      width: 100%;
       border-width: 1px;
     }
   }

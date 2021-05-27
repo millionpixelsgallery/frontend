@@ -16,7 +16,7 @@ export const ByPixelsReviewPixelsSC = styled.div<ByPixelsReviewPixelsSCProps>`
 export const CalculateSC = styled.div<ByPixelsReviewPixelsSCProps>`
   text-transform: uppercase;
   ${AreaSC} {
-    width: 100px;
+    width: 104px;
     padding-left: 0;
     padding-right: 0;
     text-align: center;

@@ -83,8 +83,8 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
   }
   .next {
     .token {
-      width: 10px;
-      height: 10px;
+      width: 20px;
+      height: 20px;
       border: 5px solid ${({ theme }) => theme.color.processBar.color};
       background-color: ${({ theme }) => theme.color.processBar.inner};
       margin-top: 8px;

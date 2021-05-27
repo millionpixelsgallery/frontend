@@ -105,7 +105,7 @@ function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPix
       ) : step === 1 ? (
         <ByPixelsReviewPixels data={data}>{Bottom}</ByPixelsReviewPixels>
       ) : step === 2 ? (
-        <ByPixelsUploadPhoto data={data} formik={formik}>
+        <ByPixelsUploadPhoto title={'UPLOAD YOUR PHOTO (*OPTIONAL)'} data={data} formik={formik}>
           {Bottom}
         </ByPixelsUploadPhoto>
       ) : step === 3 ? (
