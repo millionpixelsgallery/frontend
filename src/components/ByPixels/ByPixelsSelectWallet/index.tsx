@@ -17,6 +17,13 @@ export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   onSelect: (wallet: Wallets) => void
 }
 
+export enum WalletEnum {
+  Metamask = 'metamask',
+  Fortmatic = 'fortmatic',
+  Portis = 'portis',
+  Torus = 'torus',
+}
+
 function ByPixelsSelectWallet({ className, onSelect, style, ...rest }: ByPixelsSelectWalletProps) {
   const handleSelect = useCallback(
     (e) => {
@@ -40,29 +47,49 @@ function ByPixelsSelectWallet({ className, onSelect, style, ...rest }: ByPixelsS
         </Text>
         <Col gap={30} style={marginBottom(162)}>
           <Row gap={30}>
-            <Button type={'outlined'} width={200} data-wallet={'metamask'} onClick={handleSelect}>
+            <Button
+              type={'outlined'}
+              width={200}
+              data-wallet={WalletEnum.Metamask}
+              onClick={handleSelect}
+            >
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={metamask} alt={'metamask'} style={marginRight(25)} />
+                <img src={metamask} alt={WalletEnum.Metamask} style={marginRight(25)} />
                 <span>METAMASK</span>
               </Row>
             </Button>
-            <Button type={'outlined'} width={200} data-wallet={'fortmatic'} onClick={handleSelect}>
+            <Button
+              type={'outlined'}
+              width={200}
+              data-wallet={WalletEnum.Fortmatic}
+              onClick={handleSelect}
+            >
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={fortmatic} alt={'fortmatic'} style={marginRight(25)} />
+                <img src={fortmatic} alt={WalletEnum.Fortmatic} style={marginRight(25)} />
                 <span>Fortmatic</span>
               </Row>
             </Button>
           </Row>
           <Row gap={30}>
-            <Button type={'outlined'} width={200} data-wallet={'portis'} onClick={handleSelect}>
+            <Button
+              type={'outlined'}
+              width={200}
+              data-wallet={WalletEnum.Portis}
+              onClick={handleSelect}
+            >
               <Row align={'center'} justify={'start'} style={marginLeft(23)}>
-                <img src={portis} alt={'portis'} style={marginRight(36)} />
+                <img src={portis} alt={WalletEnum.Portis} style={marginRight(36)} />
                 <span>Portis</span>
               </Row>
             </Button>
-            <Button type={'outlined'} width={200} data-wallet={'torus'} onClick={handleSelect}>
+            <Button
+              type={'outlined'}
+              width={200}
+              data-wallet={WalletEnum.Torus}
+              onClick={handleSelect}
+            >
               <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={torus} alt={'torus'} style={marginRight(29)} />
+                <img src={torus} alt={WalletEnum.Torus} style={marginRight(29)} />
                 <span>TOrus</span>
               </Row>
             </Button>

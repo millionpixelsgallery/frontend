@@ -42,7 +42,7 @@ export type ByPixelsValues = {
 }
 
 export type Wallets = 'metamask' | 'fortmatic' | 'portis' | 'torus'
-export const supportedImageExtensions = ['gif', 'jpeg', 'png']
+export const supportedImageExtensions = ['gif', 'jpeg', 'png', 'jpg']
 
 function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPixelsProps) {
   const formik = useForm({
@@ -98,30 +98,21 @@ function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPix
     [step]
   )
 
-  const Step = () =>
-    useMemo(() => {
-      switch (step) {
-        case 0:
-          return <ByPixelsSelectWallet onSelect={handleSelectWallet} />
-        case 1:
-          return <ByPixelsReviewPixels data={data}>{Bottom}</ByPixelsReviewPixels>
-        case 2:
-          return <ByPixelsUploadPhoto formik={formik}>{Bottom}</ByPixelsUploadPhoto>
-        case 3:
-          return (
-            <ByPixelsConfirmOrder formik={formik} data={data}>
-              {Bottom}
-            </ByPixelsConfirmOrder>
-          )
-        default:
-          return null
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [step, formik, Bottom, data])
-
   return (
     <ByPixelsSC className={className} style={style} {...rest}>
-      {Step()}
+      {step === 0 ? (
+        <ByPixelsSelectWallet onSelect={handleSelectWallet} />
+      ) : step === 1 ? (
+        <ByPixelsReviewPixels data={data}>{Bottom}</ByPixelsReviewPixels>
+      ) : step === 2 ? (
+        <ByPixelsUploadPhoto data={data} formik={formik}>
+          {Bottom}
+        </ByPixelsUploadPhoto>
+      ) : step === 3 ? (
+        <ByPixelsConfirmOrder formik={formik} data={data}>
+          {Bottom}
+        </ByPixelsConfirmOrder>
+      ) : null}
     </ByPixelsSC>
   )
 }

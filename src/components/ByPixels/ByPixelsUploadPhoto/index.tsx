@@ -9,7 +9,7 @@ import Button from 'components/ui/Button'
 import Text from 'components/ui/Text'
 import Area from 'components/ui/Area'
 import { FormSubType } from 'hooks/useForm'
-import { ByPixelsValues, supportedImageExtensions } from 'components/ByPixels/index'
+import { ByPixelsValues, ProductData, supportedImageExtensions } from 'components/ByPixels/index'
 import FileInput from 'components/ui/FileInput'
 import cn from 'classnames'
 
@@ -18,6 +18,7 @@ export interface ByPixelsUploadPhotoProps extends ByPixelsUploadPhotoSCProps {
   style?: CSSProperties
   children?: ReactNode
   formik: FormSubType<ByPixelsValues>
+  data: ProductData
 }
 
 function ByPixelsUploadPhoto({
@@ -25,6 +26,7 @@ function ByPixelsUploadPhoto({
   style,
   formik,
   children,
+  data,
   ...rest
 }: ByPixelsUploadPhotoProps) {
   const onChangeLink = useCallback(
@@ -32,7 +34,7 @@ function ByPixelsUploadPhoto({
       formik.setFieldValue('link', e.currentTarget.value.slice(0, 750).replace(/^https?:\/\//, ''))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formik]
+    [formik.setFieldValue]
   )
 
   const onChangeTitle = useCallback(
@@ -40,7 +42,7 @@ function ByPixelsUploadPhoto({
       formik.setFieldValue('title', e.currentTarget.value.slice(0, 100))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formik]
+    [formik.setFieldValue]
   )
 
   return (
@@ -81,7 +83,7 @@ function ByPixelsUploadPhoto({
                   <>
                     For best Image Display use{' '}
                     <Text weight={600} type={'S'}>
-                      X*Y px.
+                      {data.height * data.width} px.
                     </Text>
                     <br />
                   </>
