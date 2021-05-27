@@ -33,4 +33,9 @@ export default createGlobalStyle`
       text-align: right;
     }
   }
+  .overflow {
+    &-anywhere {
+      overflow-wrap: anywhere;
+    }
+  }
 `
