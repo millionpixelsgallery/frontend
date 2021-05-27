@@ -27,6 +27,14 @@ const theme = {
     burger: {
       color: '#5E72EB',
     },
+    infoBlock: {
+      title: '#0B0742',
+      child: '#5E72EB',
+    },
+    infoBlockPx: {
+      title: '#0B0742',
+      child: '#5E72EB',
+    },
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',
