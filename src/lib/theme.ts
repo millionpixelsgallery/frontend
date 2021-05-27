@@ -8,6 +8,7 @@ const theme = {
       title: '#ff9190',
       text: '#0b0742',
       gray: '#0B07424D',
+      placeholder: 'rgba(11,7,66,0.3)',
     },
     layout: {
       square: {
