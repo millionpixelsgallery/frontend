@@ -32,7 +32,7 @@ function ByPixelsUploadPhoto({
       formik.setFieldValue('link', e.currentTarget.value.slice(0, 750).replace(/^https?:\/\//, ''))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formik]
+    [formik.setFieldValue]
   )
 
   const onChangeTitle = useCallback(
@@ -40,7 +40,7 @@ function ByPixelsUploadPhoto({
       formik.setFieldValue('title', e.currentTarget.value.slice(0, 100))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formik]
+    [formik.setFieldValue]
   )
 
   return (

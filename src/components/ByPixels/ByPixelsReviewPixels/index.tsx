@@ -24,32 +24,26 @@ export const Calculate = ({
   <CalculateSC>
     <Row gap={7} align={'center'} style={marginBottom(20)}>
       <Area name={'width'}>
-        <>
-          <Text type={'XL'} color={highlight}>
-            {data.width}
-            <Text color={highlight} type={'S'}>
-              px
-            </Text>
+        <Text type={'XL'} color={highlight}>
+          {data.width}
+          <Text color={highlight} type={'S'}>
+            px
           </Text>
-        </>
+        </Text>
       </Area>
       <Text type={'XL'}>X</Text>
       <Area name={'height'}>
-        <>
-          <Text type={'XL'} color={highlight}>
-            {data.height}
-            <Text color={highlight} type={'S'}>
-              px
-            </Text>
+        <Text type={'XL'} color={highlight}>
+          {data.height}
+          <Text color={highlight} type={'S'}>
+            px
           </Text>
-        </>
+        </Text>
       </Area>
       <Text type={'XL'}>=</Text>
       <Area name={'TOTAL'}>
-        <>
-          <Text type={'XL'}>{data.height + data.width}</Text>
-          <Text type={'S'}>px</Text>
-        </>
+        <Text type={'XL'}>{data.height + data.width}</Text>
+        <Text type={'S'}>px</Text>
       </Area>
     </Row>
   </CalculateSC>
