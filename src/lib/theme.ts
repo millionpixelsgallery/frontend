@@ -24,6 +24,9 @@ const theme = {
       },
       gradient: 'transparent linear-gradient(110deg, #FF9190 0%, #5E72EB 100%) 0% 0% no-repeat padding-box',
     },
+    burger: {
+      color: '#5E72EB',
+    },
     link: {
       primaryPrimary: '#5e72eb',
       primaryActive: '#99a4e3',

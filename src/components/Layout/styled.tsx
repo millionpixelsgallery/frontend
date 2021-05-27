@@ -13,7 +13,11 @@ export const LayoutSC = styled.div<LayoutSCProps>`
   .centerBlock {
     z-index: 2;
     height: 100%;
-  }    
+  }
+
+  .leftBlock {
+    width: 156px;
+  }
   
   .square {
     box-sizing: border-box;

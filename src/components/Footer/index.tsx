@@ -1,6 +1,6 @@
 import { CSSProperties, memo } from 'react'
 import { FooterSC, FooterSCProps } from './styled'
-import { Col, Row } from 'components/ui/Grid'
+import { Row } from 'components/ui/Grid'
 import SocialIcon from 'components/ui/SocialIcon'
 import Text from 'components/ui/Text'
 import { marginRight, marginTop } from 'utils/style/indents'
