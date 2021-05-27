@@ -17,6 +17,9 @@ export const InputSC = styled.input<InputSCProps>`
   text-align: ${({ textAlign = 'center' }) => textAlign};
   width: 100%;
   padding: 0;
+  ::placeholder {
+    color: ${({ theme }) => theme.color.typography.placeholder};
+  }
 `
 
 export interface InputWrapperSCProps {

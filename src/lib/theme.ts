@@ -8,6 +8,7 @@ const theme = {
       title: '#ff9190',
       text: '#0b0742',
       gray: '#0B07424D',
+      placeholder: 'rgba(11,7,66,0.3)',
     },
     link: {
       primaryPrimary: '#5e72eb',
@@ -70,6 +71,10 @@ const theme = {
     },
     pixelsList: {
       hrBorder: 'rgb(11,7,66, 0.15)',
+    },
+    timer: {
+      name: '#5DC499',
+      time: '#5DC499',
     },
   },
   px,
