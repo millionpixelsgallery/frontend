@@ -15,7 +15,7 @@ export const LayoutSC = styled.div<LayoutSCProps>`
     height: 100%;
   }
 
-  .leftBlock {
+  .sideBlock {
     width: 156px;
   }
   

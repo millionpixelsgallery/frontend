@@ -15,7 +15,7 @@ function Layout({ className, style, ...rest }: LayoutProps) {
     <LayoutSC className={className} style={style} {...rest}>
         <Col align="center" className={'container'}>
           <Row>
-            <div className={'leftBlock'}></div>
+            <div className={'sideBlock'}></div>
             <div className={'centerBlock'}>
               <Header />
               <div className={'square'}>
@@ -26,7 +26,7 @@ function Layout({ className, style, ...rest }: LayoutProps) {
               </div>
               <Footer />
             </div>
-            <SideBar />
+            <SideBar className={'sideBlock'} />
           </Row>
         </Col>
       <div className={'gradient'}></div>
