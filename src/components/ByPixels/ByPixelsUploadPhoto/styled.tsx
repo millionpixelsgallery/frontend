@@ -21,8 +21,9 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     height: 100%;
   }
   .full-width-input {
+    width: 100%;
     ${AreaSC} {
-      width: 648px;
+      width: 100%;
       border-width: 1px;
     }
   }
@@ -37,7 +38,7 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     }
   }
   ${InputSC} {
-    color: ${({ theme }) => theme.color.link.primaryPrimary};
+    color: ${({ theme }) => theme.color.link.primaryPrimary} !important;
     text-transform: uppercase;
   }
 `

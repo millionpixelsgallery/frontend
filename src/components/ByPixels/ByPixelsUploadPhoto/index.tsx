@@ -18,6 +18,7 @@ export interface ByPixelsUploadPhotoProps extends ByPixelsUploadPhotoSCProps {
   style?: CSSProperties
   children?: ReactNode
   formik: FormSubType<ByPixelsValues>
+  title: string
   data: ProductData
 }
 
@@ -26,6 +27,7 @@ function ByPixelsUploadPhoto({
   style,
   formik,
   children,
+  title,
   data,
   ...rest
 }: ByPixelsUploadPhotoProps) {
@@ -49,7 +51,7 @@ function ByPixelsUploadPhoto({
     <ByPixelsUploadPhotoSC className={className} style={style} {...rest}>
       <Col justify={'between'} className={'full-height'}>
         <Col align={'center'} style={padding(0, 50)}>
-          <Title style={marginBottom(58)}>UPLOAD YOUR PHOTO (*OPTIONAL)</Title>
+          <Title style={marginBottom(58)}>{title}</Title>
           <Area
             name='CHOOSE AN IMAGE TO UPLOAD'
             className={cn('upload-area', { uploadError: formik.errors.image })}
