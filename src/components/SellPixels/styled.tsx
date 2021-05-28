@@ -9,6 +9,7 @@ export const SellPixelsSC = styled.div<SellPixelsSCProps>`
   height: 590px;
   padding: 50px;
   ${InputSC} {
+    color: ${({ theme }) => theme.color.link.primaryPrimary};
     width: 310px;
   }
   ${ButtonSC} {

@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useMemo } from 'react'
+import { CSSProperties, memo, useCallback } from 'react'
 import { ByPixelsSC, ByPixelsSCProps } from './styled'
 import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
 import ByPixelsReviewPixels from 'components/ByPixels/ByPixelsReviewPixels'
@@ -74,28 +74,24 @@ function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPix
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
-  const Bottom = useMemo(
-    () => (
-      <Row justify={'between'} align={'center'} style={padding(0, 50, 50, 30)}>
-        <ProcessBar steps={['REview', 'Upload', 'CONFIRM']} currentStep={step - 1} />
-        <Row justify={'end'} gap={50}>
-          {step === 2 && (
-            <Button width={140} type={'underline'} onClick={handleSkipStep}>
-              SKIP FOR NOW
-            </Button>
-          )}
-          {step !== 3 ? (
-            <Button width={140} onClick={handleNextStep}>
-              NEXT
-            </Button>
-          ) : (
-            <Button width={140}>CONFIRM</Button>
-          )}
-        </Row>
+  const Bottom = (
+    <Row justify={'between'} align={'center'} style={padding(0, 50, 50, 30)}>
+      <ProcessBar steps={['REview', 'Upload', 'CONFIRM']} currentStep={step - 1} />
+      <Row justify={'end'} gap={50}>
+        {step === 2 && (
+          <Button width={140} type={'underline'} onClick={handleSkipStep}>
+            SKIP FOR NOW
+          </Button>
+        )}
+        {step !== 3 ? (
+          <Button width={140} onClick={handleNextStep}>
+            NEXT
+          </Button>
+        ) : (
+          <Button width={140}>CONFIRM</Button>
+        )}
       </Row>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [step]
+    </Row>
   )
 
   return (

@@ -10,6 +10,7 @@ import Input from 'components/ui/Input'
 import Text from 'components/ui/Text'
 import Radio from 'components/ui/Radio'
 import Button from 'components/ui/Button'
+import { maskInt2 } from 'utils/masks'
 
 export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
@@ -30,7 +31,11 @@ export enum DurationEnum {
 function SellPixels({ className, style, ...rest }: SellPixelsProps) {
   const formik = useForm({
     initialValues: initialValues,
-    validationSchema: useValidationSchema((yup, E) => ({})),
+    validationSchema: useValidationSchema((yup) => ({
+      price: yup.string().required(),
+      duration: yup.string().required(),
+    })),
+    enableReinitialize: true,
     onSubmit: async (values) => {
       console.log(values)
     },
@@ -52,6 +57,8 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
           <Input
             placeholder='ENTER YOUR PRICE'
             value={formik.values.price}
+            onBlur={formik.handleBlur}
+            mask={maskInt2}
             onChange={handleChangePrice}
           />
         </Field>
@@ -91,7 +98,9 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
           </Row>
         </Row>
       </Col>
-      <Button width={200}>LIST FOR SALE</Button>
+      <Button disabled={!(formik.isValid && formik.dirty)} width={200}>
+        LIST FOR SALE
+      </Button>
     </SellPixelsSC>
   )
 }
