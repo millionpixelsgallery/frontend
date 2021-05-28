@@ -38,7 +38,7 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
 
   const handleChangePrice = useCallback(
     (e) => {
-      formik.setFieldValue('price', e.currentTarget.value.replace(/[^0-9.]+/g, ''))
+      formik.setFieldValue('price', e.currentTarget.value.replace(/[^0-9.]+|\.(?=\.)/g, ''))
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [formik.setFieldValue]
