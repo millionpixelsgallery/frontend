@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback } from 'react'
+import { CSSProperties, memo } from 'react'
 import { SellPixelsSC, SellPixelsSCProps } from './styled'
 import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
@@ -41,14 +41,6 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
     },
   })
 
-  const handleChangePrice = useCallback(
-    (e) => {
-      formik.setFieldValue('price', e.currentTarget.value.replace(/[^0-9.]+|\.(?=\.)/g, ''))
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [formik.setFieldValue]
-  )
-
   return (
     <SellPixelsSC className={className} style={style} {...rest}>
       <Col align={'center'}>
@@ -59,7 +51,7 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
             value={formik.values.price}
             onBlur={formik.handleBlur}
             mask={maskInt2}
-            onChange={handleChangePrice}
+            onChange={formik.handleChange}
           />
         </Field>
         <Text type={'MGray'} style={marginBottom(50)}>
