@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react'
 import { useCanvasApp, useCanvasContainer } from 'components/ui/Canvas/hooks'
 import useStatic from 'hooks/useStatic'
-import { Container, Graphics, InteractionEvent, Rectangle } from 'pixi.js'
+import { Container, Graphics, Rectangle } from 'pixi.js'
 import { between, roundBy } from 'utils/canvas'
 import { Viewport } from 'pixi-viewport'
 
@@ -15,10 +15,10 @@ function Selection({ onChange }: SelectionProps) {
   const container = useCanvasContainer() as Viewport
   const app = useCanvasApp()
   const unsubscribe = useStatic(() => {
-    let x = 10
-    let y = 10
-    let width = 100
-    let height = 30
+    let x1 = 10
+    let y1 = 10
+    let x2 = x1 + 100
+    let y2 = y1 + 30
     let dragging = false
     let resize = false
 
@@ -37,8 +37,12 @@ function Selection({ onChange }: SelectionProps) {
       .on('touchend', onDragEnd)
       .on('touchendoutside', onDragEnd)
 
-    function onDragStart(this: Graphics, e: InteractionEvent) {
+    function onDragStart(this: Graphics) {
       dragging = true
+      x1 = roundBy(x1)
+      y1 = roundBy(y1)
+      x2 = roundBy(x2)
+      y2 = roundBy(y2)
       container.plugins.pause('drag')
       container.on('mousemove', onDragMove).on('touchmove', onDragMove)
     }
@@ -47,14 +51,40 @@ function Selection({ onChange }: SelectionProps) {
       dragging = false
       container.off('mousemove', onDragMove).on('touchmove', onDragMove)
       container.plugins.resume('drag')
-      if (onChange) onChange(new Rectangle(roundBy(x), roundBy(y), roundBy(width), roundBy(height)))
+      if (onChange) {
+        const _x1 = roundBy(x1)
+        const _y1 = roundBy(y1)
+        const _x2 = roundBy(x2)
+        const _y2 = roundBy(y2)
+        onChange(new Rectangle(_x1, _y1, _x2 - _x1, _y2 - _y1))
+      }
     }
 
     function onDragMove(event: any) {
       if (dragging) {
         event.stopPropagation()
-        x = between(x + event.data.originalEvent.movementX / parentScale.x, 0, 1000 - width) // TODO touch event mb have no movementX/Y
-        y = between(y + event.data.originalEvent.movementY / parentScale.y, 0, 1000 - height)
+        const dx = event.data.originalEvent.movementX / parentScale.x
+        const dy = event.data.originalEvent.movementY / parentScale.y
+
+        if (dx < 0) {
+          const _x1 = between(x1 + dx, 0)
+          x2 += _x1 - x1
+          x1 = _x1
+        } else if (dx > 0) {
+          const _x2 = between(x2 + dx, undefined, 1000)
+          x1 += _x2 - x2
+          x2 = _x2
+        }
+
+        if (dy < 0) {
+          const _y1 = between(y1 + dy, 0)
+          y2 += _y1 - y1
+          y1 = _y1
+        } else if (dy > 0) {
+          const _y2 = between(y2 + dy, undefined, 1000)
+          y1 += _y2 - y2
+          y2 = _y2
+        }
       }
     }
 
@@ -71,19 +101,21 @@ function Selection({ onChange }: SelectionProps) {
 
     function render() {
       selectionArea.clear()
-      const selectionX = roundBy(x)
-      const selectionY = roundBy(y)
-      const selectionWidth = roundBy(width)
-      const selectionHeight = roundBy(height)
+      const _x1 = roundBy(x1)
+      const _y1 = roundBy(y1)
+      const _x2 = roundBy(x2)
+      const _y2 = roundBy(y2)
 
-      selectionArea.lineStyle(0.9 / parentScale.x, 0x000000, 1, 0)
+      selectionArea.lineStyle(1 / parentScale.x, 0x000000, 1, 0)
       selectionArea.beginFill(0xffffff, 0.5)
-      selectionArea.drawRect(selectionX, selectionY, selectionWidth, selectionHeight)
+      selectionArea.moveTo(_x1, _y1)
+      selectionArea.lineTo(_x2, _y1)
+      selectionArea.lineTo(_x2, _y2)
+      selectionArea.lineTo(_x1, _y2)
+      selectionArea.lineTo(_x1, _y1)
       selectionArea.endFill()
 
-      resizePoints.forEach((render) =>
-        render(selectionX, selectionY, selectionWidth, selectionHeight)
-      )
+      resizePoints.forEach((render) => render(_x1, _y1, _x2 - _x1, _y2 - _y1))
     }
 
     container.addChild(selectionContainer)
@@ -98,7 +130,7 @@ function Selection({ onChange }: SelectionProps) {
 
     function createResizePoint(position: Position) {
       const pointRect = new Graphics()
-      const [kX, kY, kWidth, kHeight] = getDirection(position)
+      const [kx1, ky1, kx2, ky2] = getPointsImpact(position)
       const [pX, pY] = getPosition(position)
 
       pointRect.buttonMode = true
@@ -122,7 +154,7 @@ function Selection({ onChange }: SelectionProps) {
         const ds = 10 / parentScale.x
         pointRect.clear()
         pointRect.visible =
-          position[0] === 'c' ? height > 10 : position[1] === 'c' ? width > 10 : true
+          position[0] === 'c' ? parentHeight > 10 : position[1] === 'c' ? parentWidth > 10 : true
         pointRect.lineStyle(0.9 / parentScale.x, 0x000000, 1, 0)
         pointRect.beginFill(0xffffff)
         pointRect.drawRect(
@@ -150,26 +182,32 @@ function Selection({ onChange }: SelectionProps) {
         resize = false
         container.off('mousemove', onResizeMove).off('touchmove', onResizeMove)
         container.plugins.resume('drag')
-        if (onChange)
-          onChange(new Rectangle(roundBy(x), roundBy(y), roundBy(width), roundBy(height)))
+        if (onChange) {
+          const _x1 = roundBy(x1)
+          const _y1 = roundBy(y1)
+          const _x2 = roundBy(x2)
+          const _y2 = roundBy(y2)
+          onChange(new Rectangle(_x1, _y1, _x2 - _x1, _y2 - _y1))
+        }
       }
 
       function onResizeMove(event: any) {
         if (resize) {
           event.stopPropagation()
-          const dWidth = (event.data.originalEvent.movementX / parentScale.x) * kWidth
-          const newWidth = between(width + dWidth, 10, 1000 - x)
-          const oldWidth = width
-          width = newWidth
-          const dx = (roundBy(oldWidth) - roundBy(newWidth)) * kX
-          x = between(x + dx, 0, 1000 - width)
-
-          const dHeight = (event.data.originalEvent.movementY / parentScale.y) * kHeight
-          const newHeight = between(height + dHeight, 10, 1000 - y)
-          const oldHeight = height
-          height = newHeight
-          const dy = (roundBy(oldHeight) - roundBy(newHeight)) * kY
-          y = between(y + dy, 0, 1000 - height)
+          const dx = event.data.originalEvent.movementX / parentScale.x
+          const dy = event.data.originalEvent.movementY / parentScale.y
+          const _x1 = between(x1 + dx * kx1, 0, 999)
+          const _y1 = between(y1 + dy * ky1, 0, 999)
+          const _x2 = between(x2 + dx * kx2, 1, 1000)
+          const _y2 = between(y2 + dy * ky2, 1, 1000)
+          if (_x2 - _x1 >= 1) {
+            x1 = _x1
+            x2 = _x2
+          }
+          if (_y2 - _y1 >= 1) {
+            y1 = _y1
+            y2 = _y2
+          }
         }
       }
     }
@@ -180,14 +218,14 @@ function Selection({ onChange }: SelectionProps) {
   return null
 }
 
-function getDirection(position: Position): [number, number, number, number] {
+function getPointsImpact(position: Position): [number, number, number, number] {
   switch (position) {
     case 'tl':
-      return [1, 1, -1, -1]
+      return [1, 1, 0, 0]
     case 'tc':
-      return [0, 1, 0, -1]
+      return [0, 1, 0, 0]
     case 'tr':
-      return [0, 1, 1, -1]
+      return [0, 1, 1, 0]
     case 'cr':
       return [0, 0, 1, 0]
     case 'br':
@@ -195,9 +233,9 @@ function getDirection(position: Position): [number, number, number, number] {
     case 'bc':
       return [0, 0, 0, 1]
     case 'bl':
-      return [1, 0, -1, 1]
+      return [1, 0, 0, 1]
     case 'cl':
-      return [1, 0, -1, 0]
+      return [1, 0, 0, 0]
   }
 }
 
