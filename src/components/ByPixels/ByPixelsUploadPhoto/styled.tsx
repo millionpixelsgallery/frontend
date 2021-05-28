@@ -38,7 +38,7 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     }
   }
   ${InputSC} {
-    color: ${({ theme }) => theme.color.link.primaryPrimary};
+    color: ${({ theme }) => theme.color.link.primaryPrimary} !important;
     text-transform: uppercase;
   }
 `

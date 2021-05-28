@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useMemo } from 'react'
+import { CSSProperties, memo, useCallback } from 'react'
 import { EditPixelsSC, EditPixelsSCProps } from './styled'
 import { Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
@@ -53,20 +53,16 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
-  const Bottom = useMemo(
-    () => (
-      <Row justify={'end'} style={padding(0, 50, 50)}>
-        {step == 0 ? (
-          <Button width={140} onClick={handleNextStep}>
-            NEXT
-          </Button>
-        ) : (
-          <Button width={140}>CONFIRM</Button>
-        )}
-      </Row>
-    ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [step]
+  const Bottom = (
+    <Row justify={'end'} style={padding(0, 50, 50)}>
+      {step == 0 ? (
+        <Button width={140} onClick={handleNextStep}>
+          NEXT
+        </Button>
+      ) : (
+        <Button width={140}>CONFIRM</Button>
+      )}
+    </Row>
   )
 
   return (
