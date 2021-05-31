@@ -47,14 +47,14 @@ function PixelsDetailsRow({
           <Area className={'photo-area'} name={'Your photo'}>
             {data.image ? <ImgDivSC className='image' $src={data.image} /> : 'No image'}
           </Area>
-          <Col gap={20}>
+          <Col className='details-col' gap={20}>
             <Row gap={10} justify='between'>
               <PixelsDimensions width={data.width} height={data.height} />
               {isOnSale && (
                 <Timer name='On sale - Time Left:' end={unixToDateTime(data.saleUntil!)} />
               )}
             </Row>
-            <Col className='details-col' gap={20}>
+            <Col gap={20}>
               <DetailsRow label='Start position' value={positionString} />
               <DetailsRow label='Your link' value={data.link ?? emptyString} />
               <DetailsRow label='Your title' value={data.title ?? emptyString} />

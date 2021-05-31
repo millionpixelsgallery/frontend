@@ -7,6 +7,8 @@ export interface PixelsDimensionsSCProps extends RowProps {}
 export const PixelsDimensionsSC = styled(Row)<PixelsDimensionsSCProps>`
   ${AreaSC} {
     box-sizing: border-box;
+    padding-right: 5px;
+    padding-left: 5px;
     min-width: 100px;
     height: 50px;
     text-align: center;
