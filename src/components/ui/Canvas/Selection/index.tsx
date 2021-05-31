@@ -1,7 +1,7 @@
 import { memo, useEffect } from 'react'
 import { useCanvasApp, useCanvasContainer } from 'components/ui/Canvas/hooks'
 import useStatic from 'hooks/useStatic'
-import { Container, Graphics, Rectangle } from 'pixi.js'
+import { Container, Graphics, Rectangle, InteractionEvent } from 'pixi.js'
 import { between, roundBy } from 'utils/canvas'
 import { Viewport } from 'pixi-viewport'
 
@@ -14,7 +14,7 @@ type Position = 'tl' | 'tc' | 'tr' | 'cr' | 'br' | 'bc' | 'bl' | 'cl'
 function Selection({ onChange }: SelectionProps) {
   const container = useCanvasContainer() as Viewport
   const app = useCanvasApp()
-  const unsubscribe = useStatic(() => {
+  const destroy = useStatic(() => {
     let x1 = 10
     let y1 = 10
     let x2 = x1 + 100
@@ -37,7 +37,8 @@ function Selection({ onChange }: SelectionProps) {
       .on('touchend', onDragEnd)
       .on('touchendoutside', onDragEnd)
 
-    function onDragStart(this: Graphics) {
+    function onDragStart(this: Graphics, e: InteractionEvent) {
+      e.data.originalEvent.preventDefault()
       dragging = true
       x1 = roundBy(x1)
       y1 = roundBy(y1)
@@ -172,7 +173,8 @@ function Selection({ onChange }: SelectionProps) {
         // )
       }
 
-      function onResizeStart(this: Graphics) {
+      function onResizeStart(this: Graphics, e: InteractionEvent) {
+        e.data.originalEvent.preventDefault()
         resize = true
         container.plugins.pause('drag')
         container.on('mousemove', onResizeMove).on('touchmove', onResizeMove)
@@ -213,7 +215,7 @@ function Selection({ onChange }: SelectionProps) {
     }
   })
 
-  useEffect(() => unsubscribe)
+  useEffect(() => destroy, [destroy])
 
   return null
 }
