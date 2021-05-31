@@ -1,11 +1,14 @@
 import { CSSProperties, memo, useMemo } from 'react'
-import { PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
+import { ImgDivSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
 import { PixelsData } from 'components/PixelsList/index'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
 import Text from 'components/ui/Text'
 import { emptyString } from 'utils/format/phrases'
 import Button from 'components/ui/Button'
+import Timer from 'components/Timer'
+import { unixToDateTime } from 'utils/format/datetime'
+import Area from 'components/ui/Area'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: PixelsData
@@ -17,7 +20,7 @@ export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
 
 function DetailsRow({ label, value }: { label: string; value: string }) {
   return (
-    <Text type='M'>
+    <Text className='details-row' type='M'>
       <Text type='MGray'>{label}:</Text> {value}
     </Text>
   )
@@ -40,27 +43,23 @@ function PixelsDetailsRow({
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
       <Col>
-        <Row>
-          <Row gap={25} grow={1}>
-            <div className='your-photo'>
-              <div>Your photo</div>
-              [PHOTO]
-            </div>
-            <Col className='pixels-details' gap={20}>
+        <Row gap={25}>
+          <Area className={'photo-area'} name={'Your photo'}>
+            {data.image ? <ImgDivSC className='image' $src={data.image} /> : 'No image'}
+          </Area>
+          <Col gap={20}>
+            <Row gap={10} justify='between'>
               <PixelsDimensions width={data.width} height={data.height} />
+              {isOnSale && (
+                <Timer name='On sale - Time Left:' end={unixToDateTime(data.saleUntil!)} />
+              )}
+            </Row>
+            <Col className='details-col' gap={20}>
               <DetailsRow label='Start position' value={positionString} />
               <DetailsRow label='Your link' value={data.link ?? emptyString} />
               <DetailsRow label='Your title' value={data.title ?? emptyString} />
             </Col>
-          </Row>
-          <Row justify='end'>
-            {isOnSale && (
-              <div className='timer'>
-                <div>On sale - time left:</div>
-                {data.saleUntil}
-              </div>
-            )}
-          </Row>
+          </Col>
         </Row>
         <Row justify='end' gap={20}>
           <Button type='outlined_orange' onClick={onEdit}>

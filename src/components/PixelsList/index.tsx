@@ -29,7 +29,7 @@ function PixelsList({ data, className, style, ...rest }: PixelsListProps) {
     <PixelsListSC
       className={className}
       style={style}
-      $showFirstTopBorder={data && data.length === 1}
+      $showFirstTopBorder={data.length === 1}
       {...rest}
     >
       {data &&
