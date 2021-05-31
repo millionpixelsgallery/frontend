@@ -33,7 +33,7 @@ function EditPixelsConfirmEdit({
           </Title>
           <Row gap={30} justify={'start'} align={'center'}>
             <Area name={'YOUR PHOTO'} className={'photo-area'}>
-              {formik.values.image && (
+              {formik.values.image && !formik.errors.image && (
                 <img
                   src={URL.createObjectURL(formik.values.image)}
                   alt={formik.values.image.name}

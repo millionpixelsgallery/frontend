@@ -42,7 +42,7 @@ export type ByPixelsValues = {
 }
 
 export type Wallets = 'metamask' | 'fortmatic' | 'portis' | 'torus'
-export const supportedImageExtensions = ['gif', 'jpeg', 'png', 'jpg']
+export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
 function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPixelsProps) {
   const formik = useForm({

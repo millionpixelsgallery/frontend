@@ -34,7 +34,7 @@ function ByPixelsConfirmOrder({
           <Title style={marginBottom(58)}>CONFIRM YOUR ORDER</Title>
           <Row gap={30}>
             <Area name={'YOUR PHOTO'} className={'photo-area'}>
-              {formik.values.image && (
+              {formik.values.image && !formik.errors.image && (
                 <img
                   src={URL.createObjectURL(formik.values.image)}
                   alt={formik.values.image.name}

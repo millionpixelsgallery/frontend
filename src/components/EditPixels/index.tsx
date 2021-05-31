@@ -32,7 +32,7 @@ const initialValues = {
   image: null,
 }
 
-export const supportedImageExtensions = ['gif', 'jpeg', 'png', 'jpg']
+export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
 function EditPixels({ className, step, data, onChangeStep, style, ...rest }: EditPixelsProps) {
   const formik = useForm({
