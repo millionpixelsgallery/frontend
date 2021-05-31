@@ -10,8 +10,10 @@ import Text from 'components/ui/Text'
 import Area from 'components/ui/Area'
 import { FormSubType } from 'hooks/useForm'
 import { ByPixelsValues, ProductData, supportedImageExtensions } from 'components/ByPixels/index'
+import resizeImage from 'smart-img-resize'
 import FileInput from 'components/ui/FileInput'
 import cn from 'classnames'
+import { dataURLtoFile } from 'utils/dataUrlToFile'
 
 export interface ByPixelsUploadPhotoProps extends ByPixelsUploadPhotoSCProps {
   className?: string
@@ -47,6 +49,33 @@ function ByPixelsUploadPhoto({
     [formik.setFieldValue]
   )
 
+  const handleCrop = useCallback(
+    (name, image) => {
+      if (!supportedImageExtensions.includes(image.name.toLowerCase().split('.').pop()!)) {
+        formik.setFieldValue(name, image)
+        return
+      }
+      resizeImage(
+        image,
+        {
+          outputFormat: image.name.split('.').pop(),
+          targetWidth: data.width,
+          targetHeight: data.height,
+          crop: true,
+        },
+        (err: string, base64: string) => {
+          if (err) {
+            console.error(err)
+            return
+          }
+          formik.setFieldValue(name, dataURLtoFile(image.name, base64))
+        }
+      )
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [formik.setFieldValue]
+  )
+
   return (
     <ByPixelsUploadPhotoSC className={className} style={style} {...rest}>
       <Col justify={'between'} className={'full-height'}>
@@ -61,7 +90,7 @@ function ByPixelsUploadPhoto({
               <FileInput
                 multiple={false}
                 name={'image'}
-                onValueChange={formik.setFieldValue}
+                onValueChange={handleCrop}
                 accept={`${supportedImageExtensions.map((ext) => 'image/' + ext).join(', ')}`}
               >
                 <Button type={'outlined'} shadow={false} width={200} style={margin(25, 'auto', 10)}>
