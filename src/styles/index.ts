@@ -4,9 +4,13 @@ import './font.css'
 export default createGlobalStyle`
   body {
     margin: 0;
-    padding: 100px;
+    padding: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  * {
+    box-sizing: border-box;
   }
   
   body, input, label {
@@ -27,6 +31,11 @@ export default createGlobalStyle`
     }
     &-right {
       text-align: right;
+    }
+  }
+  .overflow {
+    &-anywhere {
+      overflow-wrap: anywhere;
     }
   }
 `

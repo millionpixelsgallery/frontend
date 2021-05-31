@@ -18,6 +18,7 @@ export interface TextProps extends Omit<JSX.IntrinsicElements['span'], 'ref'> {
   lineHeight?: number | string
   letterSpacing?: number | string
   as?: keyof JSX.IntrinsicElements
+  uppercase?: boolean
 }
 
 function Text({
@@ -31,6 +32,7 @@ function Text({
   letterSpacing,
   weight,
   size,
+  uppercase,
   ...rest
 }: TextProps) {
   return (
@@ -44,6 +46,7 @@ function Text({
       $type={type}
       lineHeight={lineHeight}
       letterSpacing={letterSpacing}
+      upperCase={uppercase}
       {...rest}
     >
       {children}

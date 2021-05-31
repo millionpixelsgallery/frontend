@@ -14174,6 +14174,18 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
+smart-img-resize@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/smart-img-resize/-/smart-img-resize-2.2.0.tgz#900403d612644becf049cb6409c7098a5f5c56d0"
+  integrity sha512-A8jkBeb9VEkfkAeuKoMNXCuexFX9Eqzj3BG98JuQEj/MSKStiLb/zJ9SGASs9wlwcFZto3vcEa0DJe5rqMMdag==
+  dependencies:
+    smartcrop "^1.1.1"
+
+smartcrop@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/smartcrop/-/smartcrop-1.1.1.tgz#d8a16262f43c418fffa7b9f12a3e03d65d5d19f8"
+  integrity sha1-2KFiYvQ8QY//p7nxKj4D1l1dGfg=
+
 snapdragon-node@^2.0.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/snapdragon-node/-/snapdragon-node-2.1.1.tgz#6c175f86ff14bdb0724563e8f3c1b021a286853b"

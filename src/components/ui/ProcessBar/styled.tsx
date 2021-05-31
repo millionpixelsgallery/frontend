@@ -11,6 +11,8 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
   font-family: 'Oswald', sans-serif;
   .step {
     max-width: 95px;
+    min-width: 95px;
+    position: relative;
   }
   .step {
     &:not(:last-child) {
@@ -18,18 +20,19 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
         &:after {
           content: '';
           position: absolute;
-          width: 100px;
+          width: 90px;
           height: 5px;
           background-color: ${({ theme }) => theme.color.processBar.color};
           border-radius: 10px;
-          top: 31px;
+          top: 15.5px;
+          margin-left: 10px;
           z-index: -1;
         }
       }
       &.current {
         .token {
           &:after {
-            width: 120px;
+            width: 100px;
           }
         }
       }
@@ -37,6 +40,7 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
   }
   .token {
     border-radius: 100%;
+    z-index: 1;
     span {
       letter-spacing: 0.28px;
       font-size: 14px;
@@ -79,8 +83,8 @@ export const ProcessBarSC = styled.div<ProcessBarSCProps>`
   }
   .next {
     .token {
-      width: 10px;
-      height: 10px;
+      width: 20px;
+      height: 20px;
       border: 5px solid ${({ theme }) => theme.color.processBar.color};
       background-color: ${({ theme }) => theme.color.processBar.inner};
       margin-top: 8px;
