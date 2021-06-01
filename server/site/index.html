@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body></body>
+  <!-- Construct a Bootstrap layout -->
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Web3modal example for vanille JavaScript and HTML</h1>
+
+        <p>No wallet connected. Connect wallet to show accounts and their ETH balances.</p>
+
+        <div class="alert alert-danger" id="alert-error-https" style="display: none">
+          You can run this example only over HTTPS connection.
+        </div>
+
+        <div id="prepare">
+          <button class="btn btn-primary" id="btn-connect">Connect wallet</button>
+        </div>
+
+        <div id="connected" style="display: none">
+          <button class="btn btn-primary" id="btn-disconnect">Disconnect wallet</button>
+
+          <hr />
+
+          <div id="network">
+            <p><strong>Connected blockchain:</strong> <span id="network-name"></span></p>
+
+            <p><strong>Selected account:</strong> <span id="selected-account"></span></p>
+          </div>
+
+          <hr />
+
+          <h3>All account balances</h3>
+
+          <table class="table table-listing">
+            <thead>
+              <th>Address</th>
+              <th>ETH balance</th>
+            </thead>
+
+            <tbody id="accounts"></tbody>
+          </table>
+
+          <p>
+            Please try to switch between different accounts in your wallet if your wallet supports
+            this functonality.
+          </p>
+        </div>
+
+        <br />
+
+        <div class="well">
+          <p class="text-muted">
+            See also the
+            <a href="https://web3modal.com/">TypeScript and React example application</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- We use simple <template> templating for the example -->
+  <div id="templates" style="display: none">
+    <template id="template-balance">
+      <tr>
+        <th class="address"></th>
+        <td class="balance"></td>
+      </tr>
+    </template>
+  </div>
+
+  <!--
+  Use unpkg CDN to load all NPM packages to vanilla Javascript - read more at http://unpkg.com
+  On your deployment, you properly either want to use a preprocessing tool like webpack
+  to include these files, or extract NPM archives and manually host the files inside.
+  TODO: Pin down all versions.
+-->
+
+  <script src="https://cdn.ethers.io/lib/ethers-5.1.umd.min.js" type="text/javascript"></script>
+  <script type="text/javascript" src="https://unpkg.com/web3@1.2.11/dist/web3.min.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/web3modal@1.9.0/dist/index.js"></script>
+  <script
+    type="text/javascript"
+    src="https://unpkg.com/evm-chains@0.2.0/dist/umd/index.min.js"
+  ></script>
+  <script
+    type="text/javascript"
+    src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"
+  ></script>
+  <script type="text/javascript" src="https://unpkg.com/fortmatic@2.0.6/dist/fortmatic.js"></script>
+  <script>
+    ;(function () {
+      'use strict'
+
+      'use strict'
+      // base-x encoding / decoding
+      // Copyright (c) 2018 base-x contributors
+      // Copyright (c) 2014-2018 The Bitcoin Core developers (base58.cpp)
+      // Distributed under the MIT software license, see the accompanying
+      // file LICENSE or http://www.opensource.org/licenses/mit-license.php.
+      // @ts-ignore
+      var _Buffer = require('safe-buffer').Buffer
+      function base(ALPHABET) {
+        if (ALPHABET.length >= 255) {
+          throw new TypeError('Alphabet too long')
+        }
+        var BASE_MAP = new Uint8Array(256)
+        for (var j = 0; j < BASE_MAP.length; j++) {
+          BASE_MAP[j] = 255
+        }
+        for (var i = 0; i < ALPHABET.length; i++) {
+          var x = ALPHABET.charAt(i)
+          var xc = x.charCodeAt(0)
+          if (BASE_MAP[xc] !== 255) {
+            throw new TypeError(x + ' is ambiguous')
+          }
+          BASE_MAP[xc] = i
+        }
+        var BASE = ALPHABET.length
+        var LEADER = ALPHABET.charAt(0)
+        var FACTOR = Math.log(BASE) / Math.log(256) // log(BASE) / log(256), rounded up
+        var iFACTOR = Math.log(256) / Math.log(BASE) // log(256) / log(BASE), rounded up
+        function encode(source) {
+          if (Array.isArray(source) || source instanceof Uint8Array) {
+            source = _Buffer.from(source)
+          }
+          if (!_Buffer.isBuffer(source)) {
+            throw new TypeError('Expected Buffer')
+          }
+          if (source.length === 0) {
+            return ''
+          }
+          // Skip & count leading zeroes.
+          var zeroes = 0
+          var length = 0
+          var pbegin = 0
+          var pend = source.length
+          while (pbegin !== pend && source[pbegin] === 0) {
+            pbegin++
+            zeroes++
+          }
+          // Allocate enough space in big-endian base58 representation.
+          var size = ((pend - pbegin) * iFACTOR + 1) >>> 0
+          var b58 = new Uint8Array(size)
+          // Process the bytes.
+          while (pbegin !== pend) {
+            var carry = source[pbegin]
+            // Apply "b58 = b58 * 256 + ch".
+            var i = 0
+            for (var it1 = size - 1; (carry !== 0 || i < length) && it1 !== -1; it1--, i++) {
+              carry += (256 * b58[it1]) >>> 0
+              b58[it1] = carry % BASE >>> 0
+              carry = (carry / BASE) >>> 0
+            }
+            if (carry !== 0) {
+              throw new Error('Non-zero carry')
+            }
+            length = i
+            pbegin++
+          }
+          // Skip leading zeroes in base58 result.
+          var it2 = size - length
+          while (it2 !== size && b58[it2] === 0) {
+            it2++
+          }
+          // Translate the result into a string.
+          var str = LEADER.repeat(zeroes)
+          for (; it2 < size; ++it2) {
+            str += ALPHABET.charAt(b58[it2])
+          }
+          return str
+        }
+        function decodeUnsafe(source) {
+          if (typeof source !== 'string') {
+            throw new TypeError('Expected String')
+          }
+          if (source.length === 0) {
+            return _Buffer.alloc(0)
+          }
+          var psz = 0
+          // Skip leading spaces.
+          if (source[psz] === ' ') {
+            return
+          }
+          // Skip and count leading '1's.
+          var zeroes = 0
+          var length = 0
+          while (source[psz] === LEADER) {
+            zeroes++
+            psz++
+          }
+          // Allocate enough space in big-endian base256 representation.
+          var size = ((source.length - psz) * FACTOR + 1) >>> 0 // log(58) / log(256), rounded up.
+          var b256 = new Uint8Array(size)
+          // Process the characters.
+          while (source[psz]) {
+            // Decode character
+            var carry = BASE_MAP[source.charCodeAt(psz)]
+            // Invalid character
+            if (carry === 255) {
+              return
+            }
+            var i = 0
+            for (var it3 = size - 1; (carry !== 0 || i < length) && it3 !== -1; it3--, i++) {
+              carry += (BASE * b256[it3]) >>> 0
+              b256[it3] = carry % 256 >>> 0
+              carry = (carry / 256) >>> 0
+            }
+            if (carry !== 0) {
+              throw new Error('Non-zero carry')
+            }
+            length = i
+            psz++
+          }
+          // Skip trailing spaces.
+          if (source[psz] === ' ') {
+            return
+          }
+          // Skip leading zeroes in b256.
+          var it4 = size - length
+          while (it4 !== size && b256[it4] === 0) {
+            it4++
+          }
+          var vch = _Buffer.allocUnsafe(zeroes + (size - it4))
+          vch.fill(0x00, 0, zeroes)
+          var j = zeroes
+          while (it4 !== size) {
+            vch[j++] = b256[it4++]
+          }
+          return vch
+        }
+        function decode(string) {
+          var buffer = decodeUnsafe(string)
+          if (buffer) {
+            return buffer
+          }
+          throw new Error('Non-base' + BASE + ' character')
+        }
+        return {
+          encode: encode,
+          decodeUnsafe: decodeUnsafe,
+          decode: decode,
+        }
+      }
+
+      /**
+       * Example JavaScript code that interacts with the page and Web3 wallets
+       */
+
+      // Unpkg imports
+      const Web3Modal = window.Web3Modal.default
+      const WalletConnectProvider = window.WalletConnectProvider.default
+      const Fortmatic = window.Fortmatic
+      const ethers = window.ethers
+
+      const BASE62 = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+      const ALPHABET = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+
+      const base58 = basex(ALPHABET, BASE62)
+
+      console.log('>>>', base58('QmNXnCWPS2szLaQGVA6TFtiUAJB2YnFTJJFTXPGuc4wocQ'))
+
+      // Web3modal instance
+      let web3Modal
+
+      // Chosen wallet provider given by the dialog window
+      let provider
+
+      // Address of the selected account
+      let selectedAccount
+
+      /**
+       * Setup the orchestra
+       */
+      function init() {
+        console.log('Initializing example')
+        console.log('WalletConnectProvider is', WalletConnectProvider)
+        console.log('Fortmatic is', Fortmatic)
+        console.log('window.web3 is', window.web3, 'window.ethereum is', window.ethereum)
+
+        // Tell Web3modal what providers we have available.
+        // Built-in web browser provider (only one can exist as a time)
+        // like MetaMask, Brave or Opera is added automatically by Web3modal
+        const providerOptions = {}
+
+        web3Modal = new Web3Modal({
+          cacheProvider: false, // optional
+          providerOptions, // required
+          disableInjectedProvider: false, // optional. For MetaMask / Brave / Opera.
+        })
+
+        console.log('Web3Modal instance is', web3Modal)
+      }
+
+      /**
+       * Kick in the UI action after Web3modal dialog has chosen a provider
+       */
+      async function fetchAccountData() {
+        // Get a Web3 instance for the wallet
+        console.log('Provider', provider)
+        const web3 = new Web3(provider)
+        console.log('Web3 instance is', web3)
+
+        // Get list of accounts of the connected wallet
+        const accounts = await web3.eth.getAccounts()
+
+        // MetaMask does not give you all accounts, only the selected account
+        console.log('Got accounts', accounts)
+        selectedAccount = accounts[0]
+
+        const contract = new web3.eth.Contract(
+          JSON.parse(
+            `[{"inputs":[{"internalType":"string","name":"_baseuri","type":"string"},{"internalType":"address","name":"_vault","type":"address"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"approved","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Approval","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":true,"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"MEDIUM","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"TOP","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"approve","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"areas","outputs":[{"internalType":"bytes32","name":"ipfs","type":"bytes32"},{"internalType":"uint64","name":"mintedAtBlock","type":"uint64"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"baseURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"bytes32","name":"ipfsHash","type":"bytes32"}],"name":"buy","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint32[4]","name":"area","type":"uint32[4]"},{"internalType":"bytes32","name":"ipfs","type":"bytes32"}],"name":"buyPixels","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"areaHash","type":"bytes32"}],"name":"commitToPixels","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes32","name":"","type":"bytes32"}],"name":"commits","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"fee","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"forSale","outputs":[{"internalType":"uint128","name":"price","type":"uint128"},{"internalType":"uint128","name":"end","type":"uint128"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"getApproved","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"getBounds","outputs":[{"internalType":"uint32[4]","name":"","type":"uint32[4]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"height","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32[4]","name":"area","type":"uint32[4]"}],"name":"isAreaAvailable","outputs":[{"internalType":"uint256","name":"","type":"uint256"},{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"}],"name":"isForSale","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32[4]","name":"obj1","type":"uint32[4]"},{"internalType":"uint32[4]","name":"obj2","type":"uint32[4]"}],"name":"overlap","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ownerOf","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint32[4]","name":"area","type":"uint32[4]"}],"name":"pixelsCost","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"fraudIndex","type":"uint256[]"},{"internalType":"uint256[]","name":"originalIndex","type":"uint256[]"}],"name":"removeFraud","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"},{"internalType":"bytes","name":"_data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint128","name":"price","type":"uint128"},{"internalType":"uint8","name":"duration","type":"uint8"}],"name":"sell","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"_baseuri","type":"string"}],"name":"setBaseURI","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"_creator","type":"address"}],"name":"setCreator","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint32","name":"_fee","type":"uint32"}],"name":"setFee","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"bytes32","name":"ipfsHash","type":"bytes32"}],"name":"setIPFSHash","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"tokenURI","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"transferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[],"name":"width","outputs":[{"internalType":"uint32","name":"","type":"uint32"}],"stateMutability":"view","type":"function"}]`
+          ),
+          '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+        )
+        console.log(`Rectangle price`, await contract.methods.pixelsCost([1, 1, 100, 100]).call())
+        ethers.utils.keccak256()
+        console.log(ethers.utils.toUtf8Bytes('1BH87kjgmSsUKYa66KcMAyCSyaq840KQsCeaGCQoGquy2Q'))
+        // console.log(`Rectangle price`, await contract.methods.buyPixels([1, 1, 100, 100], 'ipfs://QmUcosykPFJtuYS8HjoEVkXRaFcfb8SUDNCffaE6n6SRZj').send())
+
+        document.querySelector('#selected-account').textContent = selectedAccount
+
+        // Get a handle
+        const template = document.querySelector('#template-balance')
+        const accountContainer = document.querySelector('#accounts')
+
+        // Purge UI elements any previously loaded accounts
+        accountContainer.innerHTML = ''
+
+        // Go through all accounts and get their ETH balance
+        const rowResolvers = accounts.map(async (address) => {
+          const balance = await web3.eth.getBalance(address)
+          // ethBalance is a BigNumber instance
+          // https://github.com/indutny/bn.js/
+          const ethBalance = web3.utils.fromWei(balance, 'ether')
+          const humanFriendlyBalance = parseFloat(ethBalance).toFixed(4)
+          // Fill in the templated row and put in the document
+          const clone = template.content.cloneNode(true)
+          clone.querySelector('.address').textContent = address
+          clone.querySelector('.balance').textContent = humanFriendlyBalance
+          accountContainer.appendChild(clone)
+        })
+
+        // Because rendering account does its own RPC commucation
+        // with Ethereum node, we do not want to display any results
+        // until data for all accounts is loaded
+        await Promise.all(rowResolvers)
+
+        // Display fully loaded UI for wallet data
+        document.querySelector('#prepare').style.display = 'none'
+        document.querySelector('#connected').style.display = 'block'
+      }
+
+      /**
+       * Fetch account data for UI when
+       * - User switches accounts in wallet
+       * - User switches networks in wallet
+       * - User connects wallet initially
+       */
+      async function refreshAccountData() {
+        // If any current data is displayed when
+        // the user is switching acounts in the wallet
+        // immediate hide this data
+        document.querySelector('#connected').style.display = 'none'
+        document.querySelector('#prepare').style.display = 'block'
+
+        // Disable button while UI is loading.
+        // fetchAccountData() will take a while as it communicates
+        // with Ethereum node via JSON-RPC and loads chain data
+        // over an API call.
+        document.querySelector('#btn-connect').setAttribute('disabled', 'disabled')
+        await fetchAccountData(provider)
+        document.querySelector('#btn-connect').removeAttribute('disabled')
+      }
+
+      /**
+       * Connect wallet button pressed.
+       */
+      async function onConnect() {
+        console.log('Opening a dialog', web3Modal)
+        try {
+          provider = await web3Modal.connect()
+        } catch (e) {
+          console.log('Could not get a wallet connection', e)
+          return
+        }
+
+        // Subscribe to accounts change
+        provider.on('accountsChanged', (accounts) => {
+          fetchAccountData()
+        })
+
+        // Subscribe to chainId change
+        provider.on('chainChanged', (chainId) => {
+          fetchAccountData()
+        })
+
+        // Subscribe to networkId change
+        provider.on('networkChanged', (networkId) => {
+          fetchAccountData()
+        })
+
+        await refreshAccountData()
+      }
+
+      /**
+       * Disconnect wallet button pressed.
+       */
+      async function onDisconnect() {
+        console.log('Killing the wallet connection', provider)
+
+        // TODO: Which providers have close method?
+        if (provider.close) {
+          await provider.close()
+
+          // If the cached provider is not cleared,
+          // WalletConnect will default to the existing session
+          // and does not allow to re-scan the QR code with a new wallet.
+          // Depending on your use case you may want or want not his behavir.
+          await web3Modal.clearCachedProvider()
+          provider = null
+        }
+
+        selectedAccount = null
+
+        // Set the UI back to the initial state
+        document.querySelector('#prepare').style.display = 'block'
+        document.querySelector('#connected').style.display = 'none'
+      }
+
+      /**
+       * Main entry point.
+       */
+      window.addEventListener('load', async () => {
+        init()
+        await onConnect()
+        document.querySelector('#btn-connect').addEventListener('click', onConnect)
+        document.querySelector('#btn-disconnect').addEventListener('click', onDisconnect)
+      })
+    })()
+  </script>
+</html>
