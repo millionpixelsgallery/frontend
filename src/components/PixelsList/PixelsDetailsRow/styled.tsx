@@ -3,7 +3,6 @@ import styled from 'styled-components'
 export interface PixelsDetailsRowSCProps extends Omit<JSX.IntrinsicElements['li'], 'ref'> {}
 
 export const PixelsDetailsRowSC = styled.li<PixelsDetailsRowSCProps>`
-  width: 800px;
   .photo-area {
     .name-wrapper {
       text-transform: uppercase;
@@ -24,8 +23,7 @@ export const PixelsDetailsRowSC = styled.li<PixelsDetailsRowSCProps>`
   }
 
   .details-col {
-    //assuming, that picture preview has fixed 200px width and total margin to the details row of 26px
-    width: calc(100% - 226px);
+    min-width: 550px;
   }
 
   .details-row {
