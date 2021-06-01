@@ -102,6 +102,10 @@ const theme = {
       name: '#5DC499',
       time: '#5DC499',
     },
+    myPixels: {
+      bg: '#ffffff',
+      shadow: '#0b074233',
+    },
   },
   px,
   when,

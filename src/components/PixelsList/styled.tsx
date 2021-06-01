@@ -6,6 +6,8 @@ export interface PixelsListSCProps extends Omit<JSX.IntrinsicElements['ul'], 're
 }
 
 export const PixelsListSC = styled.ul<PixelsListSCProps>`
+  width: 100%;
+  box-sizing: border-box;
   list-style: none;
   margin: 0;
   padding: 0;

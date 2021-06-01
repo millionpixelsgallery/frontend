@@ -9,6 +9,7 @@ import Button from 'components/ui/Button'
 import Timer from 'components/Timer'
 import { unixToDateTime } from 'utils/format/datetime'
 import Area from 'components/ui/Area'
+import Modal from 'components/ui/Modal'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: PixelsData
@@ -62,12 +63,20 @@ function PixelsDetailsRow({
           </Col>
         </Row>
         <Row justify='end' gap={20}>
-          <Button type='outlined_orange' onClick={onEdit}>
-            Edit
-          </Button>
-          <Button type='default' onClick={onSell} disabled={isOnSale}>
-            Sell
-          </Button>
+          <Modal
+            trigger={
+              <Button type='outlined_orange' onClick={onEdit}>
+                Edit
+              </Button>
+            }
+          />
+          <Modal
+            trigger={
+              <Button type='default' onClick={onSell} disabled={isOnSale}>
+                Sell
+              </Button>
+            }
+          />
         </Row>
       </Col>
     </PixelsDetailsRowSC>
