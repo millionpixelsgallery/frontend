@@ -27,4 +27,8 @@ export const LayoutSC = styled.div<LayoutSCProps>`
     right: 0;
     bottom: 0;
   }
+
+  .centerBlock {
+    width: 1000px;
+  }
 `

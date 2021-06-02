@@ -1,4 +1,4 @@
-import { memo } from 'react'
+import { memo, useCallback, MouseEvent as ReactMouseEvent, useState, useEffect } from 'react'
 import { SelectSC, SelectSCProps } from './styled'
 
 export interface SelectProps extends SelectSCProps {
@@ -7,14 +7,72 @@ export interface SelectProps extends SelectSCProps {
   width: number
   height: number
   scale?: number
+  onResize?: (
+    deltaX: number,
+    deltaY: number,
+    direction: [x1: number, y1: number, x2: number, y2: number]
+  ) => void
+  onMove?: (deltaX: number, deltaY: number) => void
+  onMouseUp?: (e: MouseEvent) => void
 }
 
-function Select({ x, y, width, height, scale = 1 }: SelectProps) {
+function useEventListener<E extends HTMLElement, K extends keyof HTMLElementEventMap>(
+  element: E,
+  type: K,
+  listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
+  deps: any[] = [],
+  options?: boolean | AddEventListenerOptions
+) {
+  useEffect(() => {
+    element.addEventListener(type, listener, options)
+    return () => {
+      element.removeEventListener(type, listener, options)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [element, type, listener, options, ...deps])
+}
+
+function Select({ x, y, width, height, scale = 1, onResize, onMove, onMouseUp }: SelectProps) {
   const strokeWidth = 1 / scale
   const resizeRectWidth = 10 / scale
   const boxTranslate = `translate(-${resizeRectWidth / 2 - strokeWidth / 2}, -${
     resizeRectWidth / 2 - strokeWidth / 2
   })`
+
+  const [dragging, setDragging] = useState(false)
+  const [resizeDir, setResizeDir] =
+    useState<[x1: number, y1: number, x2: number, y2: number] | null>(null)
+
+  const handleMouseDown = useCallback((e: ReactMouseEvent) => {
+    e.preventDefault()
+    if (e.target instanceof SVGRectElement && e.target.dataset.type === 'resize') {
+      setResizeDir(e.target.dataset.direction!.split('').map(Number) as any)
+    } else {
+      setDragging(true)
+    }
+  }, [])
+  const handleMouseUp = useCallback(
+    (e: MouseEvent) => {
+      setDragging(false)
+      setResizeDir(null)
+      if (onMouseUp) onMouseUp(e)
+    },
+    [onMouseUp]
+  )
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (dragging) {
+        if (onMove) onMove(e.movementX / scale, e.movementY / scale)
+      }
+      if (resizeDir) {
+        if (onResize) onResize(e.movementX / scale, e.movementY / scale, resizeDir)
+      }
+    },
+    [dragging, resizeDir, onResize, onMove, scale]
+  )
+
+  useEventListener(document.documentElement, 'mouseup', handleMouseUp)
+  useEventListener(document.documentElement, 'mousemove', handleMouseMove)
 
   return (
     <SelectSC
@@ -23,6 +81,7 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
       viewBox={`0 0 ${width} ${height}`}
       style={{ transform: `translate(${x}px, ${y}px)` }}
       overflow={'visible'}
+      onMouseDown={handleMouseDown}
     >
       <rect
         x={strokeWidth / 2}
@@ -33,8 +92,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         strokeWidth={strokeWidth}
         fill='#eeeeee'
         fillOpacity={0.3}
+        data-data-type='selection'
       />
-
       <rect
         x={0}
         y={0}
@@ -44,6 +103,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         strokeWidth={strokeWidth}
         fill='#ffffff'
         transform={boxTranslate}
+        data-type='resize'
+        data-direction='1100'
       />
       <rect
         x={'100%'}
@@ -54,6 +115,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         strokeWidth={strokeWidth}
         fill='#ffffff'
         transform={boxTranslate}
+        data-type='resize'
+        data-direction='0110'
       />
       <rect
         x={0}
@@ -64,6 +127,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         strokeWidth={strokeWidth}
         fill='#ffffff'
         transform={boxTranslate}
+        data-type='resize'
+        data-direction='1001'
       />
       <rect
         x={'100%'}
@@ -74,6 +139,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         strokeWidth={strokeWidth}
         fill='#ffffff'
         transform={boxTranslate}
+        data-type='resize'
+        data-direction='0011'
       />
 
       <rect
@@ -86,6 +153,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         fill='#ffffff'
         transform={boxTranslate}
         visibility={width * scale > 25 ? 'visible' : 'hidden'}
+        data-type='resize'
+        data-direction='0100'
       />
       <rect
         x={'50%'}
@@ -97,6 +166,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         fill='#ffffff'
         transform={boxTranslate}
         visibility={width * scale > 25 ? 'visible' : 'hidden'}
+        data-type='resize'
+        data-direction='0001'
       />
       <rect
         x={'100%'}
@@ -108,6 +179,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         fill='#ffffff'
         transform={boxTranslate}
         visibility={height * scale > 25 ? 'visible' : 'hidden'}
+        data-type='resize'
+        data-direction='0010'
       />
       <rect
         x={0}
@@ -119,6 +192,8 @@ function Select({ x, y, width, height, scale = 1 }: SelectProps) {
         fill='#ffffff'
         transform={boxTranslate}
         visibility={height * scale > 25 ? 'visible' : 'hidden'}
+        data-type='resize'
+        data-direction='1000'
       />
     </SelectSC>
   )
