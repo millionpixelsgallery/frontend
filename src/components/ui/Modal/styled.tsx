@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components'
 
 export interface ModalOverlaySCProps {}
 
@@ -13,6 +13,12 @@ export const ModalOverlaySC = styled.div<ModalOverlaySCProps>`
   display: flex;
   align-items: center;
   justify-content: center;
+`
+
+export const GlobalModalStyles = createGlobalStyle`
+  body {
+    position: fixed;
+  }
 `
 
 export interface ModalSCProps {}
