@@ -44,7 +44,7 @@ export type Web3Providers = keyof typeof web3Options['providerOptions'] | 'metam
 
 const web3Modal = new Web3Modal(web3Options)
 
-type Area = [number, number, number, number]
+type Area = [x: number, y: number, width: number, height: number]
 type Sale = {
   price: number
   end: number
