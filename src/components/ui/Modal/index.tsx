@@ -31,6 +31,7 @@ export interface ModalProps extends ModalSCProps {
   trigger?: ReactElement<{ onClick: Function }>
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
   componentProps?: { [key: string]: any }
+  closeCb?: () => void
 }
 
 function Modal({
@@ -41,6 +42,7 @@ function Modal({
   trigger,
   render,
   onBack,
+  closeCb,
   componentProps = {},
   ...rest
 }: ModalProps) {
@@ -52,7 +54,10 @@ function Modal({
   }, [])
 
   const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
-  const handleClose = useCallback(() => setVisible(false), [setVisible])
+  const handleClose = useCallback(() => {
+    if (closeCb) closeCb()
+    setVisible(false)
+  }, [setVisible, closeCb])
 
   return (
     <>

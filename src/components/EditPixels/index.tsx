@@ -7,10 +7,13 @@ import useForm from 'hooks/useForm'
 import ByPixelsUploadPhoto from 'components/ByPixels/ByPixelsUploadPhoto'
 import EditPixelsConfirmEdit from 'components/EditPixels/EditPixelsConfirmEdit'
 import { padding } from 'utils/style/indents'
+import { useApiMethods } from 'hooks/useApi'
+import { upload } from 'lib/nft'
 
 export interface ProductData {
   width: number
   height: number
+  index: number
   position: {
     x: number
     y: number
@@ -23,6 +26,7 @@ export interface EditPixelsProps extends EditPixelsSCProps {
   style?: CSSProperties
   step: number
   onChangeStep: (step: number) => void
+  onClose: () => void
   data: ProductData
 }
 
@@ -34,7 +38,17 @@ const initialValues = {
 
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
-function EditPixels({ className, step, data, onChangeStep, style, ...rest }: EditPixelsProps) {
+function EditPixels({
+  className,
+  step,
+  data,
+  onChangeStep,
+  onClose,
+  style,
+  ...rest
+}: EditPixelsProps) {
+  const methods = useApiMethods()
+
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup, E) => ({
@@ -44,7 +58,9 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
       }),
     })),
     onSubmit: async (values) => {
-      console.log(values)
+      await methods?.setIpfs(data.index, await upload(values.image!, values.title, values.link))
+      onClose()
+      onChangeStep(0)
     },
   })
 
@@ -60,7 +76,9 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
           NEXT
         </Button>
       ) : (
-        <Button width={140}>CONFIRM</Button>
+        <Button width={140} onClick={formik.submitForm}>
+          CONFIRM
+        </Button>
       )}
     </Row>
   )
