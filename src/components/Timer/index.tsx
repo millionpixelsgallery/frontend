@@ -6,7 +6,7 @@ import Text from 'components/ui/Text'
 import theme from 'lib/theme'
 
 const timeLeftToEnd = (end: DateTime) => {
-  const diff = end.diffNow()
+  const diff = end.diff(DateTime.utc())
   const isEndOccurred = diff.milliseconds <= 0
   return !isEndOccurred
     ? end.diffNow(['years', 'months', 'days', 'hours', 'minutes', 'seconds'])
