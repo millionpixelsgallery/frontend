@@ -50,12 +50,14 @@ function Select({ x, y, width, height, scale = 1, onResize, onMove, onMouseUp }:
     } else {
       setDragging(true)
     }
+    document.body.style.cursor = 'pointer'
   }, [])
   const handleMouseUp = useCallback(
     (e: MouseEvent) => {
       setDragging(false)
       setResizeDir(null)
       if (onMouseUp) onMouseUp(e)
+      document.body.style.removeProperty('cursor')
     },
     [onMouseUp]
   )
@@ -86,8 +88,8 @@ function Select({ x, y, width, height, scale = 1, onResize, onMove, onMouseUp }:
       <rect
         x={strokeWidth / 2}
         y={strokeWidth / 2}
-        width={width - strokeWidth}
-        height={height - strokeWidth}
+        width={Math.max(0.001, width - strokeWidth)}
+        height={Math.max(0.001, height - strokeWidth)}
         stroke='#000000'
         strokeWidth={strokeWidth}
         fill='#eeeeee'
