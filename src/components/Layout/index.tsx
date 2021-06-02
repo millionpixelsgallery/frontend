@@ -14,8 +14,8 @@ export interface LayoutProps extends LayoutSCProps {
 function Layout({ className, style, children, ...rest }: LayoutProps) {
   return (
     <LayoutSC className={className} style={style} {...rest}>
-      <Col align='center' className={'container'}>
-        <Row>
+      <Col className={'container'}>
+        <Row justify={'center'}>
           <div className={'sideBlock'} />
           <div className={'centerBlock'}>
             <Header />

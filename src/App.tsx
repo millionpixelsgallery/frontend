@@ -4,6 +4,8 @@ import { Web3Connect, Web3Methods } from 'lib/web3connect'
 import { useEffect, useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { ApiContext } from 'hooks/useApi'
+import Modal from 'components/ui/Modal'
+import MobilePlaceholder from 'components/MobilePlaceholder'
 
 function App() {
   const [methods, setMethods] = useState<Web3Methods>()
@@ -22,6 +24,11 @@ function App() {
         },
       }}
     >
+      <Modal
+        closable={false}
+        component={MobilePlaceholder}
+        defaultVisible={window.innerWidth < 1281}
+      />
       <Layout>
         <Switch>
           <Route path='/gallery' component={Viewport} />

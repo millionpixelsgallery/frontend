@@ -29,6 +29,7 @@ export interface ModalProps extends ModalSCProps {
 
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
+  defaultVisible?: boolean
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
   componentProps?: { [key: string]: any }
 }
@@ -39,12 +40,13 @@ function Modal({
   closable = true,
   component,
   trigger,
+  defaultVisible = false,
   render,
   onBack,
   componentProps = {},
   ...rest
 }: ModalProps) {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(defaultVisible)
   const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
