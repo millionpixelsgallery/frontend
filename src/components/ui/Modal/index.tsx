@@ -11,7 +11,7 @@ import {
   useLayoutEffect,
   useState,
 } from 'react'
-import { ModalOverlaySC, ModalSC, ModalSCProps } from './styled'
+import { GlobalModalStyles, ModalOverlaySC, ModalSC, ModalSCProps } from './styled'
 import { createPortal } from 'react-dom'
 import { ReactComponent as BackSVG } from './assets/Back.svg'
 import { ReactComponent as CloseSVG } from './assets/Close.svg'
@@ -61,6 +61,7 @@ function Modal({
         visible &&
         createPortal(
           <ModalOverlaySC hidden={!visible}>
+            <GlobalModalStyles />
             <ModalSC className={className} style={style} {...rest}>
               {Boolean(onBack) && (
                 <Button type={'wrapper'} className={'back'} size={'content'} onClick={onBack}>
