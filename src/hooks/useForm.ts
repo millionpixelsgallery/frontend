@@ -12,7 +12,7 @@ import useFormErrorGetter from 'hooks/useFormErrorGetter'
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useWindowListener from 'hooks/useWindowListener'
 import { get } from 'lodash-es'
-import useActualRef from 'hooks/useActualRef'
+import useLink from 'hooks/useLink'
 
 export type FormType<Values> = FormikState<Values> &
   FormikHelpers<Values> &
@@ -62,7 +62,7 @@ export default function useForm<Values extends FormikValues = FormikValues>(
   const autosave = useAutosaveSettings(config.autosave)
   if (autosave) {
     const timerRef = useRef<any>()
-    const formikRef = useActualRef(formik)
+    const formikRef = useLink(formik)
 
     formik.submitForm = useSubmitQueue(formikRef)
     formik.setFieldValue = useAutosaveCallback(
@@ -120,7 +120,7 @@ function useAutosaveSettings(
 }
 
 function useSubmitQueue({ current: formik }: MutableRefObject<FormikHelpers<any>>) {
-  const submitFormCbRef = useActualRef(formik.submitForm)
+  const submitFormCbRef = useLink(formik.submitForm)
   const submittingRef = useRef(false)
   const submitQueueRef: MutableRefObject<
     Array<{ resolve: (value: any) => void; reject: (err: any) => void }>
