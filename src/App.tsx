@@ -17,7 +17,6 @@ function App() {
       value={{
         methods,
         async connect(provider) {
-          if (methods) return
           await new Web3Connect(setMethods).connect(provider)
         },
       }}
