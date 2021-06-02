@@ -58,8 +58,10 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
       }),
     })),
     onSubmit: async (values) => {
-      const image = Boolean(values.image) ? await upload(values.image!) : ''
-      await methods?.buyPixels([data.position.x, data.position.y, data.width, data.height], image)
+      await methods?.buyPixels(
+        [data.position.x, data.position.y, data.width, data.height],
+        await upload(values.image!, values.title, values.link)
+      )
       onClose()
     },
   })

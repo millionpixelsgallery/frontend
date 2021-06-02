@@ -51,11 +51,11 @@ function Header({ style }: HeaderProps) {
             step,
             onChangeStep: setStep,
             data: {
-              width: 100,
-              height: 100,
+              width: 10,
+              height: 10,
               position: {
-                x: 300,
-                y: 300,
+                x: 10,
+                y: 10,
               },
               price: 6,
             },

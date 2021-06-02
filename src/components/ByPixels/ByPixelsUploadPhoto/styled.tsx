@@ -40,5 +40,7 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
   ${InputSC} {
     color: ${({ theme }) => theme.color.link.primaryPrimary} !important;
     text-transform: uppercase;
+    -webkit-box-shadow: inset 0 0 0 50px #fff;
+    -webkit-text-fill-color: ${({ theme }) => theme.color.link.primaryPrimary} !important;
   }
 `
