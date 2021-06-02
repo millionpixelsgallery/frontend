@@ -52,10 +52,10 @@ function Header({ style }: HeaderProps) {
             onChangeStep: setStep,
             data: {
               width: 100,
-              height: 60,
+              height: 100,
               position: {
-                x: 193,
-                y: 871,
+                x: 300,
+                y: 300,
               },
               price: 6,
             },
