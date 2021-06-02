@@ -11,8 +11,8 @@ const Grid = styled.div<GridProps>`
   bottom: 0;
   background-size: 1px 1px;
   background-position: -0.025px -0.025px;
-  background-image: linear-gradient(90deg, grey 0.05px, transparent 0),
-    linear-gradient(180deg, grey 0.05px, transparent 0);
+  background-image: linear-gradient(90deg, #ececec 0.05px, transparent 0),
+    linear-gradient(180deg, #ececec 0.05px, transparent 0);
 `
 
 export default memo(Grid)
