@@ -55,7 +55,11 @@ type Pixels = {
   ipfs: string
   area: Area
   owner: string
-  image: string
+  image?: {
+    title: string
+    link: string
+    image: string
+  }
 }
 
 export class Web3Connect {
@@ -181,14 +185,23 @@ export class Web3Methods {
         }
       }
 
-      data = {
-        index,
-        ipfs,
-        sale,
-        area,
-        owner,
-        image: `https://${ipfs}.ipfs.dweb.link/`,
-      }
+      const image = ipfs
+        ? await fetch(`https://${ipfs}.ipfs.dweb.link/metadata.json`)
+            .then((r) => r.json())
+            .then((j) => ({
+              title: j.name,
+              link: j.description,
+              image: `https://${j.image
+                .replace('ipfs://', '')
+                .replace('/image', '')}.ipfs.dweb.link/image`,
+            }))
+            .catch((e) => {
+              console.log(`Can't find image by the link: https://${ipfs}.ipfs.dweb.link/`, e)
+              return undefined
+            })
+        : undefined
+
+      data = { index, ipfs, sale, area, owner, image }
     } catch (e) {
       console.log(e)
       throw new Error(`Area ${index} is not available`)

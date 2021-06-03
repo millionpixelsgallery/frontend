@@ -4,7 +4,7 @@ export interface ModalOverlaySCProps {}
 
 export const ModalOverlaySC = styled.div<ModalOverlaySCProps>`
   position: fixed;
-  z-index: 2;
+  z-index: 3;
   top: 0;
   left: 0;
   width: 100vw;
