@@ -12,6 +12,7 @@ import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
 import { useApiConnect, useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
+import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 
 export interface ProductData {
   width: number
@@ -60,12 +61,17 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
     onSubmit: async (values) => {
       await methods?.buyPixels(
         [data.position.x, data.position.y, data.width, data.height],
-        await upload(values.image!, values.title, values.link)
+        await upload(
+          Boolean(values.image)
+            ? values.image!
+            : await cratePlaceHolderFile(data.width, data.height),
+          values.title,
+          values.link
+        )
       )
       onClose()
     },
   })
-
   useEffect(() => {
     if (!methods) {
       onChangeStep(0)
@@ -79,7 +85,7 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback(async () => {
     onChangeStep(step + 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])

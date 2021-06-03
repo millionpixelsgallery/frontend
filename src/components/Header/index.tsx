@@ -55,8 +55,8 @@ function Header({ style }: HeaderProps) {
             step,
             onChangeStep: setStep,
             data: {
-              width: 10,
-              height: 10,
+              width: 400,
+              height: 400,
               position: {
                 x: 10,
                 y: 10,
