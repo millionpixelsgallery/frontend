@@ -56,7 +56,7 @@ function SellPixels({
       if (values.duration === 'week') duration = 7
       if (values.duration === 'day') duration = 1
       if (values.duration === 'month') duration = 30
-      await methods?.sellPixels(0, +values.price, duration)
+      await methods?.sellPixels(index, +values.price, duration)
       onClose()
       onChangeStep(0)
     },
