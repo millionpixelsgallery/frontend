@@ -6,7 +6,7 @@ export interface SelectProps extends SelectSCProps {
   y: number
   width: number
   height: number
-  scale?: number
+  scale: number | undefined
   onResize?: (
     deltaX: number,
     deltaY: number,
