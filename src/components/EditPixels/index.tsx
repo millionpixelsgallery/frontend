@@ -9,6 +9,7 @@ import EditPixelsConfirmEdit from 'components/EditPixels/EditPixelsConfirmEdit'
 import { padding } from 'utils/style/indents'
 import { useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
+import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 
 export interface ProductData {
   width: number
@@ -58,7 +59,16 @@ function EditPixels({
       }),
     })),
     onSubmit: async (values) => {
-      await methods?.setIpfs(data.index, await upload(values.image!, values.title, values.link))
+      await methods?.setIpfs(
+        data.index,
+        await upload(
+          Boolean(values.image)
+            ? values.image!
+            : await cratePlaceHolderFile(data.width, data.height),
+          values.title,
+          values.link
+        )
+      )
       onClose()
       onChangeStep(0)
     },
@@ -90,7 +100,9 @@ function EditPixels({
           {Bottom}
         </ByPixelsUploadPhoto>
       ) : step === 1 ? (
-        <EditPixelsConfirmEdit formik={formik}>{Bottom}</EditPixelsConfirmEdit>
+        <EditPixelsConfirmEdit data={data} formik={formik}>
+          {Bottom}
+        </EditPixelsConfirmEdit>
       ) : null}
     </EditPixelsSC>
   )

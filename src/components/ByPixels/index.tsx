@@ -70,6 +70,7 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
         )
       )
       onClose()
+      onChangeStep(0)
     },
   })
   useEffect(() => {

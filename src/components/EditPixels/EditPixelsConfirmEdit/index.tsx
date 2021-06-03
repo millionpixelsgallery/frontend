@@ -4,17 +4,19 @@ import { Col, Row } from 'components/ui/Grid'
 import Title from 'components/ui/Title'
 import { marginBottom, padding } from 'utils/style/indents'
 import Area from 'components/ui/Area'
-import { ByPixelsValues } from 'components/ByPixels'
+import { ByPixelsValues, ProductData } from 'components/ByPixels'
 import Text from 'components/ui/Text'
 import { FormSubType } from 'hooks/useForm'
 import { formatBytes } from 'utils/formatBytes'
 import { EllipsisDivSC } from 'components/ByPixels/ByPixelsUploadPhoto/styled'
+import { cratePlaceHolder } from 'utils/cratePlaceHolderFile'
 
 export interface EditPixelsConfirmEditProps extends EditPixelsConfirmEditSCProps {
   className?: string
   style?: CSSProperties
   children?: ReactNode
   formik: FormSubType<ByPixelsValues>
+  data: ProductData
 }
 
 function EditPixelsConfirmEdit({
@@ -22,6 +24,7 @@ function EditPixelsConfirmEdit({
   style,
   children,
   formik,
+  data,
   ...rest
 }: EditPixelsConfirmEditProps) {
   return (
@@ -33,12 +36,16 @@ function EditPixelsConfirmEdit({
           </Title>
           <Row gap={30} justify={'start'} align={'center'}>
             <Area name={'YOUR PHOTO'} className={'photo-area'}>
-              {formik.values.image && !formik.errors.image && (
+              {
                 <img
-                  src={URL.createObjectURL(formik.values.image)}
-                  alt={formik.values.image.name}
+                  src={
+                    !formik.values.image || formik.errors.image
+                      ? cratePlaceHolder(data.width, data.height)
+                      : URL.createObjectURL(formik.values.image)
+                  }
+                  alt={formik.values.image ? formik.values.image.name : 'dollar'}
                 />
-              )}
+              }
             </Area>
             <Col gap={20} className={'overflow-anywhere'}>
               {formik.values.image && !formik.errors.image && (
