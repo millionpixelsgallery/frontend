@@ -20,6 +20,11 @@ export const Default = createStory({
   children: 'lorem',
 })
 
+export const Loading = createStory({
+  children: 'lorem',
+  loading: true,
+})
+
 export const Disabled = createStory({
   children: 'lorem',
   disabled: true,

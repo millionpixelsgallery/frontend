@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useEffect } from 'react'
+import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
 import { ByPixelsSC, ByPixelsSCProps } from './styled'
 import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
 import ByPixelsReviewPixels from 'components/ByPixels/ByPixelsReviewPixels'
@@ -48,6 +48,7 @@ export type ByPixelsValues = {
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
 function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest }: ByPixelsProps) {
+  const [loading, setLoading] = useState(false)
   const methods = useApiMethods()
   const connect = useApiConnect()
   const formik = useForm({
@@ -59,16 +60,22 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
       }),
     })),
     onSubmit: async (values) => {
-      await methods?.buyPixels(
-        [data.position.x, data.position.y, data.width, data.height],
-        await upload(
-          Boolean(values.image)
-            ? values.image!
-            : await cratePlaceHolderFile(data.width, data.height),
-          values.title,
-          values.link
+      setLoading(true)
+      try {
+        await methods?.buyPixels(
+          [data.position.x, data.position.y, data.width, data.height],
+          await upload(
+            Boolean(values.image)
+              ? values.image!
+              : await cratePlaceHolderFile(data.width, data.height),
+            values.title,
+            values.link
+          )
         )
-      )
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
+      }
       onClose()
       onChangeStep(0)
     },
@@ -111,7 +118,7 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
             NEXT
           </Button>
         ) : (
-          <Button width={140} onClick={formik.submitForm}>
+          <Button width={140} onClick={formik.submitForm} loading={loading}>
             CONFIRM
           </Button>
         )}

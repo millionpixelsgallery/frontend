@@ -1,9 +1,10 @@
 import { CSSProperties, memo, useCallback, useLayoutEffect, useRef, useState } from 'react'
 import Grid from 'components/Viewport/Grid'
-import { ViewportContentSC, ViewportSC } from 'components/Viewport/styled'
+import { ViewportContentSC, ViewportSC, ViewportWrapperSC } from 'components/Viewport/styled'
 import panzoom, { Transform } from 'panzoom'
 import Select from 'components/Viewport/Select'
 import { between } from 'utils/canvas'
+import Tooltip from 'components/Viewport/Tooltip'
 
 export interface ViewportProps {
   className?: string
@@ -35,7 +36,6 @@ function Viewport({ className, style }: ViewportProps) {
     10, 10, 110, 80,
   ])
 
-  const [x1, y1, x2, y2] = selectCords
   const handleSelectMove = useCallback((dx, dy) => {
     setSelectCords(([x1, y1, x2, y2]) => {
       if (dx < 0) {
@@ -72,22 +72,39 @@ function Viewport({ className, style }: ViewportProps) {
     ])
   }, [])
 
+  const [x1, y1, x2, y2] = selectCords
+  const selectX = Math.round(x1)
+  const selectY = Math.round(y1)
+  const selectWidth = Math.round(x2 - x1)
+  const selectHeight = Math.round(y2 - y1)
+
   return (
-    <ViewportSC className={className} style={style}>
-      <ViewportContentSC ref={contentRef}>
-        <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
-        <Select
-          x={Math.round(x1)}
-          y={Math.round(y1)}
-          width={Math.round(x2 - x1)}
-          height={Math.round(y2 - y1)}
-          scale={transform?.scale}
-          onMove={handleSelectMove}
-          onResize={handleSelectResize}
-          onMouseUp={handleSelectEnd}
-        />
-      </ViewportContentSC>
-    </ViewportSC>
+    <ViewportWrapperSC className={className} style={style}>
+      <ViewportSC>
+        <ViewportContentSC ref={contentRef}>
+          <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
+          <Select
+            x={selectX}
+            y={selectY}
+            width={selectWidth}
+            height={selectHeight}
+            scale={transform?.scale}
+            onMove={handleSelectMove}
+            onResize={handleSelectResize}
+            onMouseUp={handleSelectEnd}
+          />
+          <Tooltip
+            targetX={selectX}
+            targetY={selectY}
+            targetWidth={selectWidth}
+            targetHeight={selectHeight}
+            transform={transform}
+          >
+            X: {selectX} Y: {selectY} | {selectWidth}X{selectHeight}
+          </Tooltip>
+        </ViewportContentSC>
+      </ViewportSC>
+    </ViewportWrapperSC>
   )
 }
 

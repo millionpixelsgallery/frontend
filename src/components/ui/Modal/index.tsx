@@ -8,6 +8,7 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react'
@@ -29,24 +30,29 @@ export interface ModalProps extends ModalSCProps {
 
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
+  defaultVisible?: boolean
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
   componentProps?: { [key: string]: any }
-  closeCb?: () => void
+
+  disabledControlButtons?: boolean
 }
 
 function Modal({
   className,
   style,
   closable = true,
+  closableByEsc,
   component,
   trigger,
+  defaultVisible = false,
   render,
   onBack,
-  closeCb,
+  onClose,
   componentProps = {},
+  disabledControlButtons = false,
   ...rest
 }: ModalProps) {
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(defaultVisible)
   const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
@@ -55,9 +61,18 @@ function Modal({
 
   const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
   const handleClose = useCallback(() => {
-    if (closeCb) closeCb()
+    if (onClose) onClose()
     setVisible(false)
-  }, [setVisible, closeCb])
+  }, [setVisible, onClose])
+
+  useEffect(() => {
+    if (!closableByEsc) return
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') handleClose()
+    }
+    document.addEventListener('keydown', handleKeydown)
+    return () => document.removeEventListener('keydown', handleKeydown)
+  }, [closableByEsc, handleClose])
 
   return (
     <>
@@ -69,12 +84,24 @@ function Modal({
             <GlobalModalStyles />
             <ModalSC className={className} style={style} {...rest}>
               {Boolean(onBack) && (
-                <Button type={'wrapper'} className={'back'} size={'content'} onClick={onBack}>
+                <Button
+                  type={'wrapper'}
+                  className={'back'}
+                  size={'content'}
+                  onClick={onBack}
+                  disabled={disabledControlButtons}
+                >
                   <BackSVG />
                 </Button>
               )}
               {closable && (
-                <Button type={'wrapper'} className={'close'} size={'content'} onClick={handleClose}>
+                <Button
+                  type={'wrapper'}
+                  className={'close'}
+                  size={'content'}
+                  onClick={handleClose}
+                  disabled={disabledControlButtons}
+                >
                   <CloseSVG />
                 </Button>
               )}
