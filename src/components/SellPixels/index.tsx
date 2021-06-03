@@ -11,10 +11,15 @@ import Text from 'components/ui/Text'
 import Radio from 'components/ui/Radio'
 import Button from 'components/ui/Button'
 import { maskInt2 } from 'utils/masks'
+import { useApiMethods } from 'hooks/useApi'
 
 export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
   style?: CSSProperties
+  index: number
+  step: number
+  onChangeStep: (step: number) => void
+  onClose: () => void
 }
 
 const initialValues = {
@@ -28,7 +33,17 @@ export enum DurationEnum {
   Month = 'month',
 }
 
-function SellPixels({ className, style, ...rest }: SellPixelsProps) {
+function SellPixels({
+  className,
+  style,
+  step,
+  onChangeStep,
+  onClose,
+  index,
+  ...rest
+}: SellPixelsProps) {
+  const methods = useApiMethods()
+
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup) => ({
@@ -37,7 +52,13 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
     })),
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log(values)
+      let duration = 1
+      if (values.duration === 'week') duration = 7
+      if (values.duration === 'day') duration = 1
+      if (values.duration === 'month') duration = 30
+      await methods?.sellPixels(0, +values.price, duration)
+      onClose()
+      onChangeStep(0)
     },
   })
 
@@ -90,7 +111,7 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
           </Row>
         </Row>
       </Col>
-      <Button disabled={!(formik.isValid && formik.dirty)} width={200}>
+      <Button disabled={!(formik.isValid && formik.dirty)} onClick={formik.submitForm} width={200}>
         LIST FOR SALE
       </Button>
     </SellPixelsSC>
