@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback } from 'react'
+import { CSSProperties, memo, useCallback, useEffect } from 'react'
 import { EditPixelsSC, EditPixelsSCProps } from './styled'
 import { Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
@@ -11,7 +11,7 @@ import { useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 
-export interface ProductData {
+export interface EditProductData {
   width: number
   height: number
   index: number
@@ -28,15 +28,13 @@ export interface EditPixelsProps extends EditPixelsSCProps {
   step: number
   onChangeStep: (step: number) => void
   onClose: () => void
-  data: ProductData
+  data: EditProductData
+  image: {
+    image: string
+    link: string
+    title: string
+  }
 }
-
-const initialValues = {
-  link: '',
-  title: '',
-  image: null,
-}
-
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
 function EditPixels({
@@ -46,12 +44,17 @@ function EditPixels({
   onChangeStep,
   onClose,
   style,
+  image,
   ...rest
 }: EditPixelsProps) {
   const methods = useApiMethods()
 
   const formik = useForm({
-    initialValues: initialValues,
+    initialValues: {
+      link: image.link,
+      title: image.title,
+      image: null,
+    },
     validationSchema: useValidationSchema((yup, E) => ({
       image: yup.mixed().test('supported', E.INVALID_IMAGE_FORMAT, (file) => {
         if (!file) return true
@@ -59,12 +62,11 @@ function EditPixels({
       }),
     })),
     onSubmit: async (values) => {
+      let image = values.image
       await methods?.setIpfs(
         data.index,
         await upload(
-          Boolean(values.image)
-            ? values.image!
-            : await cratePlaceHolderFile(data.width, data.height),
+          Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
           values.title,
           values.link
         )
@@ -73,6 +75,21 @@ function EditPixels({
       onChangeStep(0)
     },
   })
+
+  useEffect(() => {
+    fetch(image.image).then((res) =>
+      res.blob().then((blob) => {
+        if (blob.type.split('/').pop()!.toLowerCase().includes('svg')) return
+        formik.setFieldValue(
+          'image',
+          new File([blob], `image.${blob.type.split('/').pop()!.toLowerCase()}`, {
+            type: blob.type,
+          })
+        )
+      })
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [image.image])
 
   const handleNextStep = useCallback(() => {
     onChangeStep(step + 1)
