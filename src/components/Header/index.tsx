@@ -19,6 +19,9 @@ function Header({ style }: HeaderProps) {
   const onBack = () => {
     setStep((step) => step - 1)
   }
+  const onCloseCb = () => {
+    setStep(1)
+  }
   return (
     <HeaderSC style={style} justify='between' align='center'>
       <Link to='/'>
@@ -47,15 +50,16 @@ function Header({ style }: HeaderProps) {
           }
           onBack={step ? onBack : undefined}
           component={ByPixels}
+          closeCb={onCloseCb}
           componentProps={{
             step,
             onChangeStep: setStep,
             data: {
-              width: 100,
-              height: 60,
+              width: 400,
+              height: 400,
               position: {
-                x: 193,
-                y: 871,
+                x: 10,
+                y: 10,
               },
               price: 6,
             },

@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback } from 'react'
+import { CSSProperties, memo, useCallback, useEffect } from 'react'
 import { ByPixelsSC, ByPixelsSCProps } from './styled'
 import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
 import ByPixelsReviewPixels from 'components/ByPixels/ByPixelsReviewPixels'
@@ -10,6 +10,9 @@ import Button from 'components/ui/Button'
 import { padding } from 'utils/style/indents'
 import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
+import { useApiConnect, useApiMethods } from 'hooks/useApi'
+import { upload } from 'lib/nft'
+import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 
 export interface ProductData {
   width: number
@@ -26,6 +29,7 @@ export interface ByPixelsProps extends ByPixelsSCProps {
   style?: CSSProperties
   step: number
   onChangeStep: (step: number) => void
+  onClose: () => void
   data: ProductData
 }
 
@@ -41,10 +45,11 @@ export type ByPixelsValues = {
   image: null | File
 }
 
-export type Wallets = 'metamask' | 'fortmatic' | 'portis' | 'torus'
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
-function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPixelsProps) {
+function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest }: ByPixelsProps) {
+  const methods = useApiMethods()
+  const connect = useApiConnect()
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup, E) => ({
@@ -54,16 +59,33 @@ function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPix
       }),
     })),
     onSubmit: async (values) => {
-      console.log(values)
+      await methods?.buyPixels(
+        [data.position.x, data.position.y, data.width, data.height],
+        await upload(
+          Boolean(values.image)
+            ? values.image!
+            : await cratePlaceHolderFile(data.width, data.height),
+          values.title,
+          values.link
+        )
+      )
+      onClose()
     },
   })
+  useEffect(() => {
+    if (!methods) {
+      onChangeStep(0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const handleSelectWallet = useCallback(() => {
+  const handleSelectWallet = useCallback(async (wallet) => {
+    await connect(wallet)
     onChangeStep(1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback(async () => {
     onChangeStep(step + 1)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
@@ -88,7 +110,9 @@ function ByPixels({ className, step, data, onChangeStep, style, ...rest }: ByPix
             NEXT
           </Button>
         ) : (
-          <Button width={140}>CONFIRM</Button>
+          <Button width={140} onClick={formik.submitForm}>
+            CONFIRM
+          </Button>
         )}
       </Row>
     </Row>
