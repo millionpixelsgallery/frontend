@@ -31,6 +31,8 @@ export interface ModalProps extends ModalSCProps {
   trigger?: ReactElement<{ onClick: Function }>
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
   componentProps?: { [key: string]: any }
+
+  disabledControlButtons?: boolean
 }
 
 function Modal({
@@ -42,6 +44,7 @@ function Modal({
   render,
   onBack,
   componentProps = {},
+  disabledControlButtons = false,
   ...rest
 }: ModalProps) {
   const [visible, setVisible] = useState(false)
@@ -64,12 +67,24 @@ function Modal({
             <GlobalModalStyles />
             <ModalSC className={className} style={style} {...rest}>
               {Boolean(onBack) && (
-                <Button type={'wrapper'} className={'back'} size={'content'} onClick={onBack}>
+                <Button
+                  type={'wrapper'}
+                  className={'back'}
+                  size={'content'}
+                  onClick={onBack}
+                  disabled={disabledControlButtons}
+                >
                   <BackSVG />
                 </Button>
               )}
               {closable && (
-                <Button type={'wrapper'} className={'close'} size={'content'} onClick={handleClose}>
+                <Button
+                  type={'wrapper'}
+                  className={'close'}
+                  size={'content'}
+                  onClick={handleClose}
+                  disabled={disabledControlButtons}
+                >
                   <CloseSVG />
                 </Button>
               )}

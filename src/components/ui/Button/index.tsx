@@ -14,6 +14,7 @@ export interface ButtonProps
   width?: number
   disabled?: boolean
   shadow?: boolean
+  loading?: boolean
   children: ReactNode
 }
 
@@ -27,6 +28,7 @@ function Button({
   width,
   children,
   disabled = false,
+  loading = false,
   ...rest
 }: ButtonProps) {
   return (
@@ -38,10 +40,11 @@ function Button({
       fontSize={fontSize}
       $width={width}
       $shadow={shadow}
-      $disabled={disabled}
+      $disabled={disabled || loading}
+      disabled={disabled || loading}
       {...rest}
     >
-      {children}
+      {loading ? 'Loading...' : children}
     </ButtonSC>
   )
 }

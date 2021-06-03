@@ -44,3 +44,15 @@ export const Default = createStory({
   closable: true,
   component: HelloWorld,
 })
+
+export const DisabledControlButtons = createStory({
+  trigger: (
+    <Button type={'outlined_orange'} size={'sm'}>
+      Open modal
+    </Button>
+  ),
+  onBack: () => {},
+  closable: true,
+  component: HelloWorld,
+  disabledControlButtons: true,
+})

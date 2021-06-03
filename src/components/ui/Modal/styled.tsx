@@ -39,10 +39,21 @@ export const ModalSC = styled.div<ModalSCProps>`
     stroke: #5e72eb;
     stroke-width: 3px;
   }
+
   .close {
     position: absolute;
     right: 25px;
     top: 28px;
     fill: #5e72eb;
+  }
+
+  button:disabled {
+    &.back {
+      stroke: #9c9c9c;
+    }
+
+    &.close {
+      fill: #9c9c9c;
+    }
   }
 `
