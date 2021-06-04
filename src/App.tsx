@@ -9,19 +9,26 @@ import MobilePlaceholder from 'components/MobilePlaceholder'
 import MyPixels from 'components/MyPixels'
 
 function App() {
+  const [loading, setLoading] = useState(true)
   const [methods, setMethods] = useState<Web3Methods>()
   useEffect(() => {
-    if (Web3Connect.cachedProvider) {
-      new Web3Connect(setMethods).connect()
-    }
+    ;(async () => {
+      if (Web3Connect.cachedProvider) {
+        await new Web3Connect(setMethods).connect()
+      }
+      setLoading(false)
+    })()
   }, [])
 
   return (
     <ApiContext.Provider
       value={{
+        loading,
         methods,
         async connect(provider) {
+          setLoading(true)
           await new Web3Connect(setMethods).connect(provider)
+          setLoading(false)
         },
       }}
     >

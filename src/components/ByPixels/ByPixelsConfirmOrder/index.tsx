@@ -10,6 +10,7 @@ import Text from 'components/ui/Text'
 import { FormSubType } from 'hooks/useForm'
 import { formatBytes } from 'utils/formatBytes'
 import { EllipsisDivSC } from 'components/ByPixels/ByPixelsUploadPhoto/styled'
+import { cratePlaceHolder } from 'utils/cratePlaceHolderFile'
 
 export interface ByPixelsConfirmOrderProps extends ByPixelsConfirmOrderSCProps {
   className?: string
@@ -34,12 +35,16 @@ function ByPixelsConfirmOrder({
           <Title style={marginBottom(58)}>CONFIRM YOUR ORDER</Title>
           <Row gap={30}>
             <Area name={'YOUR PHOTO'} className={'photo-area'}>
-              {formik.values.image && !formik.errors.image && (
+              {
                 <img
-                  src={URL.createObjectURL(formik.values.image)}
-                  alt={formik.values.image.name}
+                  src={
+                    !formik.values.image || formik.errors.image
+                      ? cratePlaceHolder(data.width, data.height)
+                      : URL.createObjectURL(formik.values.image)
+                  }
+                  alt={formik.values.image ? formik.values.image.name : 'dollar'}
                 />
-              )}
+              }
             </Area>
             <Col>
               <Calculate data={data} />

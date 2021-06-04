@@ -1,12 +1,11 @@
 import { CSSProperties, memo } from 'react'
 import { PixelsDimensionsSC, PixelsDimensionsSCProps } from './styled'
-import { PixelsData } from 'components/PixelsList'
 import Area from 'components/ui/Area'
 import Text from 'components/ui/Text'
 
 export interface PixelsDimensionsProps extends PixelsDimensionsSCProps {
-  width: PixelsData['width']
-  height: PixelsData['height']
+  width: number
+  height: number
   className?: string
   style?: CSSProperties
 }
