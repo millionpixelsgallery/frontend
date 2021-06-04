@@ -31,15 +31,15 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
   const [loading, setLoading] = useState(true)
 
   const handleSelectWallet = useCallback(
-    async (wallet, onClose) => {
+    async (wallet) => {
       await connect(wallet)
       setLoading(false)
-      if (onClose) onClose()
     },
     [connect]
   )
 
   const handleSelectWalletClose = useCallback(() => {
+    console.log(methods)
     if (!methods) history.replace('/gallery')
   }, [methods, history])
 
