@@ -9,12 +9,12 @@ import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
 import portis from './assets/portis.png'
 import torus from './assets/torus.png'
-import { Web3Providers } from 'lib/web3connect'
 
 export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   className?: string
   style?: CSSProperties
-  onSelect: (wallet: Web3Providers) => void
+  onSelect: (wallet: WalletEnum, onClose?: () => void) => void
+  onClose?: () => void
 }
 
 export enum WalletEnum {
@@ -24,13 +24,19 @@ export enum WalletEnum {
   Torus = 'torus',
 }
 
-function ByPixelsSelectWallet({ className, onSelect, style, ...rest }: ByPixelsSelectWalletProps) {
+function ByPixelsSelectWallet({
+  className,
+  onSelect,
+  style,
+  onClose,
+  ...rest
+}: ByPixelsSelectWalletProps) {
   const handleSelect = useCallback(
     (e) => {
-      const wallet: Web3Providers = e.currentTarget.dataset.wallet
-      onSelect(wallet)
+      const wallet: WalletEnum = e.currentTarget.dataset.wallet
+      onSelect(wallet, onClose)
     },
-    [onSelect]
+    [onSelect, onClose]
   )
 
   return (

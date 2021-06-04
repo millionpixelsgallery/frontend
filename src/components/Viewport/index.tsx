@@ -5,6 +5,7 @@ import panzoom, { Transform } from 'panzoom'
 import Select from 'components/Viewport/Select'
 import { between } from 'utils/canvas'
 import Tooltip from 'components/Viewport/Tooltip'
+import Canvas from 'components/Viewport/Canvas'
 
 export interface ViewportProps {
   className?: string
@@ -78,30 +79,52 @@ function Viewport({ className, style }: ViewportProps) {
   const selectWidth = Math.round(x2 - x1)
   const selectHeight = Math.round(y2 - y1)
 
+  const [tooltipCords, setTooltipCords] = useState<[number, number, number, number]>()
+
+  const onPixelsClick = useCallback(({ x, y, width, height }) => {
+    setTooltipCords([x, y, width, height])
+  }, [])
+
   return (
     <ViewportWrapperSC className={className} style={style}>
       <ViewportSC>
         <ViewportContentSC ref={contentRef}>
-          <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
-          <Select
-            x={selectX}
-            y={selectY}
-            width={selectWidth}
-            height={selectHeight}
-            scale={transform?.scale}
-            onMove={handleSelectMove}
-            onResize={handleSelectResize}
-            onMouseUp={handleSelectEnd}
+          <Canvas
+            pixels={Array.from({ length: 10 }).map((_, i) => ({
+              x: i * 100,
+              y: 0,
+              width: 100,
+              height: 100,
+              // selling: i % 2 === 0,
+              src: `https://loremflickr.com/${100}/${100}?t=${i}${0}`,
+              clickable: true,
+              onClick: onPixelsClick,
+            }))}
           />
-          <Tooltip
-            targetX={selectX}
-            targetY={selectY}
-            targetWidth={selectWidth}
-            targetHeight={selectHeight}
-            transform={transform}
-          >
-            X: {selectX} Y: {selectY} | {selectWidth}X{selectHeight}
-          </Tooltip>
+          <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
+          {false && (
+            <Select
+              x={selectX}
+              y={selectY}
+              width={selectWidth}
+              height={selectHeight}
+              scale={transform?.scale}
+              onMove={handleSelectMove}
+              onResize={handleSelectResize}
+              onMouseUp={handleSelectEnd}
+            />
+          )}
+          {tooltipCords && (
+            <Tooltip
+              targetX={tooltipCords[0]}
+              targetY={tooltipCords[1]}
+              targetWidth={tooltipCords[2]}
+              targetHeight={tooltipCords[3]}
+              transform={transform}
+            >
+              X: {tooltipCords[0]} Y: {tooltipCords[1]} | {tooltipCords[2]}X{tooltipCords[3]}
+            </Tooltip>
+          )}
         </ViewportContentSC>
       </ViewportSC>
     </ViewportWrapperSC>
