@@ -111,7 +111,7 @@ function SellPixels({
           </Row>
         </Row>
       </Col>
-      <Button disabled={!(formik.isValid && formik.dirty)} onClick={formik.submitForm} width={200}>
+      <Button loading={!(formik.isValid && formik.dirty)} onClick={formik.submitForm} width={200}>
         LIST FOR SALE
       </Button>
     </SellPixelsSC>
