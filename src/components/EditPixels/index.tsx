@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
 import { EditPixelsSC, EditPixelsSCProps } from './styled'
 import { Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
@@ -22,18 +22,21 @@ export interface EditProductData {
   price: number
 }
 
+export interface ImageData {
+  image: string
+  link: string
+  title: string
+}
+
 export interface EditPixelsProps extends EditPixelsSCProps {
   className?: string
   style?: CSSProperties
   step: number
   onChangeStep: (step: number) => void
+  onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
   data: EditProductData
-  image: {
-    image: string
-    link: string
-    title: string
-  }
+  image: ImageData
 }
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
@@ -45,6 +48,7 @@ function EditPixels({
   onClose,
   style,
   image,
+  onChangeDisabledControlButtons,
   ...rest
 }: EditPixelsProps) {
   const methods = useApiMethods()
@@ -64,6 +68,7 @@ function EditPixels({
     onSubmit: async (values) => {
       let image = values.image
       setLoading(true)
+      onChangeDisabledControlButtons(true)
       try {
         await methods?.setIpfs(
           data.index,
@@ -73,30 +78,18 @@ function EditPixels({
             values.link
           )
         )
+        onChangeDisabledControlButtons(false)
         setLoading(false)
         onChangeStep(0)
         onClose()
       } catch (e) {
         console.log(e)
+        onChangeDisabledControlButtons(false)
         setLoading(false)
+        onClose()
       }
     },
   })
-
-  useEffect(() => {
-    fetch(image.image).then((res) =>
-      res.blob().then((blob) => {
-        if (blob.type.split('/').pop()!.toLowerCase().includes('svg')) return
-        formik.setFieldValue(
-          'image',
-          new File([blob], `image.${blob.type.split('/').pop()!.toLowerCase()}`, {
-            type: blob.type,
-          })
-        )
-      })
-    )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [image.image])
 
   const handleNextStep = useCallback(() => {
     onChangeStep(step + 1)
@@ -124,7 +117,7 @@ function EditPixels({
           {Bottom}
         </ByPixelsUploadPhoto>
       ) : step === 1 ? (
-        <EditPixelsConfirmEdit data={data} formik={formik}>
+        <EditPixelsConfirmEdit data={data} image={image} formik={formik}>
           {Bottom}
         </EditPixelsConfirmEdit>
       ) : null}

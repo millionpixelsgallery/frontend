@@ -16,6 +16,7 @@ export interface HeaderProps extends HeaderSCProps {
 
 function Header({ style }: HeaderProps) {
   const [step, setStep] = useState(1)
+  const [disabledControlButtons, setDisabledControlButtons] = useState(false)
   const onBack = () => {
     setStep((step) => step - 1)
   }
@@ -48,15 +49,17 @@ function Header({ style }: HeaderProps) {
           }
           onBack={step ? onBack : undefined}
           component={ByPixels}
+          disabledControlButtons={disabledControlButtons}
           componentProps={{
             step,
             onChangeStep: setStep,
+            onChangeDisabledControlButtons: setDisabledControlButtons,
             data: {
-              width: 400,
-              height: 400,
+              width: 10,
+              height: 10,
               position: {
-                x: 10,
-                y: 10,
+                x: 500,
+                y: 500,
               },
               price: 6,
             },

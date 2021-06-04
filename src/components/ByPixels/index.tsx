@@ -29,6 +29,7 @@ export interface ByPixelsProps extends ByPixelsSCProps {
   style?: CSSProperties
   step: number
   onChangeStep: (step: number) => void
+  onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
   data: ProductData
 }
@@ -47,7 +48,16 @@ export type ByPixelsValues = {
 
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
-function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest }: ByPixelsProps) {
+function ByPixels({
+  className,
+  step,
+  data,
+  onChangeStep,
+  onChangeDisabledControlButtons,
+  style,
+  onClose,
+  ...rest
+}: ByPixelsProps) {
   const [loading, setLoading] = useState(false)
   const methods = useApiMethods()
   const connect = useApiConnect()
@@ -61,6 +71,7 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
     })),
     onSubmit: async (values) => {
       setLoading(true)
+      onChangeDisabledControlButtons(true)
       try {
         await methods?.buyPixels(
           [data.position.x, data.position.y, data.width, data.height],
@@ -72,11 +83,14 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
             values.link
           )
         )
+        onChangeDisabledControlButtons(false)
         setLoading(false)
         onChangeStep(0)
         onClose()
       } catch (e) {
         console.log(e)
+        onChangeDisabledControlButtons(false)
+        onClose()
         setLoading(false)
       }
     },
