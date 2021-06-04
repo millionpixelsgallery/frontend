@@ -69,6 +69,11 @@ export class Web3Connect {
   }
 
   private provider: any
+  private static defaultContact: any = new ethers.Contract(
+    CONTRACT_ADDRESS,
+    abi,
+    ethers.getDefaultProvider(NETWORK)
+  )
   private contract: any
   private web3: any
   private account: any
@@ -120,68 +125,53 @@ export class Web3Connect {
 
     return methods
   }
-}
 
-export class Web3Methods {
-  constructor(private contract: any, private web3: any, private account: any) {}
-
-  public async getPixelsCost(area: Area): Promise<{ raw: string; format: string }> {
+  public static async getPixelsCost(area: Area): Promise<{ raw: string; format: string }> {
     if (area[0] + area[2] > 1000 || area[1] + area[3] > 1000) {
       throw new Error(`Too big area`)
     }
-    const raw = await this.contract.methods.pixelsCost(area).call()
+
+    const raw = await this.defaultContact.pixelsCost(area)
 
     return {
       raw,
-      format: parseFloat(this.web3.utils.fromWei(raw)).toFixed(4),
+      format: parseFloat(Web3.utils.fromWei(`${raw}`)).toFixed(4),
     }
   }
 
-  public async buyPixels(area: Area, ipfs: string): Promise<Pixels> {
-    return new Promise(async (resolve, reject) => {
-      const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
+  public static async getAllPixels() {
+    const pixels: Array<Promise<Pixels>> = []
+    const count = await this.defaultContact.getAreasCount()
+    for (let i = 0; i < count; i++) {
+      pixels.push(this.getPixels(i))
+    }
 
-      if (isAvailable) {
-        try {
-          const hash = ethers.utils.solidityKeccak256(
-            ['uint32[4]', 'string', 'address'],
-            [area, ipfs, this.account]
-          )
-          await this.contract.methods.commitToPixels(hash).send({ from: this.account })
-        } catch (e) {
-          console.warn('Commit already set')
-        }
-
-        const price = await this.getPixelsCost(area)
-        await this.contract.methods
-          .buyPixels(area, ipfs)
-          .send({ from: this.account, value: price.raw })
-
-        const count = await this.contract.methods.getAreasCount().call()
-
-        resolve(this.getPixels(count - 1))
-      } else {
-        return reject(new Error('Area is not available'))
-      }
-    })
+    return Promise.all(pixels)
   }
 
-  public async getPixels(index: number): Promise<Pixels> {
+  public static async getPixels(index: number): Promise<Pixels> {
     let data: Pixels
     try {
       const [{ ipfs }, area, owner, isForSale] = await Promise.all([
-        this.contract.methods.areas(index).call(),
-        this.contract.methods.getBounds(index).call(),
-        this.contract.methods.ownerOf(index).call(),
-        this.contract.methods.isForSale(index).call(),
+        this.defaultContact.areas(index),
+        this.defaultContact.getBounds(index),
+        this.defaultContact.ownerOf(index),
+        this.defaultContact.isForSale(index),
       ])
 
       let sale
 
       if (isForSale) {
-        sale = await this.contract.methods.forSale(index).call()
+        sale = await this.defaultContact.forSale(index)
         if (sale.end < Date.now() / 1000) {
           sale = undefined
+        }
+
+        if (sale) {
+          sale = {
+            end: parseInt(sale.end.toString()),
+            price: parseInt(Web3.utils.fromWei(sale.price.toString())),
+          }
         }
       }
 
@@ -209,49 +199,72 @@ export class Web3Methods {
 
     return data
   }
+}
 
-  public async getAllPixels() {
-    const pixels: Array<Promise<Pixels>> = []
-    const count = await this.contract.methods.getAreasCount().call()
-    for (let i = 0; i < count; i++) {
-      pixels.push(this.getPixels(i))
-    }
+class Web3Methods {
+  constructor(private contract: any, private web3: any, private account: any) {}
 
-    return Promise.all(pixels)
+  public async buyPixels(area: Area, ipfs: string): Promise<Pixels> {
+    return new Promise(async (resolve, reject) => {
+      const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
+
+      if (isAvailable) {
+        try {
+          const hash = ethers.utils.solidityKeccak256(
+            ['uint32[4]', 'string', 'address'],
+            [area, ipfs, this.account]
+          )
+          await this.contract.methods.commitToPixels(hash).send({ from: this.account })
+        } catch (e) {
+          console.warn('Commit already set')
+        }
+
+        const price = await Web3Connect.getPixelsCost(area)
+        await this.contract.methods
+          .buyPixels(area, ipfs)
+          .send({ from: this.account, value: price.raw })
+
+        const count = await this.contract.methods.getAreasCount().call()
+
+        resolve(Web3Connect.getPixels(count - 1))
+      } else {
+        return reject(new Error('Area is not available'))
+      }
+    })
   }
 
   public async getAllMyPixels() {
-    return this.getAllPixels().then((pixels) =>
+    return Web3Connect.getAllPixels().then((pixels) =>
       pixels.filter(({ owner }) => this.account === owner)
     )
   }
 
   public async setIpfs(index: number, ipfs: string) {
-    const pixels = await this.getPixels(index)
+    const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
       await this.contract.methods.setIPFSHash(index, ipfs).send({ from: this.account })
 
-      return this.getPixels(index)
+      return Web3Connect.getPixels(index)
     }
 
     throw new Error(`Pixels do not belong to you`)
   }
 
   public async sellPixels(index: number, price: number, duration: number) {
-    const pixels = await this.getPixels(index)
+    const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
       await this.contract.methods
         .sell(index, this.web3.utils.toWei(`${price}`), duration)
         .send({ from: this.account })
 
-      return this.getPixels(index)
+      return Web3Connect.getPixels(index)
     }
 
     throw new Error(`Pixels do not belong to you`)
   }
 
   public async buyPixelsForSale(index: number, ipfs: string) {
-    const pixels = await this.getPixels(index)
+    const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner !== this.account) {
       if (!pixels.sale || pixels.sale.end < Date.now() / 1000) {
         throw new Error(`Pixels not in sale`)
@@ -262,7 +275,7 @@ export class Web3Methods {
           value: pixels.sale.price,
         })
 
-        return this.getPixels(index)
+        return Web3Connect.getPixels(index)
       } catch (e) {
         throw new Error(`You can't buy pixels`)
       }
