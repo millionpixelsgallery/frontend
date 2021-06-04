@@ -1,13 +1,19 @@
-import { CSSProperties, memo, useMemo } from 'react'
+import { CSSProperties, memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { MyPixelsSC, MyPixelsSCProps } from './styled'
 import Title from 'components/ui/Title'
 import Text from 'components/ui/Text'
 import Link from 'components/ui/Link'
-import noPixelsPng from 'components/NoPixels/assets/NoPixels.png'
-import { marginTop, paddingBottom } from 'utils/style/indents'
+import noPixelsPng from 'components/MyPixels/assets/NoPixels.png'
+import { marginTop, padding, paddingBottom } from 'utils/style/indents'
 import { Col } from 'components/ui/Grid'
-import { pixelsListMockedData } from 'components/PixelsList/mockedData'
 import PixelsList from 'components/PixelsList'
+import { useApiConnect, useApiMethods } from 'hooks/useApi'
+import { Pixels } from 'lib/web3connect'
+import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
+import Modal from 'components/ui/Modal'
+import { useHistory } from 'react-router-dom'
+import Button from 'components/ui/Button'
+import ByPixels from 'components/ByPixels'
 
 export interface MyPixelsProps extends MyPixelsSCProps {
   className?: string
@@ -15,37 +21,90 @@ export interface MyPixelsProps extends MyPixelsSCProps {
 }
 
 function MyPixels({ className, style, ...rest }: MyPixelsProps) {
-  const data = pixelsListMockedData
-  const hasPixels = useMemo(() => Boolean(data.length), [data.length])
+  const methods = useApiMethods()
+  const connect = useApiConnect()
+  const history = useHistory()
+
+  const [data, setData] = useState<Pixels[]>([])
+
+  const dataLength = data && data.length
+  const hasPixels = useMemo(() => Boolean(dataLength), [dataLength])
+  const [loading, setLoading] = useState(true)
+
+  const handleSelectWallet = useCallback(
+    async (wallet, onClose) => {
+      await connect(wallet)
+      setLoading(false)
+      if (onClose) onClose()
+    },
+    [connect]
+  )
+
+  const handleSelectWalletClose = useCallback(() => {
+    if (!methods) history.replace('/gallery')
+  }, [methods, history])
+
+  const handleGetData = useCallback(() => {
+    methods?.getAllMyPixels().then((myPixels) =>
+      setData((prevState) => {
+        setLoading(false)
+        return myPixels ?? prevState
+      })
+    )
+  }, [methods])
+
+  useEffect(handleGetData, [handleGetData])
 
   return (
     <MyPixelsSC className={className} style={style} {...rest}>
-      <Col align={'center'} gap={50}>
-        <Title>MY PIXELS</Title>
-        <Text className={'text-center'}>
-          {hasPixels ? (
-            'These are your pixels, use them wisely.'
-          ) : (
-            <>
-              You currently don’t own any pixels
-              <br /> in this wallet.
-              <br /> Now is a good time to <Link to={''}>buy</Link>
-            </>
-          )}
-        </Text>
-        {hasPixels ? (
-          <PixelsList data={data} style={paddingBottom(50)} />
-        ) : (
-          <>
-            <img src={noPixelsPng} alt={'no pixels'} />
-            <Text type={'S'} style={marginTop(50)}>
-              <Link to={''} type={'secondary'}>
-                CONNECT OTHER WALLET
-              </Link>
-            </Text>
-          </>
-        )}
-      </Col>
+      {methods ? (
+        <Col align={'center'} gap={50}>
+          <Title>MY PIXELS</Title>
+          <Text className={'text-center'}>
+            {loading && 'Loading...'}
+            {!loading && hasPixels && 'These are your pixels, use them wisely.'}
+            {!loading && !hasPixels && (
+              <>
+                You currently don’t own any pixels
+                <br /> in this wallet.
+                <br /> Now is a good time to{' '}
+                <Modal component={ByPixels} trigger={<Link to={'/gallery'}>buy</Link>} />
+              </>
+            )}
+          </Text>
+          {!loading &&
+            (hasPixels ? (
+              <PixelsList data={data!} style={paddingBottom(50)} />
+            ) : (
+              <>
+                <img src={noPixelsPng} alt={'no pixels'} />
+                <Text type={'S'} style={marginTop(50)}>
+                  <Modal
+                    component={ByPixelsSelectWallet}
+                    componentProps={{ onSelect: handleSelectWallet, style: padding(50, 111, 58) }}
+                    onClose={handleSelectWalletClose}
+                    closableByEsc
+                    trigger={
+                      <Button type={'wrapper'}>
+                        <Link native href={'#'} type={'secondary'}>
+                          CONNECT OTHER WALLET
+                        </Link>
+                      </Button>
+                    }
+                  />
+                </Text>
+              </>
+            ))}
+        </Col>
+      ) : (
+        <Modal
+          defaultVisible={!methods}
+          component={ByPixelsSelectWallet}
+          componentProps={{ onSelect: handleSelectWallet, style: padding(50, 111, 58) }}
+          onClose={handleSelectWalletClose}
+          closableByEsc
+        />
+      )}
     </MyPixelsSC>
   )
 }

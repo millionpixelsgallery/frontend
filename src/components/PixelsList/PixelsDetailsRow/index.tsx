@@ -1,6 +1,5 @@
 import { CSSProperties, memo, useMemo } from 'react'
 import { ImgDivSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
-import { PixelsData } from 'components/PixelsList/index'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
 import Text from 'components/ui/Text'
@@ -10,9 +9,10 @@ import Timer from 'components/Timer'
 import { unixToDateTime } from 'utils/format/datetime'
 import Area from 'components/ui/Area'
 import Modal from 'components/ui/Modal'
+import { Pixels } from 'lib/web3connect'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
-  data: PixelsData
+  data: Pixels
   onEdit?: () => void
   onSell?: () => void
   className?: string
@@ -35,30 +35,28 @@ function PixelsDetailsRow({
   style,
   ...rest
 }: PixelsDetailsRowProps) {
-  const positionString = useMemo(
-    () => `X${data.position.x}, Y${data.position.y}`,
-    [data.position.x, data.position.y]
-  )
-  const isOnSale = useMemo(() => Boolean(data.saleUntil), [data.saleUntil])
+  const { area, sale, image: dataImg } = data
+  const [x, y, width, height] = area
+  const { title, link, image } = dataImg || {}
+  const positionString = useMemo(() => `X${x}, Y${y}`, [x, y])
+  const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
       <Col>
         <Row gap={25}>
           <Area className={'photo-area'} name={'Your photo'}>
-            {data.image ? <ImgDivSC className='image' $src={data.image} /> : 'No image'}
+            {image ? <ImgDivSC className='image' $src={image} /> : 'No image'}
           </Area>
           <Col className='details-col' gap={20}>
             <Row gap={10} justify='between'>
-              <PixelsDimensions width={data.width} height={data.height} />
-              {isOnSale && (
-                <Timer name='On sale - Time Left:' end={unixToDateTime(data.saleUntil!)} />
-              )}
+              <PixelsDimensions width={width} height={height} />
+              {isOnSale && <Timer name='On sale - Time Left:' end={unixToDateTime(sale?.end!)} />}
             </Row>
             <Col gap={20}>
               <DetailsRow label='Start position' value={positionString} />
-              <DetailsRow label='Your link' value={data.link ?? emptyString} />
-              <DetailsRow label='Your title' value={data.title ?? emptyString} />
+              <DetailsRow label='Your link' value={link ?? emptyString} />
+              <DetailsRow label='Your title' value={title ?? emptyString} />
             </Col>
           </Col>
         </Row>

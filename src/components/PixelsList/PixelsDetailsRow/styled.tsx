@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { ButtonSC } from 'components/ui/Button/styled'
 
 export interface PixelsDetailsRowSCProps extends Omit<JSX.IntrinsicElements['li'], 'ref'> {}
 
@@ -30,6 +31,11 @@ export const PixelsDetailsRowSC = styled.li<PixelsDetailsRowSCProps>`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  ${ButtonSC} {
+    height: 32px;
+    width: 76px;
   }
 `
 

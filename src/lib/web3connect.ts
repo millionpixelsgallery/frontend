@@ -44,12 +44,12 @@ export type Web3Providers = keyof typeof web3Options['providerOptions'] | 'metam
 
 const web3Modal = new Web3Modal(web3Options)
 
-type Area = [x: number, y: number, width: number, height: number]
-type Sale = {
+export type Area = [x: number, y: number, width: number, height: number]
+export type Sale = {
   price: number
   end: number
 }
-type Pixels = {
+export type Pixels = {
   index: number
   sale?: Sale
   ipfs: string
