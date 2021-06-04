@@ -39,9 +39,13 @@ function App() {
       />
       <Layout>
         <Switch>
-          <Route path='/gallery' component={Viewport} />
+          <Route path='/gallery'>
+            <Viewport key='gallery' />
+          </Route>
           <Route path='/my-pixels' component={MyPixels} />
-          <Route path='/marketplace' />
+          <Route path='/marketplace'>
+            <Viewport key='marketplace' sellMode />
+          </Route>
           <Redirect to='/gallery' from='/' exact />
         </Switch>
       </Layout>
