@@ -10,9 +10,10 @@ import Canvas from 'components/Viewport/Canvas'
 export interface ViewportProps {
   className?: string
   style?: CSSProperties
+  sellMode?: boolean
 }
 
-function Viewport({ className, style }: ViewportProps) {
+function Viewport({ className, style, sellMode }: ViewportProps) {
   const contentRef = useRef<HTMLDivElement>(null)
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   useLayoutEffect(() => {
@@ -31,6 +32,8 @@ function Viewport({ className, style }: ViewportProps) {
       const transform = instance.getTransform()
       setTransform({ ...transform })
     })
+
+    return () => instance.dispose()
   }, [])
 
   const [selectCords, setSelectCords] = useState<[x1: number, y1: number, x2: number, y2: number]>([
@@ -95,8 +98,8 @@ function Viewport({ className, style }: ViewportProps) {
               y: 0,
               width: 100,
               height: 100,
-              // selling: i % 2 === 0,
-              src: `https://loremflickr.com/${100}/${100}?t=${i}${0}`,
+              selling: sellMode ? i % 2 === 0 : undefined,
+              src: sellMode ? undefined : `https://loremflickr.com/${100}/${100}?t=${i}${0}`,
               clickable: true,
               onClick: onPixelsClick,
             }))}

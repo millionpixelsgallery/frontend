@@ -47,6 +47,8 @@ function Canvas({ className, style, pixels }: CanvasProps) {
     app.render = app.render.bind(app)
 
     setApp(app)
+
+    return () => app.destroy(false)
   }, [])
 
   useEffect(() => app?.render())
