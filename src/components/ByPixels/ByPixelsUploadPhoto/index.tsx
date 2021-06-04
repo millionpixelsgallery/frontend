@@ -125,7 +125,7 @@ function ByPixelsUploadPhoto({
                 </Text>{' '}
                 Image Formats:{' '}
                 <Text weight={600} type={'S'}>
-                  JPG, PNG or GIF (animated).
+                  JPG, PNG.
                 </Text>
               </Text>
             </Col>

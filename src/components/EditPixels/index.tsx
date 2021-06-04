@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
 import { EditPixelsSC, EditPixelsSCProps } from './styled'
 import { Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
@@ -7,10 +7,14 @@ import useForm from 'hooks/useForm'
 import ByPixelsUploadPhoto from 'components/ByPixels/ByPixelsUploadPhoto'
 import EditPixelsConfirmEdit from 'components/EditPixels/EditPixelsConfirmEdit'
 import { padding } from 'utils/style/indents'
+import { useApiMethods } from 'hooks/useApi'
+import { upload } from 'lib/nft'
+import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 
-export interface ProductData {
+export interface EditProductData {
   width: number
   height: number
+  index: number
   position: {
     x: number
     y: number
@@ -18,25 +22,43 @@ export interface ProductData {
   price: number
 }
 
+export interface ImageData {
+  image: string
+  link: string
+  title: string
+}
+
 export interface EditPixelsProps extends EditPixelsSCProps {
   className?: string
   style?: CSSProperties
   step: number
   onChangeStep: (step: number) => void
-  data: ProductData
+  onChangeDisabledControlButtons: (disabled: boolean) => void
+  onClose: () => void
+  data: EditProductData
+  image: ImageData
 }
-
-const initialValues = {
-  link: '',
-  title: '',
-  image: null,
-}
-
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
 
-function EditPixels({ className, step, data, onChangeStep, style, ...rest }: EditPixelsProps) {
+function EditPixels({
+  className,
+  step,
+  data,
+  onChangeStep,
+  onClose,
+  style,
+  image,
+  onChangeDisabledControlButtons,
+  ...rest
+}: EditPixelsProps) {
+  const methods = useApiMethods()
+  const [loading, setLoading] = useState(false)
   const formik = useForm({
-    initialValues: initialValues,
+    initialValues: {
+      link: image.link,
+      title: image.title,
+      image: null,
+    },
     validationSchema: useValidationSchema((yup, E) => ({
       image: yup.mixed().test('supported', E.INVALID_IMAGE_FORMAT, (file) => {
         if (!file) return true
@@ -44,7 +66,28 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
       }),
     })),
     onSubmit: async (values) => {
-      console.log(values)
+      let image = values.image
+      setLoading(true)
+      onChangeDisabledControlButtons(true)
+      try {
+        await methods?.setIpfs(
+          data.index,
+          await upload(
+            Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
+            values.title,
+            values.link
+          )
+        )
+        onChangeDisabledControlButtons(false)
+        setLoading(false)
+        onChangeStep(0)
+        onClose()
+      } catch (e) {
+        console.log(e)
+        onChangeDisabledControlButtons(false)
+        setLoading(false)
+        onClose()
+      }
     },
   })
 
@@ -60,7 +103,9 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
           NEXT
         </Button>
       ) : (
-        <Button width={140}>CONFIRM</Button>
+        <Button width={140} onClick={formik.submitForm} loading={loading}>
+          CONFIRM
+        </Button>
       )}
     </Row>
   )
@@ -72,7 +117,9 @@ function EditPixels({ className, step, data, onChangeStep, style, ...rest }: Edi
           {Bottom}
         </ByPixelsUploadPhoto>
       ) : step === 1 ? (
-        <EditPixelsConfirmEdit formik={formik}>{Bottom}</EditPixelsConfirmEdit>
+        <EditPixelsConfirmEdit data={data} image={image} formik={formik}>
+          {Bottom}
+        </EditPixelsConfirmEdit>
       ) : null}
     </EditPixelsSC>
   )

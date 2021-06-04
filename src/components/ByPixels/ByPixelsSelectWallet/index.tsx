@@ -9,12 +9,11 @@ import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
 import portis from './assets/portis.png'
 import torus from './assets/torus.png'
-import { Wallets } from 'components/ByPixels/index'
 
 export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   className?: string
   style?: CSSProperties
-  onSelect: (wallet: Wallets, onClose?: () => void) => void
+  onSelect: (wallet: WalletEnum, onClose?: () => void) => void
   onClose?: () => void
 }
 
@@ -34,7 +33,7 @@ function ByPixelsSelectWallet({
 }: ByPixelsSelectWalletProps) {
   const handleSelect = useCallback(
     (e) => {
-      const wallet: Wallets = e.currentTarget.dataset.wallet
+      const wallet: WalletEnum = e.currentTarget.dataset.wallet
       onSelect(wallet, onClose)
     },
     [onSelect, onClose]
