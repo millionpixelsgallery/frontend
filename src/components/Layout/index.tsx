@@ -1,4 +1,12 @@
-import { CSSProperties, memo, ReactNode, ReactNodeArray, useCallback, useState } from 'react'
+import {
+  CSSProperties,
+  memo,
+  ReactNode,
+  ReactNodeArray,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from 'react'
 import { LayoutSC, LayoutSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import Header from 'components/Header'
@@ -20,17 +28,26 @@ function Layout({ className, style, children, ...rest }: LayoutProps) {
     useCallback(() => setViewportWidth(document.documentElement.offsetWidth), [])
   )
 
+  useLayoutEffect(() => setViewportWidth(document.documentElement.offsetWidth), [])
+
   return (
-    <LayoutSC className={className} style={style} {...rest}>
+    <LayoutSC
+      className={className}
+      style={{
+        paddingLeft: viewportWidth % 2,
+        ...style,
+      }}
+      {...rest}
+    >
       <Col className={'container'}>
         <Row justify={'center'}>
-          <div className={'sideBlock'} style={{ width: 156 + (viewportWidth % 2) / 2 }} />
+          <div className={'sideBlock'} />
           <div className={'centerBlock'}>
             <Header />
             {children}
             <Footer />
           </div>
-          <SideBar className={'sideBlock'} style={{ width: 156 }} />
+          <SideBar className={'sideBlock'} />
         </Row>
       </Col>
       <div className={'gradient'} />

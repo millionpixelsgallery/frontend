@@ -4,7 +4,7 @@ export interface LayoutSCProps {}
 
 export const LayoutSC = styled.div<LayoutSCProps>`
   position: relative;
-  width: 100%;
+  width: 100vw;
   min-height: 100vh;
   padding: 42px 0 25px;
 
@@ -12,6 +12,10 @@ export const LayoutSC = styled.div<LayoutSCProps>`
     position: relative;
     z-index: 2;
     height: 100%;
+  }
+
+  .sideBlock {
+    width: 156px;
   }
 
   .gradient {
