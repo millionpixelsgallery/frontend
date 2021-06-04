@@ -201,7 +201,7 @@ export class Web3Connect {
   }
 }
 
-class Web3Methods {
+export class Web3Methods {
   constructor(private contract: any, private web3: any, private account: any) {}
 
   public async buyPixels(area: Area, ipfs: string): Promise<Pixels> {
