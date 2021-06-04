@@ -7,4 +7,5 @@ export const SelectSC = styled.svg<SelectSCProps>`
   cursor: pointer;
   top: 0;
   left: 0;
+  z-index: 2;
 `

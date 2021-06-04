@@ -5,6 +5,7 @@ import panzoom, { Transform } from 'panzoom'
 import Select from 'components/Viewport/Select'
 import { between } from 'utils/canvas'
 import Tooltip from 'components/Viewport/Tooltip'
+import Canvas from 'components/Viewport/Canvas'
 
 export interface ViewportProps {
   className?: string
@@ -82,6 +83,7 @@ function Viewport({ className, style }: ViewportProps) {
     <ViewportWrapperSC className={className} style={style}>
       <ViewportSC>
         <ViewportContentSC ref={contentRef}>
+          <Canvas />
           <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
           <Select
             x={selectX}

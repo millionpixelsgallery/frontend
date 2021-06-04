@@ -14,10 +14,6 @@ export const LayoutSC = styled.div<LayoutSCProps>`
     height: 100%;
   }
 
-  .sideBlock {
-    width: 156px;
-  }
-
   .gradient {
     background: ${({ theme }) => theme.color.layout.gradient};
     position: absolute;
