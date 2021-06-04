@@ -8,6 +8,7 @@ import {
   ReactElement,
   ReactNode,
   useCallback,
+  useEffect,
   useLayoutEffect,
   useState,
 } from 'react'
@@ -40,11 +41,13 @@ function Modal({
   className,
   style,
   closable = true,
+  closableByEsc,
   component,
   trigger,
   defaultVisible = false,
   render,
   onBack,
+  onClose,
   componentProps = {},
   disabledControlButtons = false,
   ...rest
@@ -57,7 +60,19 @@ function Modal({
   }, [])
 
   const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
-  const handleClose = useCallback(() => setVisible(false), [setVisible])
+  const handleClose = useCallback(() => {
+    if (onClose) onClose()
+    setVisible(false)
+  }, [setVisible, onClose])
+
+  useEffect(() => {
+    if (!closableByEsc) return
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.code === 'Escape') handleClose()
+    }
+    document.addEventListener('keydown', handleKeydown)
+    return () => document.removeEventListener('keydown', handleKeydown)
+  }, [closableByEsc, handleClose])
 
   return (
     <>
