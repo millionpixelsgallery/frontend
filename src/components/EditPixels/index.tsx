@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useEffect } from 'react'
+import { CSSProperties, memo, useCallback, useEffect, useState } from 'react'
 import { EditPixelsSC, EditPixelsSCProps } from './styled'
 import { Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
@@ -48,7 +48,7 @@ function EditPixels({
   ...rest
 }: EditPixelsProps) {
   const methods = useApiMethods()
-
+  const [loading, setLoading] = useState(false)
   const formik = useForm({
     initialValues: {
       link: image.link,
@@ -63,16 +63,23 @@ function EditPixels({
     })),
     onSubmit: async (values) => {
       let image = values.image
-      await methods?.setIpfs(
-        data.index,
-        await upload(
-          Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
-          values.title,
-          values.link
+      setLoading(true)
+      try {
+        await methods?.setIpfs(
+          data.index,
+          await upload(
+            Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
+            values.title,
+            values.link
+          )
         )
-      )
-      onClose()
-      onChangeStep(0)
+        setLoading(false)
+        onChangeStep(0)
+        onClose()
+      } catch (e) {
+        console.log(e)
+        setLoading(false)
+      }
     },
   })
 
@@ -103,7 +110,7 @@ function EditPixels({
           NEXT
         </Button>
       ) : (
-        <Button width={140} onClick={formik.submitForm}>
+        <Button width={140} onClick={formik.submitForm} loading={loading}>
           CONFIRM
         </Button>
       )}

@@ -73,11 +73,12 @@ function ByPixels({ className, step, data, onChangeStep, style, onClose, ...rest
           )
         )
         setLoading(false)
+        onChangeStep(0)
+        onClose()
       } catch (e) {
+        console.log(e)
         setLoading(false)
       }
-      onClose()
-      onChangeStep(0)
     },
   })
   useEffect(() => {
