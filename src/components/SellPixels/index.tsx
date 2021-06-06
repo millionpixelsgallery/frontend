@@ -1,4 +1,4 @@
-import { CSSProperties, memo } from 'react'
+import { CSSProperties, memo, useState } from 'react'
 import { SellPixelsSC, SellPixelsSCProps } from './styled'
 import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
@@ -17,9 +17,9 @@ export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
   style?: CSSProperties
   index: number
-  step: number
-  onChangeStep: (step: number) => void
+  onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
+  getData?: () => void
 }
 
 const initialValues = {
@@ -36,13 +36,14 @@ export enum DurationEnum {
 function SellPixels({
   className,
   style,
-  step,
-  onChangeStep,
   onClose,
   index,
+  getData,
+  onChangeDisabledControlButtons,
   ...rest
 }: SellPixelsProps) {
   const methods = useApiMethods()
+  const [loading, setLoading] = useState(false)
 
   const formik = useForm({
     initialValues: initialValues,
@@ -52,13 +53,25 @@ function SellPixels({
     })),
     enableReinitialize: true,
     onSubmit: async (values) => {
+      setLoading(true)
       let duration = 1
       if (values.duration === 'week') duration = 7
       if (values.duration === 'day') duration = 1
       if (values.duration === 'month') duration = 30
-      await methods?.sellPixels(index, +values.price, duration)
-      onClose()
-      onChangeStep(0)
+      onChangeDisabledControlButtons(true)
+      try {
+        console.log(index, +values.price, duration)
+        await methods?.sellPixels(index, +values.price, duration)
+        onChangeDisabledControlButtons(false)
+        setLoading(false)
+        getData && getData()
+        onClose()
+      } catch (e) {
+        console.log(e)
+        onChangeDisabledControlButtons(false)
+        setLoading(false)
+        onClose()
+      }
     },
   })
 
@@ -111,7 +124,12 @@ function SellPixels({
           </Row>
         </Row>
       </Col>
-      <Button loading={!(formik.isValid && formik.dirty)} onClick={formik.submitForm} width={200}>
+      <Button
+        disabled={!(formik.isValid && formik.dirty)}
+        onClick={formik.submitForm}
+        loading={loading}
+        width={200}
+      >
         LIST FOR SALE
       </Button>
     </SellPixelsSC>

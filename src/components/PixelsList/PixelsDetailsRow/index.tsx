@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useMemo } from 'react'
+import { CSSProperties, memo, useCallback, useMemo, useState } from 'react'
 import { ImgDivSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
@@ -10,11 +10,13 @@ import { unixToDateTime } from 'utils/format/datetime'
 import Area from 'components/ui/Area'
 import Modal from 'components/ui/Modal'
 import { Pixels } from 'lib/web3connect'
+import SellPixels from '../../SellPixels'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: Pixels
   onEdit?: () => void
   onSell?: () => void
+  getData?: () => void
   className?: string
   style?: CSSProperties
 }
@@ -31,15 +33,18 @@ function PixelsDetailsRow({
   data,
   onEdit,
   onSell,
+  getData,
   className,
   style,
   ...rest
 }: PixelsDetailsRowProps) {
-  const { area, sale, image: dataImg } = data
+  const { area, sale, image: dataImg, index } = data
   const [x, y, width, height] = area
   const { title, link, image } = dataImg || {}
   const positionString = useMemo(() => `X${x}, Y${y}`, [x, y])
   const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
+  const [disabledControlButtons, setDisabledControlButtons] = useState(false)
+  const onBack = useCallback((handleClose) => handleClose(), [])
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
@@ -69,6 +74,14 @@ function PixelsDetailsRow({
             }
           />
           <Modal
+            component={SellPixels}
+            onBack={onBack}
+            componentProps={{
+              index,
+              getData,
+              onChangeDisabledControlButtons: setDisabledControlButtons,
+            }}
+            disabledControlButtons={disabledControlButtons}
             trigger={
               <Button type='default' onClick={onSell} disabled={isOnSale}>
                 Sell

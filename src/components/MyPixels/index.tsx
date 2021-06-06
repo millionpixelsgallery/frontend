@@ -74,7 +74,7 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
           </Text>
           {!loading &&
             (hasPixels ? (
-              <PixelsList data={data!} style={paddingBottom(50)} />
+              <PixelsList data={data!} getData={handleGetData} style={paddingBottom(50)} />
             ) : (
               <>
                 <img src={noPixelsPng} alt={'no pixels'} />
