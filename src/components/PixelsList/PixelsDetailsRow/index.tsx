@@ -87,13 +87,13 @@ function PixelsDetailsRow({
                   x,
                   y,
                 },
-                price: 6,
               },
               image: {
                 title,
                 link,
                 image,
               },
+              index: data.index,
             }}
           />
           <Modal
