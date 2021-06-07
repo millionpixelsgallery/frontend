@@ -17,7 +17,7 @@ export const ModalOverlaySC = styled.div<ModalOverlaySCProps>`
 
 export const GlobalModalStyles = createGlobalStyle`
   body {
-    position: fixed;
+    overflow: hidden;
   }
 `
 

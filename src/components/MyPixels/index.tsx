@@ -24,7 +24,7 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
   const { methods, connect, loading: apiLoading } = useApi()
   const history = useHistory()
 
-  const [data, setData] = useState<Pixels[]>([])
+  const [data, setData] = useState<Pixels[] | null>(null)
 
   const dataLength = data && data.length
   const hasPixels = useMemo(() => Boolean(dataLength), [dataLength])
@@ -59,7 +59,7 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
           <Title>MY PIXELS</Title>
           <Text className={'text-center'}>
             {loading && !apiLoading && 'Loading...'}
-            {apiLoading && 'Connecting to a wallet...'}
+            {apiLoading && !data && 'Connecting to a wallet...'}
             {!loading && hasPixels && 'These are your pixels, use them wisely.'}
             {!loading && !hasPixels && (
               <>

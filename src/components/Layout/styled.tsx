@@ -4,7 +4,6 @@ export interface LayoutSCProps {}
 
 export const LayoutSC = styled.div<LayoutSCProps>`
   position: relative;
-  width: 100vw;
   min-height: 100vh;
   padding: 42px 0 25px;
 
