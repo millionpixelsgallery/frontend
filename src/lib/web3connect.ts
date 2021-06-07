@@ -212,7 +212,7 @@ export class Web3Methods {
     return new Promise(async (resolve, reject) => {
       const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
-      if (isAvailable) {
+      if (isAvailable && area[2] > 0 && area[3] > 0) {
         try {
           const hash = ethers.utils.solidityKeccak256(
             ['uint32[4]', 'string', 'address'],
