@@ -139,6 +139,7 @@ function ByPixelsUploadPhoto({
           >
             <Input
               placeholder='www.gizmokaka.io'
+              className={'input-text-start'}
               value={formik.values.link}
               onChange={onChangeLink}
             />
