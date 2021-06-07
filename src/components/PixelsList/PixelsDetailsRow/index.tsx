@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useMemo } from 'react'
+import { CSSProperties, memo, useMemo, useState } from 'react'
 import { ImgDivSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
@@ -10,6 +10,7 @@ import { unixToDateTime } from 'utils/format/datetime'
 import Area from 'components/ui/Area'
 import Modal from 'components/ui/Modal'
 import { Pixels } from 'lib/web3connect'
+import EditPixels from 'components/EditPixels'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: Pixels
@@ -40,6 +41,11 @@ function PixelsDetailsRow({
   const { title, link, image } = dataImg || {}
   const positionString = useMemo(() => `X${x}, Y${y}`, [x, y])
   const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
+  const [step, setStep] = useState(0)
+  const [disabledControlButtons, setDisabledControlButtons] = useState(false)
+  const onBack = () => {
+    setStep((step) => step - 1)
+  }
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
@@ -67,6 +73,28 @@ function PixelsDetailsRow({
                 Edit
               </Button>
             }
+            onBack={step ? onBack : undefined}
+            disabledControlButtons={disabledControlButtons}
+            component={EditPixels}
+            componentProps={{
+              step,
+              onChangeStep: setStep,
+              onChangeDisabledControlButtons: setDisabledControlButtons,
+              data: {
+                width,
+                height,
+                position: {
+                  x,
+                  y,
+                },
+                price: 6,
+              },
+              image: {
+                title,
+                link,
+                image,
+              },
+            }}
           />
           <Modal
             trigger={
