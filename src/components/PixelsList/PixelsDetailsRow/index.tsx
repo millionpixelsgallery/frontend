@@ -11,6 +11,7 @@ import Area from 'components/ui/Area'
 import Modal from 'components/ui/Modal'
 import { Pixels } from 'lib/web3connect'
 import SellPixels from '../../SellPixels'
+import EditPixels from 'components/EditPixels'
 
 export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: Pixels
@@ -42,10 +43,13 @@ function PixelsDetailsRow({
   const { title, link, image } = dataImg || {}
   const positionString = useMemo(() => `X${x}, Y${y}`, [x, y])
   const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
-  const [disabledControlButtons, setDisabledControlButtons] = useState(false)
   const [visible, setVisible] = useState(false)
-  const onBack = useCallback(() => setVisible(false), [])
   const onVisibilityChange = useCallback((visibility) => setVisible(visibility), [])
+  const [step, setStep] = useState(0)
+  const [disabledControlButtons, setDisabledControlButtons] = useState(false)
+  const onBack = () => {
+    setStep((step) => step - 1)
+  }
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
@@ -73,6 +77,28 @@ function PixelsDetailsRow({
                 Edit
               </Button>
             }
+            onBack={step ? onBack : undefined}
+            disabledControlButtons={disabledControlButtons}
+            component={EditPixels}
+            componentProps={{
+              step,
+              onChangeStep: setStep,
+              onChangeDisabledControlButtons: setDisabledControlButtons,
+              data: {
+                width,
+                height,
+                position: {
+                  x,
+                  y,
+                },
+              },
+              image: {
+                title,
+                link,
+                image,
+              },
+              index: data.index,
+            }}
           />
           <Modal
             component={SellPixels}
