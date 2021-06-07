@@ -5,8 +5,8 @@ import { ButtonSC } from 'components/ui/Button/styled'
 export interface SellPixelsSCProps {}
 
 export const SellPixelsSC = styled.div<SellPixelsSCProps>`
-  width: 700px;
-  height: 590px;
+  width: 800px;
+  height: 700px;
   padding: 50px;
   ${InputSC} {
     color: ${({ theme }) => theme.color.link.primaryPrimary};

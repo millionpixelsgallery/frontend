@@ -13,6 +13,7 @@ import useForm from 'hooks/useForm'
 import { useApiConnect, useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
+import { usePixelsController } from 'hooks/usePixels'
 
 export interface ProductData {
   width: number
@@ -58,6 +59,7 @@ function ByPixels({
   onClose,
   ...rest
 }: ByPixelsProps) {
+  const pixels = usePixelsController()
   const [loading, setLoading] = useState(false)
   const methods = useApiMethods()
   const connect = useApiConnect()
@@ -83,15 +85,13 @@ function ByPixels({
             values.link
           )
         )
-        onChangeDisabledControlButtons(false)
-        setLoading(false)
         onChangeStep(0)
-        onClose()
-      } catch (e) {
-        console.log(e)
+      } finally {
         onChangeDisabledControlButtons(false)
         onClose()
         setLoading(false)
+        pixels.setSelectionActive(false)
+        await pixels.fetchPixels()
       }
     },
   })

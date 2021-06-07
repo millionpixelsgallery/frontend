@@ -1,4 +1,4 @@
-import { CSSProperties, memo } from 'react'
+import { CSSProperties, memo, useState } from 'react'
 import { SellPixelsSC, SellPixelsSCProps } from './styled'
 import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
@@ -11,10 +11,15 @@ import Text from 'components/ui/Text'
 import Radio from 'components/ui/Radio'
 import Button from 'components/ui/Button'
 import { maskInt2 } from 'utils/masks'
+import { useApiMethods } from 'hooks/useApi'
 
 export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
   style?: CSSProperties
+  index: number
+  onChangeDisabledControlButtons: (disabled: boolean) => void
+  onClose: () => void
+  getData?: () => void
 }
 
 const initialValues = {
@@ -28,7 +33,18 @@ export enum DurationEnum {
   Month = 'month',
 }
 
-function SellPixels({ className, style, ...rest }: SellPixelsProps) {
+function SellPixels({
+  className,
+  style,
+  onClose,
+  index,
+  getData,
+  onChangeDisabledControlButtons,
+  ...rest
+}: SellPixelsProps) {
+  const methods = useApiMethods()
+  const [loading, setLoading] = useState(false)
+
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup) => ({
@@ -37,7 +53,20 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
     })),
     enableReinitialize: true,
     onSubmit: async (values) => {
-      console.log(values)
+      setLoading(true)
+      let duration = 1
+      if (values.duration === 'week') duration = 7
+      if (values.duration === 'day') duration = 1
+      if (values.duration === 'month') duration = 30
+      onChangeDisabledControlButtons(true)
+      try {
+        await methods?.sellPixels(index, +values.price, duration)
+      } finally {
+        onChangeDisabledControlButtons(false)
+        setLoading(false)
+        getData && getData()
+        onClose()
+      }
     },
   })
 
@@ -90,7 +119,12 @@ function SellPixels({ className, style, ...rest }: SellPixelsProps) {
           </Row>
         </Row>
       </Col>
-      <Button disabled={!(formik.isValid && formik.dirty)} width={200}>
+      <Button
+        disabled={!(formik.isValid && formik.dirty)}
+        onClick={formik.submitForm}
+        loading={loading}
+        width={200}
+      >
         LIST FOR SALE
       </Button>
     </SellPixelsSC>

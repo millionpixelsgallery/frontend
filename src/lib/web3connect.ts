@@ -130,16 +130,18 @@ export class Web3Connect {
     return methods
   }
 
-  public static async getPixelsCost(area: Area): Promise<{ raw: string; format: string }> {
-    if (area[0] + area[2] > 1000 || area[1] + area[3] > 1000) {
-      throw new Error(`Too big area`)
-    }
+  public static async getPixelsCost(
+    area: Area
+  ): Promise<{ raw: string; format: string; isAvailable: boolean }> {
+    const [, isAvailable] = await this.defaultContact.isAreaAvailable(area)
+    if (area[0] + area[2] > 1000 || area[1] + area[3] > 1000) throw new Error(`Too big area`)
 
     const raw = await this.defaultContact.pixelsCost(area)
 
     return {
       raw,
       format: parseFloat(Web3.utils.fromWei(`${raw}`)).toFixed(4),
+      isAvailable,
     }
   }
 
