@@ -1,4 +1,4 @@
-import Web3Modal from 'web3modal'
+import Web3Modal, { getInjectedProvider } from 'web3modal'
 import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
 import Torus from '@toruslabs/torus-embed'
@@ -85,6 +85,10 @@ export class Web3Connect {
     } else {
       this.onAccountChange = onAccountChange
     }
+  }
+
+  public static hasMetamask(): boolean {
+    return Boolean(getInjectedProvider())
   }
 
   public async connect(provider?: Web3Providers) {

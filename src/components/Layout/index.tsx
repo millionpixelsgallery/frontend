@@ -21,14 +21,14 @@ export interface LayoutProps extends LayoutSCProps {
 }
 
 function Layout({ className, style, children, ...rest }: LayoutProps) {
-  const [viewportWidth, setViewportWidth] = useState(document.documentElement.offsetWidth)
+  const [viewportWidth, setViewportWidth] = useState(window.innerWidth)
   useEventListener(
     window,
     'resize',
-    useCallback(() => setViewportWidth(document.documentElement.offsetWidth), [])
+    useCallback(() => setViewportWidth(window.innerWidth), [])
   )
 
-  useLayoutEffect(() => setViewportWidth(document.documentElement.offsetWidth), [])
+  useLayoutEffect(() => setViewportWidth(window.innerWidth), [])
 
   return (
     <LayoutSC

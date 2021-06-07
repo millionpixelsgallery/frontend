@@ -10,6 +10,7 @@ import {
   useCallback,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useState,
 } from 'react'
 import { GlobalModalStyles, ModalOverlaySC, ModalSC, ModalSCProps } from './styled'
@@ -25,11 +26,12 @@ export interface ModalProps extends ModalSCProps {
   closable?: boolean
   closableByEsc?: boolean
   onClose?: () => void
-
+  onVisibilityChange?: (visible: boolean) => void
   onBack?: () => void
 
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
+  visible?: boolean
   defaultVisible?: boolean
   component?: string | ComponentClass<any, any> | FunctionComponent<any>
   componentProps?: { [key: string]: any }
@@ -50,20 +52,30 @@ function Modal({
   onClose,
   componentProps = {},
   disabledControlButtons = false,
+  onVisibilityChange,
   ...rest
 }: ModalProps) {
-  const [visible, setVisible] = useState(defaultVisible)
+  let { visible } = rest
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const controlled = useMemo(() => 'visible' in rest, [])
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [_visible, _setVisible] = controlled ? [] : useState(defaultVisible)
+  if (!controlled) visible = _visible
   const [modalRoot, setModalRoot] = useState<HTMLElement | null>(null)
 
   useLayoutEffect(() => {
     setModalRoot(document.getElementById('modal-root')!)
   }, [])
 
-  const handleVisibleChange = useCallback(() => setVisible(!visible), [visible, setVisible])
+  const handleVisibleChange = useCallback(() => {
+    if (_setVisible) _setVisible(!visible)
+    if (onVisibilityChange) onVisibilityChange(!visible)
+  }, [visible, _setVisible, onVisibilityChange])
   const handleClose = useCallback(() => {
     if (onClose) onClose()
-    setVisible(false)
-  }, [setVisible, onClose])
+    if (_setVisible) _setVisible(false)
+    if (onVisibilityChange) onVisibilityChange(false)
+  }, [_setVisible, onClose, onVisibilityChange])
 
   useEffect(() => {
     if (!closableByEsc) return
