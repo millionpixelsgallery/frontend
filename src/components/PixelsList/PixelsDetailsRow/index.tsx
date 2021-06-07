@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useMemo, useState } from 'react'
+import { CSSProperties, memo, useMemo, useState } from 'react'
 import { ImgDivSC, PixelsDetailsRowSC, PixelsDetailsRowSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import PixelsDimensions from 'components/PixelsDimensions'
@@ -44,7 +44,6 @@ function PixelsDetailsRow({
   const positionString = useMemo(() => `X${x}, Y${y}`, [x, y])
   const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
   const [disabledControlButtons, setDisabledControlButtons] = useState(false)
-  const onBack = useCallback((handleClose) => handleClose(), [])
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
@@ -75,7 +74,7 @@ function PixelsDetailsRow({
           />
           <Modal
             component={SellPixels}
-            onBack={onBack}
+            // onBack={onBack}
             componentProps={{
               index,
               getData,

@@ -26,7 +26,7 @@ export interface ModalProps extends ModalSCProps {
   closableByEsc?: boolean
   onClose?: () => void
 
-  onBack?: (func: () => void) => void
+  onBack?: () => void
 
   render?: (onVisibleChange: () => void) => ReactNode
   trigger?: ReactElement<{ onClick: Function }>
@@ -64,7 +64,6 @@ function Modal({
     if (onClose) onClose()
     setVisible(false)
   }, [setVisible, onClose])
-  const onBackCallback = useCallback(() => onBack && onBack(handleClose), [onBack, handleClose])
 
   useEffect(() => {
     if (!closableByEsc) return
@@ -89,7 +88,7 @@ function Modal({
                   type={'wrapper'}
                   className={'back'}
                   size={'content'}
-                  onClick={onBackCallback}
+                  onClick={onBack}
                   disabled={disabledControlButtons}
                 >
                   <BackSVG />
