@@ -17,10 +17,10 @@ function App() {
         try {
           await new Web3Connect(setMethods).connect()
         } catch (e) {
-          console.error(e)
+          setLoading(false)
+          throw e
         }
       }
-      setLoading(false)
     })()
   }, [])
 
@@ -34,9 +34,9 @@ function App() {
           try {
             await new Web3Connect(setMethods).connect(provider)
           } catch (e) {
-            console.error(e)
+            setLoading(false)
+            throw e
           }
-          setLoading(false)
         },
       }}
     >
