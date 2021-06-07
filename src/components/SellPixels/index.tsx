@@ -60,16 +60,11 @@ function SellPixels({
       if (values.duration === 'month') duration = 30
       onChangeDisabledControlButtons(true)
       try {
-        console.log(index, +values.price, duration)
         await methods?.sellPixels(index, +values.price, duration)
+      } finally {
         onChangeDisabledControlButtons(false)
         setLoading(false)
         getData && getData()
-        onClose()
-      } catch (e) {
-        console.log(e)
-        onChangeDisabledControlButtons(false)
-        setLoading(false)
         onClose()
       }
     },
