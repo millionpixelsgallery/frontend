@@ -26,7 +26,7 @@ export interface ModalProps extends ModalSCProps {
   closable?: boolean
   closableByEsc?: boolean
   onClose?: () => void
-
+  onVisibilityChange?: (visible: boolean) => void
   onBack?: () => void
 
   render?: (onVisibleChange: () => void) => ReactNode
@@ -52,6 +52,7 @@ function Modal({
   onClose,
   componentProps = {},
   disabledControlButtons = false,
+  onVisibilityChange,
   ...rest
 }: ModalProps) {
   let { visible } = rest
@@ -68,11 +69,13 @@ function Modal({
 
   const handleVisibleChange = useCallback(() => {
     if (_setVisible) _setVisible(!visible)
-  }, [visible, _setVisible])
+    if (onVisibilityChange) onVisibilityChange(!visible)
+  }, [visible, _setVisible, onVisibilityChange])
   const handleClose = useCallback(() => {
     if (onClose) onClose()
     if (_setVisible) _setVisible(false)
-  }, [_setVisible, onClose])
+    if (onVisibilityChange) onVisibilityChange(false)
+  }, [_setVisible, onClose, onVisibilityChange])
 
   useEffect(() => {
     if (!closableByEsc) return
