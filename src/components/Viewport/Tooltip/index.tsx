@@ -7,7 +7,6 @@ import {
   useMemo,
   useRef,
 } from 'react'
-import Card from 'components/ui/Card'
 import styled from 'styled-components'
 import useTrigger from 'hooks/useTrigger'
 import { Transform } from 'panzoom'
@@ -25,7 +24,7 @@ export interface TooltipProps {
   children?: ReactNode | ReactNodeArray
 }
 
-const TooltipSC = styled(Card)`
+const TooltipSC = styled.div`
   transform-origin: 0 0;
   position: absolute;
   top: 0;

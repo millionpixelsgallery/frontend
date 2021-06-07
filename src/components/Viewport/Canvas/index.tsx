@@ -29,7 +29,6 @@ const CanvasSC = styled.canvas`
 function Canvas({ className, style, pixels }: CanvasProps) {
   const ref = useRef<HTMLCanvasElement>(null)
   const [app, setApp] = useState<Application>()
-
   useLayoutEffect(() => {
     const app = new Application({
       view: ref.current!,
