@@ -7,7 +7,7 @@ import noPixelsPng from 'components/MyPixels/assets/NoPixels.png'
 import { marginTop, padding, paddingBottom } from 'utils/style/indents'
 import { Col } from 'components/ui/Grid'
 import PixelsList from 'components/PixelsList'
-import { useApiConnect, useApiMethods } from 'hooks/useApi'
+import { useApi } from 'hooks/useApi'
 import { Pixels } from 'lib/web3connect'
 import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
 import Modal from 'components/ui/Modal'
@@ -21,8 +21,7 @@ export interface MyPixelsProps extends MyPixelsSCProps {
 }
 
 function MyPixels({ className, style, ...rest }: MyPixelsProps) {
-  const methods = useApiMethods()
-  const connect = useApiConnect()
+  const { methods, connect, loading: apiLoading } = useApi()
   const history = useHistory()
 
   const [data, setData] = useState<Pixels[]>([])
@@ -32,10 +31,8 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
   const [loading, setLoading] = useState(true)
 
   const handleSelectWallet = useCallback(
-    async (wallet, onClose) => {
-      await connect(wallet)
-      setLoading(false)
-      if (onClose) onClose()
+    async (wallet) => {
+      await connect(wallet).finally(() => setLoading(false))
     },
     [connect]
   )
@@ -57,11 +54,12 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
 
   return (
     <MyPixelsSC className={className} style={style} {...rest}>
-      {methods ? (
+      {methods || apiLoading ? (
         <Col align={'center'} gap={50}>
           <Title>MY PIXELS</Title>
           <Text className={'text-center'}>
-            {loading && 'Loading...'}
+            {loading && !apiLoading && 'Loading...'}
+            {apiLoading && 'Connecting to a wallet...'}
             {!loading && hasPixels && 'These are your pixels, use them wisely.'}
             {!loading && !hasPixels && (
               <>
@@ -98,7 +96,7 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
         </Col>
       ) : (
         <Modal
-          defaultVisible={!methods}
+          visible={!methods && !apiLoading}
           component={ByPixelsSelectWallet}
           componentProps={{ onSelect: handleSelectWallet, style: padding(50, 111, 58) }}
           onClose={handleSelectWalletClose}

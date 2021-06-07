@@ -14,9 +14,13 @@ function App() {
   useEffect(() => {
     ;(async () => {
       if (Web3Connect.cachedProvider) {
-        await new Web3Connect(setMethods).connect()
+        try {
+          await new Web3Connect(setMethods).connect()
+        } catch (e) {
+          setLoading(false)
+          throw e
+        }
       }
-      setLoading(false)
     })()
   }, [])
 
@@ -27,8 +31,12 @@ function App() {
         methods,
         async connect(provider) {
           setLoading(true)
-          await new Web3Connect(setMethods).connect(provider)
-          setLoading(false)
+          try {
+            await new Web3Connect(setMethods).connect(provider)
+          } catch (e) {
+            setLoading(false)
+            throw e
+          }
         },
       }}
     >
