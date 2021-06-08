@@ -17,31 +17,30 @@ function App() {
       if (Web3Connect.cachedProvider) {
         try {
           await new Web3Connect(setMethods).connect()
-        } catch (e) {
+        } finally {
           setLoading(false)
-          throw e
         }
       }
     })()
   }, [])
 
   return (
-    <PixelsProvider>
-      <ApiContext.Provider
-        value={{
-          loading,
-          methods,
-          async connect(provider) {
-            setLoading(true)
-            try {
-              await new Web3Connect(setMethods).connect(provider)
-            } catch (e) {
-              setLoading(false)
-              throw e
-            }
-          },
-        }}
-      >
+    <ApiContext.Provider
+      value={{
+        loading,
+        methods,
+        async connect(provider) {
+          setLoading(true)
+          try {
+            await new Web3Connect(setMethods).connect(provider)
+          } catch (e) {
+            setLoading(false)
+            throw e
+          }
+        },
+      }}
+    >
+      <PixelsProvider>
         <Modal
           closable={false}
           component={MobilePlaceholder}
@@ -59,8 +58,8 @@ function App() {
             <Redirect to='/gallery' from='/' exact />
           </Switch>
         </Layout>
-      </ApiContext.Provider>
-    </PixelsProvider>
+      </PixelsProvider>
+    </ApiContext.Provider>
   )
 }
 

@@ -20,7 +20,6 @@ export interface SellPixelsProps extends SellPixelsSCProps {
   index: number
   onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
-  getData?: () => void
 }
 
 const initialValues = {
@@ -39,7 +38,6 @@ function SellPixels({
   style,
   onClose,
   index,
-  getData,
   onChangeDisabledControlButtons,
 }: SellPixelsProps) {
   const methods = useApiMethods()
@@ -65,7 +63,6 @@ function SellPixels({
       } finally {
         onChangeDisabledControlButtons(false)
         setLoading(false)
-        getData && getData()
         onClose()
         await fetchPixels()
       }

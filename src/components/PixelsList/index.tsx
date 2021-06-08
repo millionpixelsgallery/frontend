@@ -13,10 +13,9 @@ export interface PixelsListProps extends PixelsListSCProps {
   data: Pixels[]
   className?: string
   style?: CSSProperties
-  getData?: () => void
 }
 
-function PixelsList({ data, className, style, getData, ...rest }: PixelsListProps) {
+function PixelsList({ data, className, style, ...rest }: PixelsListProps) {
   return (
     <PixelsListSC
       className={className}
@@ -27,7 +26,7 @@ function PixelsList({ data, className, style, getData, ...rest }: PixelsListProp
       {data &&
         Boolean(data.length) &&
         data.map((pixels, i) => (
-          <PixelsDetailsRow key={i} getData={getData} data={pixels} style={padding(50, 0, 20)} />
+          <PixelsDetailsRow key={i} data={pixels} style={padding(50, 0, 20)} />
         ))}
     </PixelsListSC>
   )
