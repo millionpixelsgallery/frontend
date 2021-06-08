@@ -45,6 +45,7 @@ function PixelsDetailsRow({
   const isOnSale = useMemo(() => Boolean(sale?.end), [sale?.end])
   const [visible, setVisible] = useState(false)
   const onVisibilityChange = useCallback((visibility) => setVisible(visibility), [])
+  const onEditVisibilityChange = useCallback((visibility) => !visibility && setStep(0), [])
   const [step, setStep] = useState(0)
   const [disabledControlButtons, setDisabledControlButtons] = useState(false)
   const onBack = () => {
@@ -78,6 +79,7 @@ function PixelsDetailsRow({
               </Button>
             }
             onBack={step ? onBack : undefined}
+            onVisibilityChange={onEditVisibilityChange}
             disabledControlButtons={disabledControlButtons}
             component={EditPixels}
             componentProps={{
@@ -91,13 +93,13 @@ function PixelsDetailsRow({
                   x,
                   y,
                 },
+                index: data.index,
               },
               image: {
                 title,
                 link,
                 image,
               },
-              index: data.index,
             }}
           />
           <Modal
