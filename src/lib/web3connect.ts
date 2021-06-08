@@ -146,21 +146,72 @@ export class Web3Connect {
   }
 
   public static async mediumSize(): Promise<Area> {
-    return Promise.all([
+    const cachedArea = this.getLocalCache<Area>('medium_size', 'area')
+    if (cachedArea) return cachedArea
+
+    const area = await Promise.all([
       this.defaultContact.MEDIUM(0),
       this.defaultContact.MEDIUM(1),
       this.defaultContact.MEDIUM(2),
       this.defaultContact.MEDIUM(3),
     ])
+
+    this.setLocalCache('medium_size', area)
+
+    return area
   }
 
   public static async topSize(): Promise<Area> {
-    return Promise.all([
+    const cachedArea = this.getLocalCache<Area>('top_size', 'area')
+    if (cachedArea) return cachedArea
+
+    const area = await Promise.all([
       this.defaultContact.TOP(0),
       this.defaultContact.TOP(1),
       this.defaultContact.TOP(2),
       this.defaultContact.TOP(3),
     ])
+
+    this.setLocalCache('top_size', area)
+
+    return area
+  }
+
+  private static getLocalCache<T = any>(key: string, validate?: 'area'): T | null {
+    key = `${key}:${CONTRACT_ADDRESS}`
+    const validators = {
+      area(value: any): value is Area {
+        return (
+          Array.isArray(value) &&
+          value.length === 4 &&
+          value.every((value) => typeof value === 'number')
+        )
+      },
+    }
+
+    try {
+      const raw = localStorage.getItem(key)
+      if (!raw) return null
+      const value = JSON.parse(raw)
+      if (!validate) {
+        return value
+      } else {
+        if (validators[validate](value)) {
+          return value as any as T
+        } else {
+          localStorage.removeItem(key)
+          return null
+        }
+      }
+    } catch (e) {
+      console.warn(e)
+      return null
+    }
+  }
+
+  private static setLocalCache(key: string, value: any) {
+    key = `${key}:${CONTRACT_ADDRESS}`
+    localStorage.setItem(key, JSON.stringify(value))
   }
 
   public static async getPixelsCost(

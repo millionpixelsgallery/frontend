@@ -1,6 +1,7 @@
 import { CSSProperties, memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Application, Sprite, Graphics, Container } from 'pixi.js'
+import { Area, Web3Connect } from 'lib/web3connect'
 
 export interface CanvasProps {
   className?: string
@@ -52,13 +53,39 @@ function Canvas({ className, style, pixels }: CanvasProps) {
 
   useEffect(() => app?.render())
 
+  const [mediumArea, setMediumArea] = useState<Area>()
+  const [topArea, setTopArea] = useState<Area>()
+
+  useEffect(() => {
+    Web3Connect.mediumSize().then(setMediumArea)
+    Web3Connect.topSize().then(setTopArea)
+  }, [])
+
   return (
     <>
       <CanvasSC className={className} style={style} ref={ref} width={1000} height={1000} />
       {app && (
         <>
-          <Rect container={app.stage} x={475} y={475} width={50} height={50} fill={0xeaeaea} />
-          <Rect container={app.stage} x={495} y={495} width={10} height={10} fill={0xdddddd} />
+          {mediumArea && (
+            <Rect
+              container={app.stage}
+              x={mediumArea[0]}
+              y={mediumArea[1]}
+              width={mediumArea[2]}
+              height={mediumArea[3]}
+              fill={0xeaeaea}
+            />
+          )}
+          {topArea && (
+            <Rect
+              container={app.stage}
+              x={topArea[0]}
+              y={topArea[1]}
+              width={topArea[2]}
+              height={topArea[3]}
+              fill={0xdddddd}
+            />
+          )}
           {pixels?.map((props) => (
             <Pixels
               key={`${props.x}${props.y}${props.selling}${props.src}`}
