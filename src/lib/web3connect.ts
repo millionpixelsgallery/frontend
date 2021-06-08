@@ -145,6 +145,24 @@ export class Web3Connect {
     return methods
   }
 
+  public static async mediumSize(): Promise<Area> {
+    return Promise.all([
+      this.defaultContact.MEDIUM(0),
+      this.defaultContact.MEDIUM(1),
+      this.defaultContact.MEDIUM(2),
+      this.defaultContact.MEDIUM(3),
+    ])
+  }
+
+  public static async topSize(): Promise<Area> {
+    return Promise.all([
+      this.defaultContact.TOP(0),
+      this.defaultContact.TOP(1),
+      this.defaultContact.TOP(2),
+      this.defaultContact.TOP(3),
+    ])
+  }
+
   public static async getPixelsCost(
     area: Area
   ): Promise<{ raw: string; format: string; isAvailable: boolean }> {
