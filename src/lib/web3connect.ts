@@ -293,7 +293,7 @@ export class Web3Methods {
     const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
       await this.contract.methods
-        .sell(index, this.web3.utils.toWei(`${price}`), duration)
+        .sell(index, this.web3.utils.toWei(`${price}`, 'ether'), duration)
         .send({ from: this.account })
 
       return Web3Connect.getPixels(index)
@@ -311,7 +311,7 @@ export class Web3Methods {
       try {
         await this.contract.methods.buy(index, ipfs).send({
           from: this.account,
-          value: pixels.sale.price,
+          value: this.web3.utils.toWei(`${pixels.sale.price}`, 'ether'),
         })
 
         return Web3Connect.getPixels(index)
