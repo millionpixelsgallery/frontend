@@ -32,6 +32,7 @@ const TooltipSC = styled.div`
   position: absolute;
   top: 0;
   left: 0;
+  z-index: 3;
 `
 
 const root = document.getElementById('root')!
@@ -63,11 +64,20 @@ function Tooltip({
   const right = Math.abs(tx) / scale + 1000 / scale
   const bottom = Math.abs(ty) / scale + 1000 / scale
 
+  if (bottom - gap < offsetY + tooltipHeight) {
+    if (tooltipHeight > targetHeight) {
+      offsetY = targetY - tooltipHeight - gap
+    } else {
+      offsetY = targetY + gap
+      offsetX += gap
+    }
+  }
+
   if (tooltipWidth > targetWidth && right - gap < offsetX + tooltipWidth) {
     offsetX = targetX - (tooltipWidth - targetWidth)
-  }
-  if (bottom - gap < offsetY + tooltipHeight) {
-    offsetY = targetY - tooltipHeight - gap
+    if (tooltipHeight < targetHeight) {
+      offsetX -= gap
+    }
   }
 
   useLayoutEffect(() => toggleHidden(), [])
