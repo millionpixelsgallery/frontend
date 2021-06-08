@@ -15,7 +15,9 @@ import { between } from 'utils/canvas'
 import Tooltip from 'components/Viewport/Tooltip'
 import Canvas from 'components/Viewport/Canvas'
 import { usePixelsController } from 'hooks/usePixels'
-import BuyTooltip from 'components/Viewport/BuyTooltip'
+import BuyTooltip from 'components/Viewport/Tooltip/BuyTooltip'
+import SellTooltip from 'components/Viewport/Tooltip/SaleTooltip'
+import DetailsTooltip from 'components/Viewport/Tooltip/DetailsTooltip'
 
 export interface ViewportProps {
   className?: string
@@ -156,8 +158,9 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               onMouseUp={handleSelectEnd}
             />
           )}
-          {tooltipCords && !sellMode && !selectionActive && (
+          {tooltipCords && !selectionActive && (
             <Tooltip
+              key={tooltipCords.join()}
               targetX={tooltipCords[0]}
               targetY={tooltipCords[1]}
               targetWidth={tooltipCords[2]}
@@ -165,9 +168,11 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               transform={transform}
               onClose={handleTooltipClose}
             >
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab corporis deserunt,
-              doloremque id iste libero nam quasi quia ratione repellendus sed similique voluptas?
-              At earum eius magnam necessitatibus, nulla placeat!
+              {sellMode ? (
+                <SellTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
+              ) : (
+                <DetailsTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
+              )}
             </Tooltip>
           )}
           {!sellMode && selectionActive && (

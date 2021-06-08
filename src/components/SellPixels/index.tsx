@@ -12,6 +12,7 @@ import Radio from 'components/ui/Radio'
 import Button from 'components/ui/Button'
 import { maskInt2 } from 'utils/masks'
 import { useApiMethods } from 'hooks/useApi'
+import { usePixelsController } from 'hooks/usePixels'
 
 export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
@@ -40,10 +41,10 @@ function SellPixels({
   index,
   getData,
   onChangeDisabledControlButtons,
-  ...rest
 }: SellPixelsProps) {
   const methods = useApiMethods()
   const [loading, setLoading] = useState(false)
+  const { fetchPixels } = usePixelsController()
 
   const formik = useForm({
     initialValues: initialValues,
@@ -66,12 +67,13 @@ function SellPixels({
         setLoading(false)
         getData && getData()
         onClose()
+        await fetchPixels()
       }
     },
   })
 
   return (
-    <SellPixelsSC className={className} style={style} {...rest}>
+    <SellPixelsSC className={className} style={style}>
       <Col align={'center'}>
         <Title style={marginBottom(100)}>SELL your pixels</Title>
         <Field name={'price'} title={'SET PRICE in ETH'} style={marginBottom(8)}>

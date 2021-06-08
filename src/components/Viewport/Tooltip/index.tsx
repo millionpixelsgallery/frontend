@@ -34,6 +34,8 @@ const TooltipSC = styled.div`
   left: 0;
 `
 
+const root = document.getElementById('root')!
+
 function Tooltip({
   className,
   style,
@@ -72,12 +74,12 @@ function Tooltip({
 
   const renderRef = useRenderRef()
   useEventListener(
-    document.body,
+    root,
     'click',
     (e) => {
       if (renderRef.first) return
       if (!(e.target === ref.current || ref.current?.contains(e.target as Node | null))) {
-        if (onClose) onClose()
+        // if (onClose) onClose()
       }
     },
     [onClose]

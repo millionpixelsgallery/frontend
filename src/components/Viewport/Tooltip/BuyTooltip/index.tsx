@@ -6,7 +6,7 @@ import Modal from 'components/ui/Modal'
 import ByPixels from 'components/ByPixels'
 import { Web3Connect } from 'lib/web3connect'
 import cn from 'classnames'
-import { BuyTooltipSC } from 'components/Viewport/BuyTooltip/styled'
+import { BuyTooltipSC } from 'components/Viewport/Tooltip/BuyTooltip/styled'
 
 export interface BuyTooltipProps {
   x: number

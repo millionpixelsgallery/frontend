@@ -23,6 +23,7 @@ export interface ProductData {
     y: number
   }
   price: number
+  index?: number
 }
 
 export interface ByPixelsProps extends ByPixelsSCProps {
@@ -74,16 +75,21 @@ function ByPixels({
       setLoading(true)
       onChangeDisabledControlButtons(true)
       try {
-        await methods?.buyPixels(
-          [data.position.x, data.position.y, data.width, data.height],
-          await upload(
-            Boolean(values.image)
-              ? values.image!
-              : await cratePlaceHolderFile(data.width, data.height),
-            values.title,
-            values.link
-          )
+        const ipfs = await upload(
+          Boolean(values.image)
+            ? values.image!
+            : await cratePlaceHolderFile(data.width, data.height),
+          values.title,
+          values.link
         )
+        if (data.index != undefined) {
+          await methods?.buyPixelsForSale(data.index, ipfs)
+        } else {
+          await methods?.buyPixels(
+            [data.position.x, data.position.y, data.width, data.height],
+            ipfs
+          )
+        }
         onChangeStep(0)
       } finally {
         onChangeDisabledControlButtons(false)
