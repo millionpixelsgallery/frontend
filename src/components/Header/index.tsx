@@ -7,6 +7,7 @@ import NavLink from 'components/ui/NavLink'
 import Link from 'components/ui/Link'
 import { marginBottom } from 'utils/style/indents'
 import { usePixelsController } from 'hooks/usePixels'
+import { useHistory } from 'react-router-dom'
 
 export interface HeaderProps extends HeaderSCProps {
   className?: string
@@ -15,6 +16,7 @@ export interface HeaderProps extends HeaderSCProps {
 
 function Header({ style }: HeaderProps) {
   const { setSelectionActive } = usePixelsController()
+  const history = useHistory()
 
   return (
     <HeaderSC style={style} justify='between' align='center'>
@@ -40,7 +42,10 @@ function Header({ style }: HeaderProps) {
           size='lg'
           width={150}
           style={marginBottom(12)}
-          onClick={() => setSelectionActive(true)}
+          onClick={() => {
+            history.push('/gallery')
+            setSelectionActive(true)
+          }}
         >
           BUY PIXELS
         </Button>

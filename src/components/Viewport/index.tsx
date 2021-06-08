@@ -24,7 +24,8 @@ export interface ViewportProps {
 }
 
 function Viewport({ className, style, sellMode }: ViewportProps) {
-  const { selectionActive, fetchPixels, pixels, pixelsLoading } = usePixelsController()
+  const { selectionActive, fetchPixels, pixels, pixelsLoading, setSelectionActive } =
+    usePixelsController()
   const contentRef = useRef<HTMLDivElement>(null)
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   const [panzoom, setPanzoom] = useState<PanZoom>()
@@ -112,6 +113,14 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
     if (selectionActive) panzoom?.zoomAbs(0, 0, 1)
   }, [selectionActive, panzoom])
 
+  useEffect(
+    () => () => {
+      if (!sellMode) setSelectionActive(false)
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
   return (
     <ViewportWrapperSC className={className} style={style}>
       <ViewportSC>
@@ -125,7 +134,11 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
                 height,
                 selling: sellMode ? Boolean(sale && sale.end > Date.now() / 1000) : undefined,
                 src: sellMode ? undefined : image?.image,
-                clickable: !selectionActive,
+                clickable: selectionActive
+                  ? false
+                  : sellMode
+                  ? Boolean(sale && sale.end > Date.now() / 1000)
+                  : true,
                 onClick: onPixelsClick,
               }
             })}

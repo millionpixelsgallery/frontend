@@ -57,7 +57,6 @@ function ByPixels({
   onChangeDisabledControlButtons,
   style,
   onClose,
-  ...rest
 }: ByPixelsProps) {
   const pixels = usePixelsController()
   const [loading, setLoading] = useState(false)
@@ -142,7 +141,7 @@ function ByPixels({
   )
 
   return (
-    <ByPixelsSC className={className} style={style} {...rest}>
+    <ByPixelsSC className={className} style={style}>
       {step === 0 ? (
         <ByPixelsSelectWallet onSelect={handleSelectWallet} />
       ) : step === 1 ? (
