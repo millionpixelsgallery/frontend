@@ -304,4 +304,8 @@ export class Web3Methods {
 
     throw new Error(`You can't buy your pixels`)
   }
+
+  public getAccount() {
+    return this.account as string
+  }
 }

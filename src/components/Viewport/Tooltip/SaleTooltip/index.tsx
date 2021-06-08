@@ -7,6 +7,7 @@ import Button from 'components/ui/Button'
 import { Row } from 'components/ui/Grid'
 import ByPixels from 'components/ByPixels'
 import Modal from 'components/ui/Modal'
+import { useApiMethods } from 'hooks/useApi'
 
 export interface SaleTooltipProps extends SaleTooltipSCProps {
   className?: string
@@ -26,6 +27,7 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
   const handleBack = useCallback(() => {
     setStep((step) => step - 1)
   }, [])
+  const methods = useApiMethods()
 
   return (
     <SaleTooltipSC className={className} style={style} type='success' title='for sale!' {...rest}>
@@ -49,7 +51,12 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
         </div>
         <Modal
           trigger={
-            <Button className='buy' width={96} size='sm'>
+            <Button
+              className='buy'
+              width={96}
+              size='sm'
+              hidden={pixel?.owner === methods?.getAccount()}
+            >
               Buy
             </Button>
           }
