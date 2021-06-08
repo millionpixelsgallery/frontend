@@ -37,7 +37,7 @@ function ByPixelsUploadPhoto({
     (e) => {
       formik.setFieldValue('link', e.currentTarget.value.slice(0, 750).replace(/^https?:\/\//, ''))
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [formik.setFieldValue]
   )
 
@@ -45,7 +45,7 @@ function ByPixelsUploadPhoto({
     (e) => {
       formik.setFieldValue('title', e.currentTarget.value.slice(0, 100))
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [formik.setFieldValue]
   )
 
@@ -72,7 +72,7 @@ function ByPixelsUploadPhoto({
         }
       )
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     [formik.setFieldValue]
   )
 

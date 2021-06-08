@@ -98,24 +98,20 @@ function ByPixels({
     if (!methods) {
       onChangeStep(0)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleSelectWallet = useCallback(async (wallet) => {
     await connect(wallet)
     onChangeStep(1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const handleNextStep = useCallback(async () => {
     onChangeStep(step + 1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
   const handleSkipStep = useCallback(() => {
     formik.resetForm()
     onChangeStep(step + 1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
   const Bottom = (

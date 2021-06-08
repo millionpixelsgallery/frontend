@@ -52,7 +52,6 @@ function Tooltip({
 
   const tooltipWidth = width / scale
   const tooltipHeight =
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useMemo(() => height ?? ref.current?.offsetHeight ?? 0, [ref.current, height]) / scale
 
   const right = Math.abs(tx) / scale + 1000 / scale
@@ -65,7 +64,6 @@ function Tooltip({
     offsetY = targetY - tooltipHeight - gap
   }
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => toggleHidden(), [])
 
   return (

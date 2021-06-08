@@ -105,7 +105,6 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
 
   useEffect(() => {
     if (!pixels && !pixelsLoading) fetchPixels()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -117,7 +116,6 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
     () => () => {
       if (!sellMode) setSelectionActive(false)
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   )
 

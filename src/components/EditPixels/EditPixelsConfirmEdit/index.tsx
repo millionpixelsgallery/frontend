@@ -44,7 +44,6 @@ function EditPixelsConfirmEdit({
         })
       )
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [image.image, formik.values.image])
 
   return (

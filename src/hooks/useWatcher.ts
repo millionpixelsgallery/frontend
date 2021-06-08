@@ -14,6 +14,5 @@ export default function useWatcher(effect: () => any, deps?: any[], skipRenders?
   useEffect(() => {
     if (render.skipped) return
     effect()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }

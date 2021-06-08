@@ -93,7 +93,6 @@ function EditPixels({
 
   const handleNextStep = useCallback(() => {
     onChangeStep(step + 1)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step])
 
   const Bottom = (

@@ -126,7 +126,9 @@
       "react-app/jest"
     ],
     "rules": {
-      "eqeqeq": "off"
+      "eqeqeq": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/rules-of-hooks": "off"
     }
   },
   "browserslist": {

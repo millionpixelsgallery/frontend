@@ -103,7 +103,6 @@ function Rect({ container, x, y, width, height, fill, lineStyle, clickable, onCl
         graphic.destroy()
       },
     ] as const
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useMemo(() => {
@@ -111,10 +110,8 @@ function Rect({ container, x, y, width, height, fill, lineStyle, clickable, onCl
       graphic.interactive = clickable
       graphic.buttonMode = clickable
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clickable])
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => destroy, [])
 
   return null
@@ -168,7 +165,6 @@ function Pixels(props: PixelsProps) {
         container.addChild(sprite)
         setSprite(sprite)
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [src])
 
     // eslint-disable-next-line react-hooks/rules-of-hooks

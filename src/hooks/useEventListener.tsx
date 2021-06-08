@@ -25,6 +25,5 @@ export function useEventListener<E extends ElementLike, K extends keyof HTMLElem
     return () => {
       element.removeEventListener(type, listener, options)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [element, type, listener, options, ...deps])
 }

@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useCallback, useEffect } from 'react'
 
 export default function useWindowListener<K extends keyof WindowEventMap>(

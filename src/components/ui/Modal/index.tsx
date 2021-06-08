@@ -56,7 +56,7 @@ function Modal({
   ...rest
 }: ModalProps) {
   let { visible } = rest
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   const controlled = useMemo(() => 'visible' in rest, [])
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [_visible, _setVisible] = controlled ? [] : useState(defaultVisible)
