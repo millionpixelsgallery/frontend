@@ -10,6 +10,8 @@ import {
 import styled from 'styled-components'
 import useTrigger from 'hooks/useTrigger'
 import { Transform } from 'panzoom'
+import { useEventListener } from 'hooks/useEventListener'
+import useRenderRef from 'hooks/useRenderRef'
 
 export interface TooltipProps {
   targetX: number
@@ -22,6 +24,7 @@ export interface TooltipProps {
   className?: string
   style?: CSSProperties
   children?: ReactNode | ReactNodeArray
+  onClose?: () => void
 }
 
 const TooltipSC = styled.div`
@@ -42,6 +45,7 @@ function Tooltip({
   transform = { scale: 1, x: 0, y: 0 },
   width = 320,
   height,
+  onClose,
 }: TooltipProps) {
   const [hidden, toggleHidden] = useTrigger(true)
   const ref = useRef<HTMLDivElement>(null)
@@ -65,6 +69,19 @@ function Tooltip({
   }
 
   useLayoutEffect(() => toggleHidden(), [])
+
+  const renderRef = useRenderRef()
+  useEventListener(
+    document.body,
+    'click',
+    (e) => {
+      if (renderRef.first) return
+      if (!(e.target === ref.current || ref.current?.contains(e.target as Node | null))) {
+        if (onClose) onClose()
+      }
+    },
+    [onClose]
+  )
 
   return (
     <TooltipSC

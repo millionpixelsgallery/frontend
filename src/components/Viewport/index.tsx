@@ -110,7 +110,7 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
   useEffect(() => {
     setTooltipCords(undefined)
     if (selectionActive) panzoom?.zoomAbs(0, 0, 1)
-  }, [selectionActive, panzoom])
+  }, [selectionActive])
 
   useEffect(
     () => () => {
@@ -118,6 +118,8 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
     },
     []
   )
+
+  const handleTooltipClose = useCallback(() => setTooltipCords(undefined), [])
 
   return (
     <ViewportWrapperSC className={className} style={style}>
@@ -154,21 +156,29 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               onMouseUp={handleSelectEnd}
             />
           )}
-          {(tooltipCords || (!sellMode && selectionActive)) && (
+          {tooltipCords && !sellMode && !selectionActive && (
             <Tooltip
-              targetX={!sellMode && selectionActive ? selectX : tooltipCords![0]}
-              targetY={!sellMode && selectionActive ? selectY : tooltipCords![1]}
-              targetWidth={!sellMode && selectionActive ? selectWidth : tooltipCords![2]}
-              targetHeight={!sellMode && selectionActive ? selectHeight : tooltipCords![3]}
+              targetX={tooltipCords[0]}
+              targetY={tooltipCords[1]}
+              targetWidth={tooltipCords[2]}
+              targetHeight={tooltipCords[3]}
+              transform={transform}
+              onClose={handleTooltipClose}
+            >
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab corporis deserunt,
+              doloremque id iste libero nam quasi quia ratione repellendus sed similique voluptas?
+              At earum eius magnam necessitatibus, nulla placeat!
+            </Tooltip>
+          )}
+          {!sellMode && selectionActive && (
+            <Tooltip
+              targetX={selectX}
+              targetY={selectY}
+              targetWidth={selectWidth}
+              targetHeight={selectHeight}
               transform={transform}
             >
-              {!sellMode && selectionActive ? (
-                <BuyTooltip x={selectX} y={selectY} width={selectWidth} height={selectHeight} />
-              ) : (
-                `Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab corporis deserunt,
-              doloremque id iste libero nam quasi quia ratione repellendus sed similique voluptas?
-              At earum eius magnam necessitatibus, nulla placeat!`
-              )}
+              <BuyTooltip x={selectX} y={selectY} width={selectWidth} height={selectHeight} />
             </Tooltip>
           )}
         </ViewportContentSC>
