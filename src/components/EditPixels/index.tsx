@@ -10,6 +10,7 @@ import { padding } from 'utils/style/indents'
 import { useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
+import { usePixelsController } from 'hooks/usePixels'
 
 export interface EditProductData {
   width: number
@@ -52,6 +53,7 @@ function EditPixels({
   ...rest
 }: EditPixelsProps) {
   const methods = useApiMethods()
+  const { fetchPixels } = usePixelsController()
   const [loading, setLoading] = useState(false)
   const formik = useForm({
     initialValues: {
@@ -78,15 +80,12 @@ function EditPixels({
             values.link
           )
         )
+      } finally {
         onChangeDisabledControlButtons(false)
         setLoading(false)
         onChangeStep(0)
         onClose()
-      } catch (e) {
-        console.log(e)
-        onChangeDisabledControlButtons(false)
-        setLoading(false)
-        onClose()
+        await fetchPixels()
       }
     },
   })

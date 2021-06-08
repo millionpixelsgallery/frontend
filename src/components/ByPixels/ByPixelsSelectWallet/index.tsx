@@ -24,13 +24,7 @@ export enum WalletEnum {
   Torus = 'torus',
 }
 
-function ByPixelsSelectWallet({
-  className,
-  onSelect,
-  style,
-  onClose,
-  ...rest
-}: ByPixelsSelectWalletProps) {
+function ByPixelsSelectWallet({ className, onSelect, style, onClose }: ByPixelsSelectWalletProps) {
   const handleSelect = useCallback(
     (e) => {
       const wallet: WalletEnum = e.currentTarget.dataset.wallet
@@ -40,7 +34,7 @@ function ByPixelsSelectWallet({
   )
 
   return (
-    <ByPixelsSelectWalletSC className={className} style={style} {...rest}>
+    <ByPixelsSelectWalletSC className={className} style={style}>
       <Col align={'center'}>
         <Title style={marginBottom(50)}>Select a Wallet</Title>
         <Text style={marginBottom(100)} className={'text-center'}>

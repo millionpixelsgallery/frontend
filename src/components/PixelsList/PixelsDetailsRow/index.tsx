@@ -17,7 +17,6 @@ export interface PixelsDetailsRowProps extends PixelsDetailsRowSCProps {
   data: Pixels
   onEdit?: () => void
   onSell?: () => void
-  getData?: () => void
   className?: string
   style?: CSSProperties
 }
@@ -30,14 +29,7 @@ function DetailsRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-function PixelsDetailsRow({
-  data,
-  onEdit,
-  getData,
-  className,
-  style,
-  ...rest
-}: PixelsDetailsRowProps) {
+function PixelsDetailsRow({ data, onEdit, className, style, ...rest }: PixelsDetailsRowProps) {
   const { area, sale, image: dataImg, index } = data
   const [x, y, width, height] = area
   const { title, link, image } = dataImg || {}
@@ -109,7 +101,6 @@ function PixelsDetailsRow({
             onVisibilityChange={onVisibilityChange}
             componentProps={{
               index,
-              getData,
               onChangeDisabledControlButtons: setDisabledControlButtons,
             }}
             disabledControlButtons={disabledControlButtons}
