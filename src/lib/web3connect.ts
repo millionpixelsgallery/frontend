@@ -115,6 +115,8 @@ export class Web3Connect {
     return this._fetchAccountData()
   }
 
+  private methodsReady = false
+
   private async _fetchAccountData() {
     this.web3 = new Web3(this.provider)
     console.log('Web3 instance is', this.web3, this.provider)
@@ -122,6 +124,11 @@ export class Web3Connect {
     const accounts = await this.web3.eth.getAccounts()
 
     if (!accounts || accounts.length === 0) {
+      if (this.methodsReady) {
+        // eslint-disable-next-line no-restricted-globals
+        location?.reload()
+        return
+      }
       throw new Error(`Can't get accounts list`)
     }
 
@@ -134,6 +141,7 @@ export class Web3Connect {
     const methods = new Web3Methods(this.contract, this.web3, this.account)
     this.onAccountChange(methods)
 
+    this.methodsReady = true
     return methods
   }
 
