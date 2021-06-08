@@ -93,6 +93,13 @@ export class Web3Connect {
 
   public async connect(provider?: Web3Providers) {
     try {
+      if (provider === 'metamask' && !Web3Connect.hasMetamask()) {
+        window.open(
+          'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn',
+          '_blank'
+        )
+        return
+      }
       this.provider = provider
         ? await web3Modal.connectTo(provider === 'metamask' ? 'injected' : provider)
         : await web3Modal.connect()
