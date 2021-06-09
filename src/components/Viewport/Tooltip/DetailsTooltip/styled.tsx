@@ -8,9 +8,14 @@ export const DetailsTooltipSC = styled(Card)`
   font: normal normal normal 16px/24px Oswald;
   letter-spacing: 0.32px;
   color: ${({ theme }) => theme.color.typography.text};
+  white-space: nowrap;
   .content {
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: uppercase;
+  }
+
+  .disabled {
+    pointer-events: none;
   }
 `

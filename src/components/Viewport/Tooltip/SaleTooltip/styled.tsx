@@ -25,4 +25,8 @@ export const SaleTooltipSC = styled(Card)`
     letter-spacing: 0.44px;
     color: #0b0742;
   }
+
+  .disabled {
+    pointer-events: none;
+  }
 `

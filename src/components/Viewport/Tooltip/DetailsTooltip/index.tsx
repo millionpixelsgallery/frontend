@@ -7,6 +7,7 @@ import { usePixelsController } from 'hooks/usePixels'
 import Link from 'components/ui/Link'
 import { marginBottom } from 'utils/style/indents'
 import { prepareLink } from 'utils/link'
+import cn from 'classnames'
 
 export interface DetailsTooltipProps extends DetailsTooltipSCProps {
   className?: string
@@ -25,6 +26,7 @@ function DetailsTooltip({ className, style, x, y, ...rest }: DetailsTooltipProps
     <DetailsTooltipSC className={className} style={style} {...rest}>
       <div style={marginBottom(8)}>{pixel?.image?.title || 'No title'}</div>
       <Link
+        className={cn({ disabled: !pixel?.image?.link })}
         href={pixel?.image?.link ? prepareLink(pixel?.image?.link) : '#'}
         native
         target={pixel?.image?.link ? '_blank' : undefined}

@@ -9,6 +9,7 @@ import ByPixels from 'components/ByPixels'
 import Modal from 'components/ui/Modal'
 import { useApiMethods } from 'hooks/useApi'
 import { prepareLink } from 'utils/link'
+import cn from 'classnames'
 
 export interface SaleTooltipProps extends SaleTooltipSCProps {
   className?: string
@@ -32,8 +33,11 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
 
   return (
     <SaleTooltipSC className={className} style={style} type='success' title='for sale!' {...rest}>
-      <div style={marginBottom(8)}>{pixel?.image?.title || 'No title'}</div>
+      <div className='text-nowrap' style={marginBottom(8)}>
+        {pixel?.image?.title || 'No title'}
+      </div>
       <Link
+        className={cn('text-nowrap', { disabled: !pixel?.image?.link })}
         href={pixel?.image?.link ? prepareLink(pixel?.image?.link) : '#'}
         native
         target={pixel?.image?.link ? '_blank' : undefined}
