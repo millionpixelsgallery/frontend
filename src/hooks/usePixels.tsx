@@ -4,6 +4,7 @@ import {
   ReactNodeArray,
   useCallback,
   useContext,
+  useEffect,
   useReducer,
 } from 'react'
 import { Pixels, Web3Connect } from 'lib/web3connect'
@@ -99,6 +100,26 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
     })
   }, [methods])
 
+  const fetchPixels = useCallback(async () => {
+    if (state.myPixels) fetchMyPixels()
+    dispatch({
+      type: 'PIXELS_LOADING',
+      loading: true,
+    })
+    const pixels = await Web3Connect.getAllPixels().catch((e) => {
+      console.error(e)
+      return []
+    })
+    dispatch({
+      type: 'PIXELS_CHANGE',
+      pixels,
+    })
+  }, [])
+
+  useEffect(() => {
+    fetchPixels()
+  }, [])
+
   return (
     <PixelsContext.Provider
       value={{
@@ -109,21 +130,7 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
             value,
           })
         },
-        async fetchPixels() {
-          if (state.myPixels) fetchMyPixels()
-          dispatch({
-            type: 'PIXELS_LOADING',
-            loading: true,
-          })
-          const pixels = await Web3Connect.getAllPixels().catch((e) => {
-            console.error(e)
-            return []
-          })
-          dispatch({
-            type: 'PIXELS_CHANGE',
-            pixels,
-          })
-        },
+        fetchPixels,
         fetchMyPixels,
       }}
     >

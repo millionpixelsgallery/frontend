@@ -1,21 +1,47 @@
-import { CSSProperties, memo } from 'react'
+import { CSSProperties, memo, useEffect, useState } from 'react'
 import { SideBarSC, SideBarSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import { margin, marginRight, marginTop } from 'utils/style/indents'
 import InfoBlock from 'components/ui/InfoBlock'
 import InfoBlockPx from 'components/ui/InfoBlockPx'
+import { usePixelsController } from 'hooks/usePixels'
+import { getLocalCache, setLocalCache } from 'utils/cache'
 
 export interface SideBarProps extends SideBarSCProps {
   className?: string
   style?: CSSProperties
 }
 
+const numberFormat = new Intl.NumberFormat('en')
+const format = numberFormat.format.bind(numberFormat)
+
 function SideBar({ className, style, ...rest }: SideBarProps) {
+  const { pixels } = usePixelsController()
+  const [created, setCreated] = useState<number>(getLocalCache('crated_nft', 0))
+  const [sold, setSold] = useState<number>(getLocalCache('sold_pixels', 0))
+
+  useEffect(() => {
+    if (!pixels) return
+    const created = pixels?.length || 0
+    const sold =
+      pixels?.reduce((sum, { area: [, , width, height] }) => {
+        return sum + width * height
+      }, 0) || 0
+
+    setCreated(created)
+    setSold(sold)
+
+    setLocalCache('crated_nft', created)
+    setLocalCache('sold_pixels', sold)
+  }, [pixels])
+
   return (
     <SideBarSC className={className} style={style} {...rest}>
       <Col style={margin(135, 0, 0, 50)}>
-        <InfoBlock title='PIXELS SOLD' children='145,915' />
-        <InfoBlock title='NFT CREATED' children='977' style={marginTop(50)} />
+        <InfoBlock title='PIXELS SOLD'>{format(sold)}</InfoBlock>
+        <InfoBlock title='NFT CREATED' style={marginTop(50)}>
+          {format(created)}
+        </InfoBlock>
         <Row style={marginTop(104)}>
           <InfoBlockPx title='1px' children='0.001' style={marginRight(15)} />
           <img src='/assets/Component3.svg' alt='pixel price zone 1' />

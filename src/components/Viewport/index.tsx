@@ -26,8 +26,7 @@ export interface ViewportProps {
 }
 
 function Viewport({ className, style, sellMode }: ViewportProps) {
-  const { selectionActive, fetchPixels, pixels, pixelsLoading, setSelectionActive } =
-    usePixelsController()
+  const { selectionActive, pixels, setSelectionActive } = usePixelsController()
   const contentRef = useRef<HTMLDivElement>(null)
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   const [panzoom, setPanzoom] = useState<PanZoom>()
@@ -103,10 +102,6 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
 
   const onPixelsClick = useCallback(({ x, y, width, height }) => {
     setTooltipCords([x, y, width, height])
-  }, [])
-
-  useEffect(() => {
-    if (!pixels && !pixelsLoading) fetchPixels()
   }, [])
 
   useEffect(() => {

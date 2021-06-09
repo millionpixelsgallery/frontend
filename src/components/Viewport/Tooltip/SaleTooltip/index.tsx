@@ -8,6 +8,7 @@ import { Row } from 'components/ui/Grid'
 import ByPixels from 'components/ByPixels'
 import Modal from 'components/ui/Modal'
 import { useApiMethods } from 'hooks/useApi'
+import { prepareLink } from 'utils/link'
 
 export interface SaleTooltipProps extends SaleTooltipSCProps {
   className?: string
@@ -33,7 +34,7 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
     <SaleTooltipSC className={className} style={style} type='success' title='for sale!' {...rest}>
       <div style={marginBottom(8)}>{pixel?.image?.title || 'No title'}</div>
       <Link
-        href={pixel?.image?.link || '#'}
+        href={pixel?.image?.link ? prepareLink(pixel?.image?.link) : '#'}
         native
         target={pixel?.image?.link ? '_blank' : undefined}
       >
