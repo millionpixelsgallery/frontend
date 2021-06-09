@@ -43,6 +43,9 @@ function PixelsDetailsRow({ data, onEdit, className, style, ...rest }: PixelsDet
   const onBack = () => {
     setStep((step) => step - 1)
   }
+  const handleClose = useCallback(() => {
+    setVisible(false)
+  }, [])
 
   return (
     <PixelsDetailsRowSC className={className} style={style} {...rest}>
@@ -96,7 +99,7 @@ function PixelsDetailsRow({ data, onEdit, className, style, ...rest }: PixelsDet
           />
           <Modal
             component={SellPixels}
-            onBack={onBack}
+            onBack={handleClose}
             visible={visible}
             onVisibilityChange={onVisibilityChange}
             componentProps={{

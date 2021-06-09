@@ -53,6 +53,10 @@ function BuyTooltip({ x, y, width, height }: BuyTooltipProps) {
     }, 600))
   }, [x, y, width, height])
 
+  const handleVisibilityChange = useCallback((visibility: boolean) => {
+    if (!visibility) setStep(1)
+  }, [])
+
   return (
     <BuyTooltipSC
       className={cn({
@@ -93,6 +97,7 @@ function BuyTooltip({ x, y, width, height }: BuyTooltipProps) {
               onBack={step ? handleBack : undefined}
               component={ByPixels}
               disabledControlButtons={disabledControlButtons}
+              onVisibilityChange={handleVisibilityChange}
               componentProps={{
                 step,
                 onChangeStep: setStep,

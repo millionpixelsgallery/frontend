@@ -59,7 +59,8 @@ function SellPixels({
       if (values.duration === 'month') duration = 30
       onChangeDisabledControlButtons(true)
       try {
-        await methods?.sellPixels(index, +values.price, duration)
+        const unmaskedPrice = +values.price.replace(/[, ]+/g, '')
+        await methods?.sellPixels(index, unmaskedPrice, duration)
       } finally {
         onChangeDisabledControlButtons(false)
         setLoading(false)
