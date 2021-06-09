@@ -260,7 +260,7 @@ export class Web3Connect {
         if (sale) {
           sale = {
             end: parseInt(sale.end.toString()),
-            price: parseInt(Web3.utils.fromWei(sale.price.toString())),
+            price: parseFloat(Web3.utils.fromWei(sale.price.toString())),
           }
         }
       }
