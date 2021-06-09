@@ -114,7 +114,7 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
       type: 'PIXELS_CHANGE',
       pixels,
     })
-  }, [])
+  }, [state.myPixels])
 
   useEffect(() => {
     fetchPixels()
