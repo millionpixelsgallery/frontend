@@ -24,7 +24,9 @@ function DetailsTooltip({ className, style, x, y, ...rest }: DetailsTooltipProps
   )
   return (
     <DetailsTooltipSC className={className} style={style} {...rest}>
-      <div style={marginBottom(8)}>{pixel?.image?.title || 'No title'}</div>
+      <div className='pixel-title text-nowrap' style={marginBottom(8)}>
+        {pixel?.image?.title || 'No title'}
+      </div>
       <Link
         className={cn({ disabled: !pixel?.image?.link })}
         href={pixel?.image?.link ? prepareLink(pixel?.image?.link) : '#'}

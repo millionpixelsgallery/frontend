@@ -1,7 +1,7 @@
 import { CSSProperties, memo, useCallback, useMemo, useState } from 'react'
 import { SaleTooltipSC, SaleTooltipSCProps } from 'components/Viewport/Tooltip/SaleTooltip/styled'
 import { usePixelsController } from 'hooks/usePixels'
-import { marginBottom, marginTop } from 'utils/style/indents'
+import { marginBottom, marginLeft, marginTop } from 'utils/style/indents'
 import Link from 'components/ui/Link'
 import Button from 'components/ui/Button'
 import { Row } from 'components/ui/Grid'
@@ -16,9 +16,10 @@ export interface SaleTooltipProps extends SaleTooltipSCProps {
   style?: CSSProperties
   x: number
   y: number
+  onClose: () => void
 }
 
-function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
+function SaleTooltip({ className, style, x, y, onClose, ...rest }: SaleTooltipProps) {
   const { pixels } = usePixelsController()
   const pixel = useMemo(
     () => pixels?.find((pixel) => pixel.area[0] === x && pixel.area[1] === y),
@@ -33,7 +34,7 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
 
   return (
     <SaleTooltipSC className={className} style={style} type='success' title='for sale!' {...rest}>
-      <div className='text-nowrap' style={marginBottom(8)}>
+      <div className='text-nowrap pixel-title' style={marginBottom(8)}>
         {pixel?.image?.title || 'No title'}
       </div>
       <Link
@@ -61,6 +62,7 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
               width={96}
               size='sm'
               hidden={pixel?.owner === methods?.getAccount()}
+              style={marginLeft(7)}
             >
               Buy
             </Button>
@@ -68,6 +70,9 @@ function SaleTooltip({ className, style, x, y, ...rest }: SaleTooltipProps) {
           onBack={step ? handleBack : undefined}
           component={ByPixels}
           disabledControlButtons={disabledControlButtons}
+          onVisibilityChange={(visible) => {
+            if (!visible) onClose()
+          }}
           componentProps={{
             step,
             onChangeStep: setStep,

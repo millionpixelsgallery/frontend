@@ -12,6 +12,7 @@ import useTrigger from 'hooks/useTrigger'
 import { Transform } from 'panzoom'
 import { useEventListener } from 'hooks/useEventListener'
 import useRenderRef from 'hooks/useRenderRef'
+import { LinkSC } from 'components/ui/Link/styled'
 
 export interface TooltipProps {
   targetX: number
@@ -33,6 +34,14 @@ const TooltipSC = styled.div`
   top: 0;
   left: 0;
   z-index: 3;
+  min-width: 320px;
+
+  ${LinkSC}, .pixel-title {
+    max-width: 300px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `
 
 const root = document.getElementById('root')!
@@ -46,8 +55,6 @@ function Tooltip({
   targetWidth,
   targetHeight,
   transform = { scale: 1, x: 0, y: 0 },
-  width = 320,
-  height,
   onClose,
 }: TooltipProps) {
   const [hidden, toggleHidden] = useTrigger(true)
@@ -57,9 +64,8 @@ function Tooltip({
   let offsetX = targetX
   let offsetY = targetY + targetHeight + gap
 
-  const tooltipWidth = width / scale
-  const tooltipHeight =
-    useMemo(() => height ?? ref.current?.offsetHeight ?? 0, [ref.current, height]) / scale
+  const tooltipWidth = useMemo(() => ref.current?.offsetWidth ?? 0, [ref.current]) / scale
+  const tooltipHeight = useMemo(() => ref.current?.offsetHeight ?? 0, [ref.current]) / scale
 
   const right = Math.abs(tx) / scale + 1000 / scale
   const bottom = Math.abs(ty) / scale + 1000 / scale
@@ -102,7 +108,6 @@ function Tooltip({
       style={{
         ...style,
         visibility: hidden ? 'hidden' : 'visible',
-        width,
         transform: ` translate(${offsetX}px, ${offsetY}px) scale(${1 / scale})`,
       }}
     >

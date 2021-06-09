@@ -104,7 +104,8 @@ function EditPixels({
           onClick={handleNextStep}
           disabled={
             !(
-              Object.values(formik.values).every(Boolean) &&
+              formik.values.title &&
+              formik.values.link &&
               !Object.values(formik.errors).some(Boolean)
             )
           }

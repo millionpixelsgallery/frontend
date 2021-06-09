@@ -164,7 +164,7 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               onClose={handleTooltipClose}
             >
               {sellMode ? (
-                <SellTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
+                <SellTooltip x={tooltipCords[0]} y={tooltipCords[1]} onClose={handleTooltipClose} />
               ) : (
                 <DetailsTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
               )}

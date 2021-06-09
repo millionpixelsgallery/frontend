@@ -260,7 +260,9 @@ export class Web3Connect {
         if (sale) {
           sale = {
             end: parseInt(sale.end.toString()),
-            price: parseFloat(Web3.utils.fromWei(sale.price.toString())),
+            price: Intl.NumberFormat('en', { maximumFractionDigits: 18 }).format(
+              parseFloat(Web3.utils.fromWei(sale.price.toString()))
+            ),
           }
         }
       }
@@ -338,11 +340,11 @@ export class Web3Methods {
     throw new Error(`Pixels do not belong to you`)
   }
 
-  public async sellPixels(index: number, price: number, duration: number) {
+  public async sellPixels(index: number, price: string, duration: number) {
     const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
       await this.contract.methods
-        .sell(index, this.web3.utils.toWei(`${price}`, 'ether'), duration)
+        .sell(index, this.web3.utils.toWei(price, 'ether'), duration)
         .send({ from: this.account })
 
       return Web3Connect.getPixels(index)

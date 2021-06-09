@@ -10,7 +10,7 @@ import Input from 'components/ui/Input'
 import Text from 'components/ui/Text'
 import Radio from 'components/ui/Radio'
 import Button from 'components/ui/Button'
-import { maskInt2 } from 'utils/masks'
+import { maskDecimal18 } from 'utils/masks'
 import { useApiMethods } from 'hooks/useApi'
 import { usePixelsController } from 'hooks/usePixels'
 
@@ -47,7 +47,15 @@ function SellPixels({
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup) => ({
-      price: yup.string().required(),
+      price: yup
+        .string()
+        .test('not zero', (value) => {
+          if (value) {
+            return +value !== 0
+          }
+          return true
+        })
+        .required(),
       duration: yup.string().required(),
     })),
     enableReinitialize: true,
@@ -59,8 +67,7 @@ function SellPixels({
       if (values.duration === 'month') duration = 30
       onChangeDisabledControlButtons(true)
       try {
-        const unmaskedPrice = +values.price.replace(/[, ]+/g, '')
-        await methods?.sellPixels(index, unmaskedPrice, duration)
+        await methods?.sellPixels(index, values.price.replace(/[, ]+/g, ''), duration)
       } finally {
         onChangeDisabledControlButtons(false)
         setLoading(false)
@@ -79,7 +86,7 @@ function SellPixels({
             placeholder='ENTER YOUR PRICE'
             value={formik.values.price}
             onBlur={formik.handleBlur}
-            mask={maskInt2}
+            mask={maskDecimal18}
             onChange={formik.handleChange}
           />
         </Field>
