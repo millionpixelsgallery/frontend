@@ -14,6 +14,7 @@ import { useApiConnect, useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 import { usePixelsController } from 'hooks/usePixels'
+import { urlRegExp } from 'utils/link'
 
 export interface ProductData {
   width: number
@@ -66,6 +67,8 @@ function ByPixels({
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup, E) => ({
+      title: yup.string().max(100),
+      link: yup.string().max(750).matches(urlRegExp),
       image: yup.mixed().test('supported', E.INVALID_IMAGE_FORMAT, (file) => {
         if (!file) return true
         return supportedImageExtensions.includes(file.name.toLowerCase().split('.').pop()!)
@@ -90,8 +93,8 @@ function ByPixels({
             ipfs
           )
         }
-        onChangeStep(0)
       } finally {
+        onChangeStep(0)
         onChangeDisabledControlButtons(false)
         onClose()
         setLoading(false)
@@ -130,7 +133,17 @@ function ByPixels({
           </Button>
         )}
         {step !== 3 ? (
-          <Button width={140} onClick={handleNextStep}>
+          <Button
+            width={140}
+            onClick={handleNextStep}
+            disabled={
+              step === 2 &&
+              !(
+                Object.values(formik.values).every(Boolean) &&
+                !Object.values(formik.errors).some(Boolean)
+              )
+            }
+          >
             NEXT
           </Button>
         ) : (

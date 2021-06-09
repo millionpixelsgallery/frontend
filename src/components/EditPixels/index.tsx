@@ -11,6 +11,7 @@ import { useApiMethods } from 'hooks/useApi'
 import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 import { usePixelsController } from 'hooks/usePixels'
+import { urlRegExp } from 'utils/link'
 
 export interface EditProductData {
   width: number
@@ -50,7 +51,6 @@ function EditPixels({
   style,
   image,
   onChangeDisabledControlButtons,
-  ...rest
 }: EditPixelsProps) {
   const methods = useApiMethods()
   const { fetchPixels } = usePixelsController()
@@ -62,6 +62,8 @@ function EditPixels({
       image: null,
     },
     validationSchema: useValidationSchema((yup, E) => ({
+      title: yup.string().max(100),
+      link: yup.string().max(750).matches(urlRegExp),
       image: yup.mixed().test('supported', E.INVALID_IMAGE_FORMAT, (file) => {
         if (!file) return true
         return supportedImageExtensions.includes(file.name.toLowerCase().split('.').pop()!)
@@ -97,7 +99,16 @@ function EditPixels({
   const Bottom = (
     <Row justify={'end'} style={padding(0, 50, 50)}>
       {step == 0 ? (
-        <Button width={140} onClick={handleNextStep}>
+        <Button
+          width={140}
+          onClick={handleNextStep}
+          disabled={
+            !(
+              Object.values(formik.values).every(Boolean) &&
+              !Object.values(formik.errors).some(Boolean)
+            )
+          }
+        >
           NEXT
         </Button>
       ) : (
@@ -109,7 +120,7 @@ function EditPixels({
   )
 
   return (
-    <EditPixelsSC className={className} style={style} {...rest}>
+    <EditPixelsSC className={className} style={style}>
       {step === 0 ? (
         <ByPixelsUploadPhoto title={'EDIT YOUR NFT'} data={data} formik={formik}>
           {Bottom}

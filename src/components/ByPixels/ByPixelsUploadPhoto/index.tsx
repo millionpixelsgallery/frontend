@@ -14,6 +14,7 @@ import resizeImage from 'smart-img-resize'
 import FileInput from 'components/ui/FileInput'
 import cn from 'classnames'
 import { dataURLtoFile } from 'utils/dataUrlToFile'
+import { useTheme } from 'styled-components'
 
 export interface ByPixelsUploadPhotoProps extends ByPixelsUploadPhotoSCProps {
   className?: string
@@ -33,9 +34,10 @@ function ByPixelsUploadPhoto({
   data,
   ...rest
 }: ByPixelsUploadPhotoProps) {
+  const theme = useTheme()
   const onChangeLink = useCallback(
     (e) => {
-      formik.setFieldValue('link', e.currentTarget.value.slice(0, 750).replace(/^https?:\/\//, ''))
+      formik.setFieldValue('link', e.currentTarget.value.slice(0, 750))
     },
 
     [formik.setFieldValue]
@@ -114,7 +116,7 @@ function ByPixelsUploadPhoto({
                   <>
                     For best Image Display use{' '}
                     <Text weight={600} type={'S'}>
-                      {data.height * data.width} px.
+                      {data.width}*{data.height} px.
                     </Text>
                     <br />
                   </>
@@ -134,18 +136,27 @@ function ByPixelsUploadPhoto({
             name='link'
             title='AdD A link'
             className={'full-width-input'}
-            prefix={<Text type={'XL'}>http://</Text>}
+            prefix={<Text type={'XL'}>https://</Text>}
             style={marginBottom(36)}
           >
             <Input
-              placeholder='www.gizmokaka.io'
+              mainColor={theme.color.link.primaryPrimary}
+              placeholder='WWW.SITE.COM'
               className={'input-text-start'}
+              error={formik.getError('link')}
               value={formik.values.link}
               onChange={onChangeLink}
+              onBlur={formik.handleBlur}
             />
           </Field>
           <Field name='title' title='ADD A TITLE' className={'full-width-input'}>
-            <Input placeholder='This is art' value={formik.values.title} onChange={onChangeTitle} />
+            <Input
+              placeholder='This is art'
+              value={formik.values.title}
+              onChange={onChangeTitle}
+              onBlur={formik.handleBlur}
+              mainColor={theme.color.link.primaryPrimary}
+            />
           </Field>
           <Text type={'S'} color={'#0B07424D'} style={marginLeft('auto')}>
             {formik.values.title.length} / 100
