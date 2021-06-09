@@ -32,9 +32,9 @@ interface PixelsState {
 
 type PixelsActions =
   | Action<'SELECTION_ACTIVE_CHANGE', { value?: boolean }>
-  | Action<'PIXELS_LOADING', { loading: boolean }>
+  | Action<'PIXELS_LOADING'>
   | Action<'PIXELS_CHANGE', { pixels: Pixels[] }>
-  | Action<'MY_PIXELS_LOADING', { loading: boolean }>
+  | Action<'MY_PIXELS_LOADING'>
   | Action<'MY_PIXELS_CHANGE', { pixels: Pixels[] }>
 
 const PixelsContext = createContext<IPixelsContext>({} as IPixelsContext)
@@ -58,7 +58,8 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
         case 'PIXELS_LOADING':
           return {
             ...state,
-            pixelsLoading: action.loading,
+            pixels: undefined,
+            pixelsLoading: true,
           }
         case 'MY_PIXELS_CHANGE':
           return {
@@ -69,7 +70,8 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
         case 'MY_PIXELS_LOADING':
           return {
             ...state,
-            myPixelsLoading: action.loading,
+            myPixels: undefined,
+            myPixelsLoading: true,
           }
         default:
           return state
@@ -88,7 +90,6 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
     if (!methods) return
     dispatch({
       type: 'MY_PIXELS_LOADING',
-      loading: true,
     })
     const pixels = await methods.getAllMyPixels().catch((e) => {
       console.error(e)
@@ -104,7 +105,6 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
     if (state.myPixels) fetchMyPixels()
     dispatch({
       type: 'PIXELS_LOADING',
-      loading: true,
     })
     const pixels = await Web3Connect.getAllPixels().catch((e) => {
       console.error(e)
@@ -119,6 +119,12 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
   useEffect(() => {
     fetchPixels()
   }, [])
+
+  useEffect(() => {
+    if (state.myPixels) {
+      fetchMyPixels()
+    }
+  }, [methods])
 
   return (
     <PixelsContext.Provider
