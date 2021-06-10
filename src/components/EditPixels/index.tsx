@@ -92,7 +92,19 @@ function EditPixels({
     },
   })
 
-  const handleNextStep = useCallback(() => {
+  const handleNextStep = useCallback(async () => {
+    if (step === 0) {
+      const errors = await formik.validateForm()
+      formik.setTouched(
+        {
+          image: true,
+          title: true,
+          link: true,
+        },
+        false
+      )
+      if (Object.keys(errors).length) return
+    }
     onChangeStep(step + 1)
   }, [step])
 
