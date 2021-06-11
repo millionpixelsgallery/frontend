@@ -61,6 +61,13 @@ function Canvas({ className, style, pixels }: CanvasProps) {
     Web3Connect.topSize().then(setTopArea)
   }, [])
 
+  const sprites = useMemo(() => {
+    if (!app) return
+    const sprites = new Container()
+    sprites.zIndex = 2
+    return sprites
+  }, [app])
+
   return (
     <>
       <CanvasSC className={className} style={style} ref={ref} width={1000} height={1000} />
@@ -89,7 +96,7 @@ function Canvas({ className, style, pixels }: CanvasProps) {
           {pixels?.map((props) => (
             <Pixels
               key={`${props.x}${props.y}${props.selling}${props.src}`}
-              container={app.stage}
+              container={sprites!}
               render={app.render}
               {...props}
             />
