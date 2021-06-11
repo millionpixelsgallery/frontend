@@ -10,13 +10,15 @@ import MyPixels from 'components/MyPixels'
 import { PixelsProvider } from 'hooks/usePixels'
 
 function App() {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(Boolean(Web3Connect.cachedProvider))
   const [methods, setMethods] = useState<Web3Methods>()
   useEffect(() => {
     ;(async () => {
       if (Web3Connect.cachedProvider) {
         try {
           await new Web3Connect(setMethods).connect()
+        } catch (e) {
+          console.error(e)
         } finally {
           setLoading(false)
         }
@@ -30,9 +32,11 @@ function App() {
         loading,
         methods,
         async connect(provider) {
-          setLoading(true)
           try {
+            setLoading(true)
             await new Web3Connect(setMethods).connect(provider)
+          } catch (e) {
+            console.error(e)
           } finally {
             setLoading(false)
           }
