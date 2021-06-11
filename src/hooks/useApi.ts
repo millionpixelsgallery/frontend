@@ -4,12 +4,12 @@ import { Web3Methods, Web3Providers } from 'lib/web3connect'
 interface IApiContext {
   methods?: Web3Methods
   loading?: boolean
-  connect(provider: Web3Providers): Promise<void>
+  connect(provider: Web3Providers): Promise<Web3Methods | undefined>
 }
 
 export const ApiContext = createContext<IApiContext>({
   connect() {
-    return Promise.resolve()
+    return Promise.resolve(undefined)
   },
 })
 

@@ -13,6 +13,7 @@ import Modal from 'components/ui/Modal'
 import { useHistory } from 'react-router-dom'
 import Button from 'components/ui/Button'
 import { usePixelsController } from 'hooks/usePixels'
+import useLink from 'hooks/useLink'
 
 export interface MyPixelsProps extends MyPixelsSCProps {
   className?: string
@@ -35,9 +36,10 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
     [connect]
   )
 
+  const methodsRef = useLink(methods)
   const handleSelectWalletClose = useCallback(() => {
-    if (!methods) history.replace('/gallery')
-  }, [methods, history])
+    if (!methodsRef.current) history.replace('/gallery')
+  }, [history])
 
   useEffect(() => {
     if (methods && !myPixelsLoading && !myPixels) fetchMyPixels()
