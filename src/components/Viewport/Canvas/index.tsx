@@ -45,6 +45,14 @@ function Canvas({ className, style, pixels }: CanvasProps) {
     }
 
     app.render = app.render.bind(app)
+    const bg = new Container()
+    bg.name = 'bg'
+
+    const pixels = new Container()
+    pixels.name = 'pixels'
+
+    app.stage.addChild(bg)
+    app.stage.addChild(pixels)
 
     setApp(app)
 
@@ -61,13 +69,6 @@ function Canvas({ className, style, pixels }: CanvasProps) {
     Web3Connect.topSize().then(setTopArea)
   }, [])
 
-  const sprites = useMemo(() => {
-    if (!app) return
-    const sprites = new Container()
-    sprites.zIndex = 2
-    return sprites
-  }, [app])
-
   return (
     <>
       <CanvasSC className={className} style={style} ref={ref} width={1000} height={1000} />
@@ -75,7 +76,7 @@ function Canvas({ className, style, pixels }: CanvasProps) {
         <>
           {mediumArea && (
             <Rect
-              container={app.stage}
+              container={app.stage.getChildByName('bg') as Container}
               x={mediumArea[0]}
               y={mediumArea[1]}
               width={mediumArea[2]}
@@ -85,7 +86,7 @@ function Canvas({ className, style, pixels }: CanvasProps) {
           )}
           {topArea && (
             <Rect
-              container={app.stage}
+              container={app.stage.getChildByName('bg') as Container}
               x={topArea[0]}
               y={topArea[1]}
               width={topArea[2]}
@@ -96,7 +97,7 @@ function Canvas({ className, style, pixels }: CanvasProps) {
           {pixels?.map((props) => (
             <Pixels
               key={`${props.x}${props.y}${props.selling}${props.src}`}
-              container={sprites!}
+              container={app.stage.getChildByName('pixels') as Container}
               render={app.render}
               {...props}
             />

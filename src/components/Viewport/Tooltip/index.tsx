@@ -34,7 +34,6 @@ const TooltipSC = styled.div`
   top: 0;
   left: 0;
   z-index: 3;
-  min-width: 320px;
 
   ${LinkSC}, .pixel-title {
     max-width: 300px;

@@ -4,7 +4,6 @@ import Card from 'components/ui/Card'
 export interface DetailsTooltipSCProps {}
 
 export const DetailsTooltipSC = styled(Card)`
-  height: 152px;
   font: normal normal normal 16px/24px Oswald;
   letter-spacing: 0.32px;
   color: ${({ theme }) => theme.color.typography.text};
@@ -13,6 +12,7 @@ export const DetailsTooltipSC = styled(Card)`
     overflow: hidden;
     text-overflow: ellipsis;
     text-transform: uppercase;
+    padding: 10px 20px 15px 20px;
   }
 
   .disabled {
