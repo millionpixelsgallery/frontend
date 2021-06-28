@@ -35,6 +35,7 @@ export interface ByPixelsProps extends ByPixelsSCProps {
   onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
   data: ProductData
+  firstBuy?: boolean
 }
 
 const initialValues = {
@@ -59,6 +60,7 @@ function ByPixels({
   onChangeDisabledControlButtons,
   style,
   onClose,
+  firstBuy,
 }: ByPixelsProps) {
   const pixels = usePixelsController()
   const [loading, setLoading] = useState(false)
@@ -158,7 +160,7 @@ function ByPixels({
   return (
     <ByPixelsSC className={className} style={style}>
       {step === 0 ? (
-        <ByPixelsSelectWallet onSelect={handleSelectWallet} />
+        <ByPixelsSelectWallet onSelect={handleSelectWallet} fullTitle={firstBuy} />
       ) : step === 1 ? (
         <ByPixelsReviewPixels data={data}>{Bottom}</ByPixelsReviewPixels>
       ) : step === 2 ? (

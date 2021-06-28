@@ -151,7 +151,7 @@ function ByPixelsUploadPhoto({
           </Field>
           <Field name='title' title='ADD A TITLE' className={'full-width-input'}>
             <Input
-              placeholder='This is art'
+              placeholder='ENTER YOUR TITLE HERE'
               value={formik.values.title}
               onChange={onChangeTitle}
               onBlur={formik.handleBlur}

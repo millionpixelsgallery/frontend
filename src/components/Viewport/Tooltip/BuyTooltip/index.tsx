@@ -99,6 +99,7 @@ function BuyTooltip({ x, y, width, height }: BuyTooltipProps) {
               disabledControlButtons={disabledControlButtons}
               onVisibilityChange={handleVisibilityChange}
               componentProps={{
+                firstBuy: true,
                 step,
                 onChangeStep: setStep,
                 onChangeDisabledControlButtons: setDisabledControlButtons,
