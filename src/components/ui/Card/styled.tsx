@@ -28,7 +28,7 @@ export const CardSC = styled.div<CardSCProps>`
         success: theme.color.card.success,
         error: theme.color.card.error,
       })};
-    font: normal normal 600 22px/32px Oswald;
+    font: normal normal 600 22px Oswald;
     letter-spacing: 0.44px;
     color: ${({ theme }) => theme.color.card.title};
     text-transform: uppercase;
@@ -36,6 +36,11 @@ export const CardSC = styled.div<CardSCProps>`
     border-radius: 20px 20px 0 0;
     padding-left: 10px;
     padding-right: 10px;
+    position: relative;
+    top: -5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   .content {
