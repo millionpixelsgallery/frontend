@@ -8,6 +8,8 @@ export const DetailsTooltipSC = styled(Card)`
   letter-spacing: 0.32px;
   color: ${({ theme }) => theme.color.typography.text};
   white-space: nowrap;
+  min-height: 152px;
+
   .content {
     overflow: hidden;
     text-overflow: ellipsis;

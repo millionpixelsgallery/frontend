@@ -31,6 +31,7 @@ function SaleTooltip({ className, style, x, y, onClose, ...rest }: SaleTooltipPr
     setStep((step) => step - 1)
   }, [])
   const methods = useApiMethods()
+  const isOwner = pixel?.owner === methods?.getAccount()
 
   return (
     <SaleTooltipSC className={className} style={style} type='success' title='for sale!' {...rest}>
@@ -59,12 +60,12 @@ function SaleTooltip({ className, style, x, y, onClose, ...rest }: SaleTooltipPr
           trigger={
             <Button
               className='buy'
-              width={96}
+              width={isOwner ? 126 : 96}
               size='sm'
-              hidden={pixel?.owner === methods?.getAccount()}
+              disabled={isOwner}
               style={marginLeft(7)}
             >
-              Buy
+              {isOwner ? 'My pixels' : 'Buy'}
             </Button>
           }
           onBack={step ? handleBack : undefined}
