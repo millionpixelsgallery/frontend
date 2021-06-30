@@ -300,15 +300,12 @@ export class Web3Methods {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
     if (isAvailable && area[2] > 0 && area[3] > 0) {
-      try {
-        const hash = ethers.utils.solidityKeccak256(
-          ['uint32[4]', 'string', 'address'],
-          [area, ipfs, this.account]
-        )
-        await this.contract.methods.commitToPixels(hash).send({ from: this.account })
-      } catch (e) {
-        console.warn('Commit already set')
-      }
+      const hash = ethers.utils.solidityKeccak256(
+        ['uint32[4]', 'string', 'address'],
+        [area, ipfs, this.account]
+      )
+
+      await this.contract.methods.commitToPixels(hash).send({ from: this.account })
 
       const price = await Web3Connect.getPixelsCost(area)
       await this.contract.methods
