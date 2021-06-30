@@ -36,7 +36,7 @@ function App() {
             setLoading(true)
             return await new Web3Connect(setMethods).connect(provider)
           } catch (e) {
-            console.error(e)
+            throw e
           } finally {
             setLoading(false)
           }
