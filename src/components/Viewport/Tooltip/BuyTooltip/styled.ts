@@ -2,8 +2,8 @@ import styled from 'styled-components'
 import Card from 'components/ui/Card'
 
 export const BuyTooltipSC = styled(Card)`
-  width: 100%;
-  height: 180px;
+  min-width: 320px;
+  min-height: 180px;
   text-transform: uppercase;
   text-align: center;
 

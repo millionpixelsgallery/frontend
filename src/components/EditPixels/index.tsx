@@ -54,7 +54,7 @@ function EditPixels({
 }: EditPixelsProps) {
   const methods = useApiMethods()
   const { fetchPixels } = usePixelsController()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState('')
   const formik = useForm({
     initialValues: {
       link: image.link,
@@ -71,20 +71,19 @@ function EditPixels({
     })),
     onSubmit: async (values) => {
       let image = values.image
-      setLoading(true)
+      setLoading('Uploading To IPFS')
       onChangeDisabledControlButtons(true)
       try {
-        await methods?.setIpfs(
-          data.index,
-          await upload(
-            Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
-            values.title,
-            values.link
-          )
+        const ipfs = await upload(
+          Boolean(image) ? image! : await cratePlaceHolderFile(data.width, data.height),
+          values.title,
+          values.link
         )
+        setLoading('Pending wallet confirm')
+        await methods?.setIpfs(data.index, ipfs)
       } finally {
         onChangeDisabledControlButtons(false)
-        setLoading(false)
+        setLoading('')
         onChangeStep(0)
         onClose()
         await fetchPixels()

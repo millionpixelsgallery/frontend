@@ -1,8 +1,9 @@
 import { CSSProperties, memo, ReactNode } from 'react'
+import { useTheme } from 'styled-components'
 import { ByPixelsConfirmOrderSC, ByPixelsConfirmOrderSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import Title from 'components/ui/Title'
-import { margin, marginBottom, padding } from 'utils/style/indents'
+import { margin, marginBottom, padding, marginTop } from 'utils/style/indents'
 import Area from 'components/ui/Area'
 import { Calculate } from 'components/ByPixels/ByPixelsReviewPixels'
 import { ByPixelsValues, ProductData } from 'components/ByPixels/index'
@@ -28,6 +29,7 @@ function ByPixelsConfirmOrder({
   formik,
   ...rest
 }: ByPixelsConfirmOrderProps) {
+  const theme = useTheme()
   return (
     <ByPixelsConfirmOrderSC className={className} style={style} {...rest}>
       <Col justify={'between'} className={'full-height'}>
@@ -81,6 +83,14 @@ function ByPixelsConfirmOrder({
               </Col>
             </Col>
           </Row>
+        </Col>
+        <Col align={'center'}>
+          <Text type={'L'} style={{ textDecoration: 'underline', ...marginTop(26) }}>
+            IMPORTANT: After clicking “confirm”
+          </Text>
+          <Text type={'L'} weight={600} color={theme.color.typography.title}>
+            You’ll need to click “confirm” in your wallet to complete the transaction
+          </Text>
         </Col>
         {children}
       </Col>

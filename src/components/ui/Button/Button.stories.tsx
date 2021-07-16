@@ -22,7 +22,7 @@ export const Default = createStory({
 
 export const Loading = createStory({
   children: 'lorem',
-  loading: true,
+  loading: 'Loading',
 })
 
 export const Disabled = createStory({

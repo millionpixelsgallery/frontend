@@ -296,20 +296,37 @@ export class Web3Connect {
 export class Web3Methods {
   constructor(private contract: any, private web3: any, private account: any) {}
 
-  public async buyPixels(area: Area, ipfs: string): Promise<Pixels> {
+  public async commit(area: Area, cb: () => void): Promise<string> {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
     if (isAvailable && area[2] > 0 && area[3] > 0) {
-      const hash = ethers.utils.solidityKeccak256(
-        ['uint32[4]', 'string', 'address'],
-        [area, ipfs, this.account]
-      )
+      try {
+        const random = (Math.random() * 1e10).toFixed(0)
+        const hash = ethers.utils.solidityKeccak256(
+          ['uint32[4]', 'uint256', 'address'],
+          [area, random, this.account]
+        )
+        await this.contract.methods
+          .commitToPixels(hash)
+          .send({ from: this.account })
+          .on('transactionHash', cb)
+        return random
+      } catch (e) {
+        console.warn('Commit already set', e)
+        throw new Error('Commit failed')
+      }
+    } else {
+      throw new Error('Area is not available')
+    }
+  }
 
-      await this.contract.methods.commitToPixels(hash).send({ from: this.account })
+  public async buyPixels(area: Area, random: string, ipfs: string): Promise<Pixels> {
+    const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
+    if (isAvailable && area[2] > 0 && area[3] > 0) {
       const price = await Web3Connect.getPixelsCost(area)
       await this.contract.methods
-        .buyPixels(area, ipfs)
+        .buyPixels(area, random, ipfs)
         .send({ from: this.account, value: price.raw })
 
       const count = await this.contract.methods.getAreasCount().call()

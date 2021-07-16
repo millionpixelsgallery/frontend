@@ -29,7 +29,7 @@ const getButtonType = (
         ${getShadow($shadow, $size, $disabled)}
         ${
           $disabled
-            ? `background: ${theme.color.button.default.disabledBg}; opacity: 0.15;`
+            ? `background: ${theme.color.button.default.disabledBg};`
             : `background: ${theme.color.button.default.bg};`
         }
       `

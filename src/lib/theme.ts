@@ -73,7 +73,7 @@ const theme = {
       default: {
         text: '#FFFFFF',
         bg: 'transparent linear-gradient(114deg, #FF9190 0%, #5E72EB 100%) 0% 0% no-repeat padding-box',
-        disabledBg: '#0B0742',
+        disabledBg: 'rgba(11,7,68,0.15)',
       },
       outlined: {
         text: '#5e72eb',

@@ -62,8 +62,11 @@ function ByPixels({
   onClose,
   firstBuy,
 }: ByPixelsProps) {
+  console.log({ data })
+  const isReSell = data.index != null
+  const [commitPromise, setCommitPromise] = useState(Promise.resolve(''))
   const pixels = usePixelsController()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState('')
   const methods = useApiMethods()
   const connect = useApiConnect()
   const formik = useForm({
@@ -77,7 +80,7 @@ function ByPixels({
       }),
     })),
     onSubmit: async (values) => {
-      setLoading(true)
+      setLoading('Uploading To IPFS')
       onChangeDisabledControlButtons(true)
       try {
         const ipfs = await upload(
@@ -87,19 +90,25 @@ function ByPixels({
           values.title,
           values.link
         )
-        if (data.index != undefined) {
-          await methods?.buyPixelsForSale(data.index, ipfs)
+        setLoading('Pending wallet confirm')
+
+        if (isReSell) {
+          await methods?.buyPixelsForSale(data.index as number, ipfs)
         } else {
+          const random = await commitPromise
           await methods?.buyPixels(
             [data.position.x, data.position.y, data.width, data.height],
+            random,
             ipfs
           )
         }
+      } catch (e) {
+        console.error('error while buying pixels', e)
       } finally {
         onChangeStep(0)
         onChangeDisabledControlButtons(false)
         onClose()
-        setLoading(false)
+        setLoading('')
         pixels.setSelectionActive(false)
         await pixels.fetchPixels()
       }
@@ -117,7 +126,28 @@ function ByPixels({
   }, [])
 
   const handleNextStep = useCallback(async () => {
-    onChangeStep(step + 1)
+    switch (step) {
+      case 1:
+        if (methods && isReSell === false) {
+          setLoading('Pending wallet confirm')
+          const promise = methods.commit(
+            [data.position.x, data.position.y, data.width, data.height],
+            () => {
+              setLoading('')
+              onChangeStep(step + 1)
+            }
+          )
+          promise.catch((_) => setLoading(''))
+          setCommitPromise(promise)
+        } else onChangeStep(step + 1)
+        break
+      case 2:
+        onChangeStep(step + 1)
+        break
+      case 3:
+        formik.submitForm()
+        break
+    }
   }, [step])
 
   const handleSkipStep = useCallback(() => {
@@ -125,34 +155,32 @@ function ByPixels({
     onChangeStep(step + 1)
   }, [step])
 
+  const StepButton = () => {
+    const disabled =
+      step == 2 &&
+      !(Object.values(formik.values).every(Boolean) && !Object.values(formik.errors).some(Boolean))
+    const texts = [isReSell ? 'Next' : 'Lock & Next', 'Next', 'Confirm']
+    return (
+      <Button
+        style={{ minWidth: '140px' }}
+        onClick={handleNextStep}
+        disabled={disabled}
+        loading={loading}
+      >
+        {texts[step - 1]}
+      </Button>
+    )
+  }
   const Bottom = (
     <Row justify={'between'} align={'center'} style={padding(0, 50, 50, 30)}>
-      <ProcessBar steps={['REview', 'Upload', 'CONFIRM']} currentStep={step - 1} />
+      <ProcessBar steps={['Review & Lock', 'Upload', 'CONFIRM']} currentStep={step - 1} />
       <Row justify={'end'} gap={50}>
         {step === 2 && (
           <Button width={140} type={'underline'} onClick={handleSkipStep}>
             SKIP FOR NOW
           </Button>
         )}
-        {step !== 3 ? (
-          <Button
-            width={140}
-            onClick={handleNextStep}
-            disabled={
-              step === 2 &&
-              !(
-                Object.values(formik.values).every(Boolean) &&
-                !Object.values(formik.errors).some(Boolean)
-              )
-            }
-          >
-            NEXT
-          </Button>
-        ) : (
-          <Button width={140} onClick={formik.submitForm} loading={loading}>
-            CONFIRM
-          </Button>
-        )}
+        <StepButton />
       </Row>
     </Row>
   )
