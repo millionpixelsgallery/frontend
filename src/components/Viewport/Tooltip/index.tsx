@@ -95,7 +95,7 @@ function Tooltip({
     (e) => {
       if (renderRef.first) return
       if (!(e.target === ref.current || ref.current?.contains(e.target as Node | null))) {
-        // if (onClose) onClose()
+        toggleHidden()
       }
     },
     [onClose]

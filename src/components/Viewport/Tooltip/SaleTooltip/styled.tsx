@@ -4,7 +4,8 @@ import Card from 'components/ui/Card'
 export interface SaleTooltipSCProps {}
 
 export const SaleTooltipSC = styled(Card)`
-  height: 189px;
+  min-height: 189px;
+  min-width: 320px;
   font: normal normal normal 16px/24px Oswald;
   letter-spacing: 0.32px;
   color: ${({ theme }) => theme.color.typography.text};

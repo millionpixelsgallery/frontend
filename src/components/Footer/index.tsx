@@ -12,14 +12,26 @@ export interface FooterProps extends FooterSCProps {
 }
 
 function Footer({ className, style, ...rest }: FooterProps) {
+  const mailto = (e: any) => {
+    const w = 800
+    const h = 800
+    const y = window.top.outerHeight / 2 + window.top.screenY - h / 2
+    const x = window.top.outerWidth / 2 + window.top.screenX - w / 2
+    window.open(
+      'mailto:millionpixelsgallery@gmail.com',
+      'mail',
+      `width=${w}, height=${h},top=${y},left=${x}`
+    )
+    e.preventDefault()
+  }
   return (
     <FooterSC className={className} style={style} {...rest}>
       <Row justify='between'>
         <Row gap={10}>
-          <Link to='/'>
+          <Link to={{ pathname: 'https://twitter.com/MPG_NFT' }}>
             <SocialIcon src='/assets/twitter.svg' />
           </Link>
-          <Link to='/'>
+          {/* <Link to='/'>
             <SocialIcon src='/assets/facebook.svg' />
           </Link>
           <Link to='/'>
@@ -27,9 +39,17 @@ function Footer({ className, style, ...rest }: FooterProps) {
           </Link>
           <Link to='/'>
             <SocialIcon src='/assets/reddit.svg' />
-          </Link>
+          </Link> */}
         </Row>
-        <Text color='#FFFFFF'>Contact us</Text>
+        <Text color='#FFFFFF'>
+          <a
+            onClick={mailto}
+            style={{ color: '#FFFFFF', textDecoration: 'none' }}
+            href='mailto:millionpixelsgallery@gmail.com'
+          >
+            Contact Us
+          </a>
+        </Text>
       </Row>
       <Row style={marginTop(74)} align='center' justify='center'>
         <Text
@@ -39,10 +59,10 @@ function Footer({ className, style, ...rest }: FooterProps) {
           lineHeight='17px'
           className={'copyright'}
         >
-          <div>© Copyright 2021 millionpixelsnfthomepage.com. All rights reserved. </div>
+          <div>© Copyright 2021 millionpixelsgallery.eth.link. All rights reserved. </div>
           <div>
-            millionpixelsnfthomepage.com cannot be held responsible for content on linked sites.
-            Images shown on millionpixelsnfthomepage.com are copyrighted by their owners.
+            millionpixelsgallery.eth.link cannot be held responsible for content on linked sites.
+            Images shown on millionpixelsgallery.eth.link are copyrighted by their owners.
           </div>
         </Text>
       </Row>

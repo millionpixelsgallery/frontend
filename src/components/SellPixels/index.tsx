@@ -41,7 +41,7 @@ function SellPixels({
   onChangeDisabledControlButtons,
 }: SellPixelsProps) {
   const methods = useApiMethods()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState('')
   const { fetchPixels } = usePixelsController()
 
   const formik = useForm({
@@ -60,7 +60,7 @@ function SellPixels({
     })),
     enableReinitialize: true,
     onSubmit: async (values) => {
-      setLoading(true)
+      setLoading('Pending wallet confirm')
       let duration = 1
       if (values.duration === 'week') duration = 7
       if (values.duration === 'day') duration = 1
@@ -70,7 +70,7 @@ function SellPixels({
         await methods?.sellPixels(index, values.price.replace(/[, ]+/g, ''), duration)
       } finally {
         onChangeDisabledControlButtons(false)
-        setLoading(false)
+        setLoading('')
         onClose()
         await fetchPixels()
       }

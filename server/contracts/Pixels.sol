@@ -91,7 +91,7 @@ contract Pixels is ERC721 {
             topArea *
                 1e17 +
                 ((medArea - topArea) * 1e16) +
-                ((regular - medArea) * 1e15);
+                ((regular - medArea) * 5e14);
 
         return cost;
     }
@@ -113,7 +113,7 @@ contract Pixels is ERC721 {
 
     /**
      * @dev user must call this first before calling buyPixels
-     * @param areaHash keccak256(rect:uint[4], ipfs:byte32, publickey:address)
+     * @param areaHash keccak256(rect:uint[4], commitNonce:uint, publickey:address)
      */
     function commitToPixels(bytes32 areaHash) external {
         require(commits[areaHash] == 0, "commit already set");
@@ -126,15 +126,16 @@ contract Pixels is ERC721 {
      * @param area rectangle to generate NFT for
      * @param ipfs the ipfs hash containing display data for the NFT
      */
-    function buyPixels(uint32[4] memory area, string calldata ipfs)
-        external
-        payable
-    {
+    function buyPixels(
+        uint32[4] memory area,
+        uint256 commitNonce,
+        string calldata ipfs
+    ) external payable {
         require(
             area[0] + area[2] <= width && area[1] + area[3] <= height,
             "out of bounds"
         );
-        _checkCommit(area, ipfs, _msgSender());
+        _checkCommit(area, commitNonce, _msgSender());
         uint256 cost = pixelsCost(area);
         require(cost <= msg.value, "Pixels: invalid payment");
 
@@ -247,11 +248,11 @@ contract Pixels is ERC721 {
 
     function _checkCommit(
         uint32[4] memory area,
-        string memory ipfs,
+        uint256 nonce,
         address buyer
     ) internal view {
         //check that area+ipfs+nonce hash = areaHash
-        bytes32 areaHash = keccak256(abi.encodePacked(area, ipfs, buyer));
+        bytes32 areaHash = keccak256(abi.encodePacked(area, nonce, buyer));
         uint256 atBlock = commits[areaHash];
         require(atBlock > 0, "commit not set");
         require(atBlock < block.number, "commit at current block");

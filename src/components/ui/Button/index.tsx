@@ -1,6 +1,6 @@
 import { CSSProperties, memo, ReactNode } from 'react'
 import { ButtonSC } from './styled'
-
+import Spinner from '../Spinner'
 export type ButtonTypes = 'default' | 'outlined' | 'outlined_orange' | 'wrapper' | 'underline'
 export type ButtonSizes = 'sm' | 'md' | 'lg' | 'content'
 
@@ -14,7 +14,7 @@ export interface ButtonProps
   width?: number
   disabled?: boolean
   shadow?: boolean
-  loading?: boolean
+  loading?: string
   children: ReactNode
 }
 
@@ -28,7 +28,7 @@ function Button({
   width,
   children,
   disabled = false,
-  loading = false,
+  loading = '',
   ...rest
 }: ButtonProps) {
   return (
@@ -40,11 +40,20 @@ function Button({
       fontSize={fontSize}
       $width={width}
       $shadow={shadow}
-      $disabled={disabled || loading}
-      disabled={disabled || loading}
+      $disabled={disabled || loading != ''}
+      disabled={disabled || loading != ''}
       {...rest}
     >
-      {loading ? 'Loading...' : children}
+      {loading ? (
+        <div style={{ display: 'flex' }}>
+          <span>{loading}</span>
+          <span>
+            <Spinner />
+          </span>
+        </div>
+      ) : (
+        children
+      )}
     </ButtonSC>
   )
 }
