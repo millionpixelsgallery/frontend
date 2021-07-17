@@ -30,17 +30,13 @@ jobs:
           pre_release_branches: main
           # release_branches: release.*,master
 
-  loadenv:
-    name: read env file
-    steps:
-      - run: echo ${{secrets.DOTENV_DEV}} >> .env
-
   deploy:
     name: Deploy Release
     runs-on: ubuntu-latest
     needs: bump_version
     if: ${{ needs.bump_version.outputs.new_tag != null }}
     steps:
+      - run: echo ${{secrets.DOTENV_DEV}} >> .env
       # Basic env setup and app build
       # Result: built app in /dist
       - run: echo "subdomain=${{ secrets.CLOUDFLARE_SUBDOMAIN_DEV }}" >> $GITHUB_ENV
