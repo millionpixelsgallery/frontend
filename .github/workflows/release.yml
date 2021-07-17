@@ -43,12 +43,6 @@ jobs:
       - run: echo "deploy_tag=${{ needs.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Load node v14
-        uses: actions/setup-node@v1
-        with:
-          node-version: '14'
-      - name: Install deps
-        run: yarn install --frozen-lockfile
       - run: echo ${{ secrets.DOTENV_DEV }} >> $GITHUB_ENV
       - run: echo ${{ secrets.DOTENV_DEV }} >> .env
       - name: Get version
@@ -57,6 +51,12 @@ jobs:
       - name: Test output
         run: echo ${{ steps.vars.outputs.version }}
       - run: ls -la
+      - name: Load node v14
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14'
+      - name: Install deps
+        run: yarn install --frozen-lockfile
       - name: Build app
         run: yarn build
 
