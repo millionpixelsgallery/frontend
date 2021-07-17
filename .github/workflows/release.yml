@@ -51,7 +51,7 @@ jobs:
         run: yarn install --frozen-lockfile
       - run: echo ${{ secrets.DOTENV_DEV }} >> $GITHUB_ENV
       - run: echo ${{ secrets.DOTENV_DEV }} >> .env
-      - run: cat .env
+      - run: echo `cat .env`
       - run: ls -la
       - name: Build app
         run: yarn build
