@@ -1,9 +1,18 @@
-import { CSSProperties, memo, ReactNode, ReactNodeArray } from 'react'
+import {
+  CSSProperties,
+  memo,
+  ReactNode,
+  ReactNodeArray,
+  useCallback,
+  useLayoutEffect,
+  useState,
+} from 'react'
 import { LayoutSC, LayoutSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import Header from 'components/Header'
 import SideBar from 'components/SideBar'
 import Footer from 'components/Footer'
+import { useEventListener } from 'hooks/useEventListener'
 
 export interface LayoutProps extends LayoutSCProps {
   className?: string
@@ -12,10 +21,26 @@ export interface LayoutProps extends LayoutSCProps {
 }
 
 function Layout({ className, style, children, ...rest }: LayoutProps) {
+  const [viewportWidth, setViewportWidth] = useState(document.body.clientWidth)
+  useEventListener(
+    window,
+    'resize',
+    useCallback(() => setViewportWidth(document.body.clientWidth), [])
+  )
+
+  useLayoutEffect(() => setViewportWidth(document.body.clientWidth), [])
+
   return (
-    <LayoutSC className={className} style={style} {...rest}>
-      <Col align='center' className={'container'}>
-        <Row>
+    <LayoutSC
+      className={className}
+      style={{
+        paddingLeft: viewportWidth % 2,
+        ...style,
+      }}
+      {...rest}
+    >
+      <Col className={'container'}>
+        <Row justify={'center'}>
           <div className={'sideBlock'} />
           <div className={'centerBlock'}>
             <Header />

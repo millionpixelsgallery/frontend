@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useState } from 'react'
+import { CSSProperties, memo } from 'react'
 import { HeaderSC, HeaderSCProps } from './styled'
 import SiteLogo from 'components/ui/SiteLogo'
 import Button from 'components/ui/Button'
@@ -6,8 +6,8 @@ import { Row } from 'components/ui/Grid'
 import NavLink from 'components/ui/NavLink'
 import Link from 'components/ui/Link'
 import { marginBottom } from 'utils/style/indents'
-import Modal from 'components/ui/Modal'
-import ByPixels from 'components/ByPixels'
+import { usePixelsController } from 'hooks/usePixels'
+import { useHistory } from 'react-router-dom'
 
 export interface HeaderProps extends HeaderSCProps {
   className?: string
@@ -15,10 +15,9 @@ export interface HeaderProps extends HeaderSCProps {
 }
 
 function Header({ style }: HeaderProps) {
-  const [step, setStep] = useState(1)
-  const onBack = () => {
-    setStep((step) => step - 1)
-  }
+  const { setSelectionActive } = usePixelsController()
+  const history = useHistory()
+
   return (
     <HeaderSC style={style} justify='between' align='center'>
       <Link to='/'>
@@ -39,28 +38,17 @@ function Header({ style }: HeaderProps) {
             Marketplace{' '}
           </NavLink>
         </Row>
-        <Modal
-          trigger={
-            <Button size='lg' width={150} style={marginBottom(12)}>
-              BUY PIXELS
-            </Button>
-          }
-          onBack={step ? onBack : undefined}
-          component={ByPixels}
-          componentProps={{
-            step,
-            onChangeStep: setStep,
-            data: {
-              width: 100,
-              height: 60,
-              position: {
-                x: 193,
-                y: 871,
-              },
-              price: 6,
-            },
+        <Button
+          size='lg'
+          width={150}
+          style={marginBottom(12)}
+          onClick={() => {
+            history.push('/gallery')
+            setSelectionActive(true)
           }}
-        />
+        >
+          BUY PIXELS
+        </Button>
       </Row>
     </HeaderSC>
   )

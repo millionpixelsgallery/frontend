@@ -32,6 +32,9 @@ export default createGlobalStyle`
     &-right {
       text-align: right;
     }
+    &-nowrap {
+      white-space: nowrap;
+    }
   }
   .overflow {
     &-anywhere {

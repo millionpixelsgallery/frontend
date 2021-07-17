@@ -29,7 +29,7 @@ async function main() {
   await vault.deployed()
   console.log('Vault deployed to:', vault.address)
 
-  const pixels = await Pixels.deploy(`mpg-test-${iteration}`, vault.address)
+  const pixels = await Pixels.deploy(`mpg-test-${iteration}`, vault.address, 200, 100)
   await pixels.deployed()
 
   console.log('Pixel deployed to:', pixels.address)

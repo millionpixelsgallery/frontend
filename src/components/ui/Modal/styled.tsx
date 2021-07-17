@@ -4,7 +4,7 @@ export interface ModalOverlaySCProps {}
 
 export const ModalOverlaySC = styled.div<ModalOverlaySCProps>`
   position: fixed;
-  z-index: 2;
+  z-index: 3;
   top: 0;
   left: 0;
   width: 100vw;
@@ -16,8 +16,8 @@ export const ModalOverlaySC = styled.div<ModalOverlaySCProps>`
 `
 
 export const GlobalModalStyles = createGlobalStyle`
-  body {
-    position: fixed;
+  body, html {
+    overflow: hidden;
   }
 `
 
@@ -39,10 +39,21 @@ export const ModalSC = styled.div<ModalSCProps>`
     stroke: #5e72eb;
     stroke-width: 3px;
   }
+
   .close {
     position: absolute;
     right: 25px;
     top: 28px;
     fill: #5e72eb;
+  }
+
+  button:disabled {
+    &.back {
+      stroke: #9c9c9c;
+    }
+
+    &.close {
+      fill: #9c9c9c;
+    }
   }
 `

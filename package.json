@@ -75,6 +75,7 @@
     "nft.storage": "^1.4.0",
     "optimize-css-assets-webpack-plugin": "5.0.4",
     "panzoom": "^9.4.2",
+    "pixi.js": "^6.0.4",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.2.1",
     "postcss-loader": "3.0.0",
@@ -125,7 +126,9 @@
       "react-app/jest"
     ],
     "rules": {
-      "eqeqeq": "off"
+      "eqeqeq": "off",
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/rules-of-hooks": "off"
     }
   },
   "browserslist": {

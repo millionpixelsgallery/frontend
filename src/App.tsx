@@ -4,32 +4,64 @@ import { Web3Connect, Web3Methods } from 'lib/web3connect'
 import { useEffect, useState } from 'react'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { ApiContext } from 'hooks/useApi'
+import Modal from 'components/ui/Modal'
+import MobilePlaceholder from 'components/MobilePlaceholder'
+import MyPixels from 'components/MyPixels'
+import { PixelsProvider } from 'hooks/usePixels'
 
 function App() {
+  const [loading, setLoading] = useState(Boolean(Web3Connect.cachedProvider))
   const [methods, setMethods] = useState<Web3Methods>()
   useEffect(() => {
-    if (Web3Connect.cachedProvider) {
-      new Web3Connect(setMethods).connect()
-    }
+    ;(async () => {
+      if (Web3Connect.cachedProvider) {
+        try {
+          await new Web3Connect(setMethods).connect()
+        } catch (e) {
+          console.error(e)
+        } finally {
+          setLoading(false)
+        }
+      }
+    })()
   }, [])
 
   return (
     <ApiContext.Provider
       value={{
+        loading,
         methods,
         async connect(provider) {
-          await new Web3Connect(setMethods).connect(provider)
+          try {
+            setLoading(true)
+            return await new Web3Connect(setMethods).connect(provider)
+          } catch (e) {
+            throw e
+          } finally {
+            setLoading(false)
+          }
         },
       }}
     >
-      <Layout>
-        <Switch>
-          <Route path='/gallery' component={Viewport} />
-          <Route path='/my-pixels' />
-          <Route path='/marketplace' />
-          <Redirect to='/gallery' from='/' exact />
-        </Switch>
-      </Layout>
+      <PixelsProvider>
+        <Modal
+          closable={false}
+          component={MobilePlaceholder}
+          defaultVisible={window.innerWidth < 1281}
+        />
+        <Layout>
+          <Switch>
+            <Route path='/gallery'>
+              <Viewport key='gallery' />
+            </Route>
+            <Route path='/my-pixels' component={MyPixels} />
+            <Route path='/marketplace'>
+              <Viewport key='marketplace' sellMode />
+            </Route>
+            <Redirect to='/gallery' from='/' exact />
+          </Switch>
+        </Layout>
+      </PixelsProvider>
     </ApiContext.Provider>
   )
 }

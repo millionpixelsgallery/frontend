@@ -1,8 +1,9 @@
 import { CSSProperties, memo, ReactNode } from 'react'
+import { useTheme } from 'styled-components'
 import { ByPixelsConfirmOrderSC, ByPixelsConfirmOrderSCProps } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import Title from 'components/ui/Title'
-import { margin, marginBottom, padding } from 'utils/style/indents'
+import { margin, marginBottom, padding, marginTop } from 'utils/style/indents'
 import Area from 'components/ui/Area'
 import { Calculate } from 'components/ByPixels/ByPixelsReviewPixels'
 import { ByPixelsValues, ProductData } from 'components/ByPixels/index'
@@ -10,6 +11,7 @@ import Text from 'components/ui/Text'
 import { FormSubType } from 'hooks/useForm'
 import { formatBytes } from 'utils/formatBytes'
 import { EllipsisDivSC } from 'components/ByPixels/ByPixelsUploadPhoto/styled'
+import { cratePlaceHolder } from 'utils/cratePlaceHolderFile'
 
 export interface ByPixelsConfirmOrderProps extends ByPixelsConfirmOrderSCProps {
   className?: string
@@ -27,6 +29,7 @@ function ByPixelsConfirmOrder({
   formik,
   ...rest
 }: ByPixelsConfirmOrderProps) {
+  const theme = useTheme()
   return (
     <ByPixelsConfirmOrderSC className={className} style={style} {...rest}>
       <Col justify={'between'} className={'full-height'}>
@@ -34,12 +37,16 @@ function ByPixelsConfirmOrder({
           <Title style={marginBottom(58)}>CONFIRM YOUR ORDER</Title>
           <Row gap={30}>
             <Area name={'YOUR PHOTO'} className={'photo-area'}>
-              {formik.values.image && !formik.errors.image && (
+              {
                 <img
-                  src={URL.createObjectURL(formik.values.image)}
-                  alt={formik.values.image.name}
+                  src={
+                    !formik.values.image || formik.errors.image
+                      ? cratePlaceHolder(data.width, data.height)
+                      : URL.createObjectURL(formik.values.image)
+                  }
+                  alt={formik.values.image ? formik.values.image.name : 'dollar'}
                 />
-              )}
+              }
             </Area>
             <Col>
               <Calculate data={data} />
@@ -76,6 +83,14 @@ function ByPixelsConfirmOrder({
               </Col>
             </Col>
           </Row>
+        </Col>
+        <Col align={'center'}>
+          <Text type={'L'} style={{ textDecoration: 'underline', ...marginTop(26) }}>
+            IMPORTANT: After clicking “confirm”
+          </Text>
+          <Text type={'L'} weight={600} color={theme.color.typography.title}>
+            You’ll need to click “confirm” in your wallet to complete the transaction
+          </Text>
         </Col>
         {children}
       </Col>

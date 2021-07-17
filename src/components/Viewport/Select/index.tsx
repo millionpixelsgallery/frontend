@@ -1,12 +1,13 @@
-import { memo, useCallback, MouseEvent as ReactMouseEvent, useState, useEffect } from 'react'
+import { memo, MouseEvent as ReactMouseEvent, useCallback, useState } from 'react'
 import { SelectSC, SelectSCProps } from './styled'
+import { useEventListener } from 'hooks/useEventListener'
 
 export interface SelectProps extends SelectSCProps {
   x: number
   y: number
   width: number
   height: number
-  scale?: number
+  scale: number | undefined
   onResize?: (
     deltaX: number,
     deltaY: number,
@@ -14,22 +15,6 @@ export interface SelectProps extends SelectSCProps {
   ) => void
   onMove?: (deltaX: number, deltaY: number) => void
   onMouseUp?: (e: MouseEvent) => void
-}
-
-function useEventListener<E extends HTMLElement, K extends keyof HTMLElementEventMap>(
-  element: E,
-  type: K,
-  listener: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,
-  deps: any[] = [],
-  options?: boolean | AddEventListenerOptions
-) {
-  useEffect(() => {
-    element.addEventListener(type, listener, options)
-    return () => {
-      element.removeEventListener(type, listener, options)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [element, type, listener, options, ...deps])
 }
 
 function Select({ x, y, width, height, scale = 1, onResize, onMove, onMouseUp }: SelectProps) {

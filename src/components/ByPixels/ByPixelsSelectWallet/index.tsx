@@ -9,12 +9,13 @@ import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
 import portis from './assets/portis.png'
 import torus from './assets/torus.png'
-import { Wallets } from 'components/ByPixels/index'
 
 export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   className?: string
   style?: CSSProperties
-  onSelect: (wallet: Wallets) => void
+  onSelect: (wallet: WalletEnum, onClose?: () => void) => void
+  onClose?: () => void
+  fullTitle?: boolean
 }
 
 export enum WalletEnum {
@@ -24,26 +25,38 @@ export enum WalletEnum {
   Torus = 'torus',
 }
 
-function ByPixelsSelectWallet({ className, onSelect, style, ...rest }: ByPixelsSelectWalletProps) {
+function ByPixelsSelectWallet({
+  className,
+  onSelect,
+  style,
+  onClose,
+  fullTitle = false,
+}: ByPixelsSelectWalletProps) {
   const handleSelect = useCallback(
     (e) => {
-      const wallet: Wallets = e.currentTarget.dataset.wallet
-      onSelect(wallet)
+      const wallet: WalletEnum = e.currentTarget.dataset.wallet
+      onSelect(wallet, onClose)
     },
-    [onSelect]
+    [onSelect, onClose]
   )
 
   return (
-    <ByPixelsSelectWalletSC className={className} style={style} {...rest}>
+    <ByPixelsSelectWalletSC className={className} style={style}>
       <Col align={'center'}>
-        <Title style={marginBottom(50)}>Select a Wallet</Title>
+        <Title style={{ ...marginBottom(50) }}>Select a Wallet</Title>
         <Text style={marginBottom(100)} className={'text-center'}>
-          Please select a wallet to connect to Million pixels gallery.
-          <br />
-          <Text type={'LGray'}>
-            First, to Lock the wanted space, <br />
-            Then, to create your nft and complete your purchase.
-          </Text>
+          <span style={{ fontWeight: fullTitle ? 600 : undefined }}>
+            Please select a wallet to connect to Million pixels gallery.
+          </span>
+          {fullTitle && (
+            <>
+              <br />
+              <Text type={'L'}>
+                First, to Lock the wanted space, <br />
+                Then, to create your nft and complete your purchase.
+              </Text>
+            </>
+          )}
         </Text>
         <Col gap={30} style={marginBottom(162)}>
           <Row gap={30}>

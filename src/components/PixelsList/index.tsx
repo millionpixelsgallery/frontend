@@ -2,24 +2,15 @@ import { CSSProperties, memo } from 'react'
 import { PixelsListSC, PixelsListSCProps } from './styled'
 import PixelsDetailsRow from 'components/PixelsList/PixelsDetailsRow'
 import { padding } from 'utils/style/indents'
+import { Pixels } from 'lib/web3connect'
 
 export interface Coords {
   x: number
   y: number
 }
 
-export interface PixelsData {
-  image: any
-  width: number
-  height: number
-  position: Coords
-  link?: string
-  title?: string
-  saleUntil?: string
-}
-
 export interface PixelsListProps extends PixelsListSCProps {
-  data: PixelsData[]
+  data: Pixels[]
   className?: string
   style?: CSSProperties
 }

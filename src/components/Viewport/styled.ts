@@ -5,9 +5,13 @@ export const ViewportSC = styled.div`
   overflow: hidden;
   width: 1000px;
   height: 1000px;
+`
+
+export const ViewportWrapperSC = styled.div`
+  border: 1px solid #5e72eb;
   background-color: #f8f8f8;
   box-shadow: 0 16px 40px #0b074233;
-  border: 1px solid #5e72eb;
+  margin: 0 -1px;
 `
 
 export const ViewportContentSC = styled.div`

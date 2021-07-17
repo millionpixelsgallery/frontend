@@ -1,20 +1,37 @@
-import { CSSProperties, memo, useCallback, useLayoutEffect, useRef, useState } from 'react'
+import {
+  CSSProperties,
+  memo,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import Grid from 'components/Viewport/Grid'
-import { ViewportContentSC, ViewportSC } from 'components/Viewport/styled'
-import panzoom, { Transform } from 'panzoom'
+import { ViewportContentSC, ViewportSC, ViewportWrapperSC } from 'components/Viewport/styled'
+import createPanzoom, { PanZoom, Transform } from 'panzoom'
 import Select from 'components/Viewport/Select'
 import { between } from 'utils/canvas'
+import Tooltip from 'components/Viewport/Tooltip'
+import Canvas from 'components/Viewport/Canvas'
+import { usePixelsController } from 'hooks/usePixels'
+import BuyTooltip from 'components/Viewport/Tooltip/BuyTooltip'
+import SellTooltip from 'components/Viewport/Tooltip/SaleTooltip'
+import DetailsTooltip from 'components/Viewport/Tooltip/DetailsTooltip'
 
 export interface ViewportProps {
   className?: string
   style?: CSSProperties
+  sellMode?: boolean
 }
 
-function Viewport({ className, style }: ViewportProps) {
+function Viewport({ className, style, sellMode }: ViewportProps) {
+  const { selectionActive, pixels, setSelectionActive } = usePixelsController()
   const contentRef = useRef<HTMLDivElement>(null)
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
+  const [panzoom, setPanzoom] = useState<PanZoom>()
   useLayoutEffect(() => {
-    const instance = panzoom(contentRef.current!, {
+    const instance = createPanzoom(contentRef.current!, {
       minZoom: 1,
       maxZoom: 40,
       bounds: true,
@@ -29,13 +46,16 @@ function Viewport({ className, style }: ViewportProps) {
       const transform = instance.getTransform()
       setTransform({ ...transform })
     })
+
+    setPanzoom(instance)
+
+    return () => instance.dispose()
   }, [])
 
   const [selectCords, setSelectCords] = useState<[x1: number, y1: number, x2: number, y2: number]>([
     10, 10, 110, 80,
   ])
 
-  const [x1, y1, x2, y2] = selectCords
   const handleSelectMove = useCallback((dx, dy) => {
     setSelectCords(([x1, y1, x2, y2]) => {
       if (dx < 0) {
@@ -72,22 +92,98 @@ function Viewport({ className, style }: ViewportProps) {
     ])
   }, [])
 
+  const [x1, y1, x2, y2] = selectCords
+  const selectX = Math.round(x1)
+  const selectY = Math.round(y1)
+  const selectWidth = Math.round(x2 - x1)
+  const selectHeight = Math.round(y2 - y1)
+
+  const [tooltipCords, setTooltipCords] = useState<[number, number, number, number]>()
+
+  const onPixelsClick = useCallback(({ x, y, width, height }) => {
+    setTooltipCords([x, y, width, height])
+  }, [])
+
+  useEffect(() => {
+    setTooltipCords(undefined)
+    if (selectionActive) panzoom?.zoomAbs(0, 0, 1)
+  }, [selectionActive])
+
+  useEffect(
+    () => () => {
+      if (!sellMode) setSelectionActive(false)
+    },
+    []
+  )
+
+  const handleTooltipClose = useCallback(() => setTooltipCords(undefined), [])
+
   return (
-    <ViewportSC className={className} style={style}>
-      <ViewportContentSC ref={contentRef}>
-        <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
-        <Select
-          x={Math.round(x1)}
-          y={Math.round(y1)}
-          width={Math.round(x2 - x1)}
-          height={Math.round(y2 - y1)}
-          scale={transform?.scale}
-          onMove={handleSelectMove}
-          onResize={handleSelectResize}
-          onMouseUp={handleSelectEnd}
-        />
-      </ViewportContentSC>
-    </ViewportSC>
+    <ViewportWrapperSC className={className} style={style}>
+      <ViewportSC>
+        <ViewportContentSC ref={contentRef}>
+          <Canvas
+            pixels={pixels?.map(({ area: [x, y, width, height], sale, image }) => {
+              return {
+                x,
+                y,
+                width,
+                height,
+                selling: sellMode ? Boolean(sale && sale.end > Date.now() / 1000) : undefined,
+                src: sellMode ? undefined : image?.image,
+                clickable: selectionActive
+                  ? false
+                  : sellMode
+                  ? Boolean(sale && sale.end > Date.now() / 1000)
+                  : true,
+                onClick: onPixelsClick,
+              }
+            })}
+          />
+          <Grid hidden={!(transform?.scale && transform.scale >= 15)} />
+          {!sellMode && selectionActive && (
+            <Select
+              x={selectX}
+              y={selectY}
+              width={selectWidth}
+              height={selectHeight}
+              scale={transform?.scale}
+              onMove={handleSelectMove}
+              onResize={handleSelectResize}
+              onMouseUp={handleSelectEnd}
+            />
+          )}
+          {tooltipCords && !selectionActive && (
+            <Tooltip
+              key={tooltipCords.join()}
+              targetX={tooltipCords[0]}
+              targetY={tooltipCords[1]}
+              targetWidth={tooltipCords[2]}
+              targetHeight={tooltipCords[3]}
+              transform={transform}
+              onClose={handleTooltipClose}
+            >
+              {sellMode ? (
+                <SellTooltip x={tooltipCords[0]} y={tooltipCords[1]} onClose={handleTooltipClose} />
+              ) : (
+                <DetailsTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
+              )}
+            </Tooltip>
+          )}
+          {!sellMode && selectionActive && (
+            <Tooltip
+              targetX={selectX}
+              targetY={selectY}
+              targetWidth={selectWidth}
+              targetHeight={selectHeight}
+              transform={transform}
+            >
+              <BuyTooltip x={selectX} y={selectY} width={selectWidth} height={selectHeight} />
+            </Tooltip>
+          )}
+        </ViewportContentSC>
+      </ViewportSC>
+    </ViewportWrapperSC>
   )
 }
 

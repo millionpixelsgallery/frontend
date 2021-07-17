@@ -1,8 +1,9 @@
 import { CSSProperties, memo, ReactNode } from 'react'
+import { useTheme } from 'styled-components'
 import { ByPixelsReviewPixelsSC, ByPixelsReviewPixelsSCProps, CalculateSC } from './styled'
 import { Col, Row } from 'components/ui/Grid'
 import Title from 'components/ui/Title'
-import { marginBottom } from 'utils/style/indents'
+import { marginBottom, marginTop } from 'utils/style/indents'
 import { ProductData } from 'components/ByPixels/index'
 import Text from 'components/ui/Text'
 import Area from 'components/ui/Area'
@@ -56,6 +57,8 @@ function ByPixelsReviewPixels({
   children,
   ...rest
 }: ByPixelsReviewPixelsProps) {
+  const theme = useTheme()
+  const isReSell = data.index != null
   return (
     <ByPixelsReviewPixelsSC className={className} style={style} {...rest}>
       <Col justify={'between'} className={'full-height'}>
@@ -75,7 +78,19 @@ function ByPixelsReviewPixels({
               <Text type={'S'}>+ GAS FEES</Text>
             </div>
           </Area>
+          {!isReSell && (
+            <Col align={'center'}>
+              <Text type={'L'} style={{ textDecoration: 'underline', ...marginTop(45) }}>
+                IMPORTANT: After clicking “lock & next”
+              </Text>
+              <Text type={'L'} weight={600} color={theme.color.typography.title}>
+                You’ll need to click “confirm” in your wallet
+              </Text>
+              <Text type={'L'}>in order to Lock the wanted space and continue the purchase</Text>
+            </Col>
+          )}
         </Col>
+
         {children}
       </Col>
     </ByPixelsReviewPixelsSC>

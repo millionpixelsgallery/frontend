@@ -27,6 +27,12 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
       border-width: 1px;
     }
   }
+  .input-text-start {
+    ${InputSC} {
+      margin-left: 5px;
+      text-align: start;
+    }
+  }
   .upload-area {
     padding-left: 0;
     padding-right: 0;
@@ -38,7 +44,6 @@ export const ByPixelsUploadPhotoSC = styled.div<ByPixelsUploadPhotoSCProps>`
     }
   }
   ${InputSC} {
-    color: ${({ theme }) => theme.color.link.primaryPrimary} !important;
     text-transform: uppercase;
   }
 `
