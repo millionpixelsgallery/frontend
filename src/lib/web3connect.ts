@@ -283,17 +283,18 @@ export class Web3Connect {
       }
 
       const image = ipfs
-        ? await fetch(`https://${ipfs}.ipfs.dweb.link/metadata.json`)
+        ? await fetch(`https://cloudflare-ipfs.com/ipfs/${ipfs}/metadata.json`)
             .then((r) => r.json())
             .then((j) => ({
               title: j.name,
               link: j.description,
-              image: `https://${j.image
-                .replace('ipfs://', '')
-                .replace('/image', '')}.ipfs.dweb.link/image`,
+              image: j.image.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/'),
             }))
             .catch((e) => {
-              console.log(`Can't find image by the link: https://${ipfs}.ipfs.dweb.link/`, e)
+              console.log(
+                `Can't find image by the link: https://cloudflare-ipfs.com/ipfs/${ipfs}/`,
+                e
+              )
               return undefined
             })
         : undefined
