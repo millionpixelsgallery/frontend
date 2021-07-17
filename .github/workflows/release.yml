@@ -43,8 +43,7 @@ jobs:
       - run: echo "deploy_tag=${{ needs.bump_version.outputs.new_tag }}" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v2
-      - run: echo ${{ secrets.DOTENV_DEV }} >> $GITHUB_ENV
-      - run: echo ${{ secrets.DOTENV_DEV }} >> .env
+      - run: echo "${{ secrets.DOTENV_DEV }}" >> .env
       - name: Get version
         id: vars
         run: echo ::set-output name=version::$(cat .env)
