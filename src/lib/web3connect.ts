@@ -8,10 +8,25 @@ import { ethers } from 'ethers'
 
 import { abi } from './contract.json'
 
-const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS as string
 const NETWORK = process.env.REACT_APP_NETWORK as string
+let RPC: string = 'http://localhost:8545',
+  CONTRACT_ADDRESS: string = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
 const FORTMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY as string
 const PORTIS_KEY = process.env.REACT_APP_PORTIS_KEY as string
+switch (NETWORK) {
+  case 'local':
+    RPC = 'http://localhost:8545'
+    CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
+    break
+  case 'development':
+    RPC = 'https://rinkeby.infura.io/v3/074defc86881430da33be9151f3beaf8'
+    CONTRACT_ADDRESS = '0xd3e09a504ffc4c2e4998bb12b44c47e5dce4cbea'
+    break
+  case 'production':
+    RPC = 'https://mainnet.infura.io/v3/074defc86881430da33be9151f3beaf8'
+    CONTRACT_ADDRESS = '0xd3e09a504ffc4c2e4998bb12b44c47e5dce4cbea'
+    break
+}
 
 const web3Options = {
   cacheProvider: true,
@@ -20,20 +35,20 @@ const web3Options = {
       package: Fortmatic,
       options: {
         key: FORTMATIC_KEY,
-        network: NETWORK,
+        network: RPC,
       },
     },
     portis: {
       package: Portis,
       options: {
         id: PORTIS_KEY,
-        network: NETWORK,
+        network: RPC,
       },
     },
     torus: {
       package: Torus,
       options: {
-        network: NETWORK,
+        network: RPC,
       },
     },
   },
@@ -72,7 +87,7 @@ export class Web3Connect {
   private static defaultContact: any = new ethers.Contract(
     CONTRACT_ADDRESS,
     abi,
-    ethers.getDefaultProvider(NETWORK)
+    ethers.getDefaultProvider(RPC)
   )
   private contract: any
   private web3: any

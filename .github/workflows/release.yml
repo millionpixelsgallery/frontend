@@ -30,6 +30,11 @@ jobs:
           pre_release_branches: main
           # release_branches: release.*,master
 
+  loadenv:
+    name: read env file
+    steps:
+      - run: echo ${{secrets.DOTENV_DEV}} >> .env
+
   deploy:
     name: Deploy Release
     runs-on: ubuntu-latest
