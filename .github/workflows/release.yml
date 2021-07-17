@@ -36,7 +36,6 @@ jobs:
     needs: bump_version
     if: ${{ needs.bump_version.outputs.new_tag != null }}
     steps:
-      - run: echo ${{secrets.DOTENV_DEV}} >> .env
       # Basic env setup and app build
       # Result: built app in /dist
       - run: echo "subdomain=${{ secrets.CLOUDFLARE_SUBDOMAIN_DEV }}" >> $GITHUB_ENV
@@ -50,6 +49,7 @@ jobs:
           node-version: '14'
       - name: Install deps
         run: yarn install --frozen-lockfile
+      - run: echo ${{ secrets.DOTENV_DEV }} >> .env
       - name: Build app
         run: yarn build
 
