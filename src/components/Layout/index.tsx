@@ -47,7 +47,7 @@ function Layout({ className, style, children, ...rest }: LayoutProps) {
             {children}
             <Footer />
           </div>
-          <SideBar className={'sideBlock'} />
+          <SideBar className={'sideBlockRight'} />
         </Row>
       </Col>
       <div className={'gradient'} />
