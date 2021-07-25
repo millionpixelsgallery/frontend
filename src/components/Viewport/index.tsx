@@ -28,6 +28,8 @@ export interface ViewportProps {
 function Viewport({ className, style, sellMode }: ViewportProps) {
   const { selectionActive, pixels, setSelectionActive } = usePixelsController()
   const contentRef = useRef<HTMLDivElement>(null)
+  const selectRef = useRef<any>(null)
+
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   const [panzoom, setPanzoom] = useState<PanZoom>()
   useLayoutEffect(() => {
@@ -116,6 +118,8 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
     []
   )
 
+  const hideSelection = () => setSelectionActive(false)
+
   const handleTooltipClose = useCallback(() => setTooltipCords(undefined), [])
 
   return (
@@ -151,6 +155,7 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               onMove={handleSelectMove}
               onResize={handleSelectResize}
               onMouseUp={handleSelectEnd}
+              ref={selectRef}
             />
           )}
           {tooltipCords && !selectionActive && (
@@ -177,6 +182,8 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               targetWidth={selectWidth}
               targetHeight={selectHeight}
               transform={transform}
+              disableToggle={selectRef.current}
+              onClose={hideSelection}
             >
               <BuyTooltip x={selectX} y={selectY} width={selectWidth} height={selectHeight} />
             </Tooltip>

@@ -25,6 +25,7 @@ export interface TooltipProps {
   className?: string
   style?: CSSProperties
   children?: ReactNode | ReactNodeArray
+  disableToggle?: HTMLElement
   onClose?: () => void
 }
 
@@ -56,6 +57,7 @@ function Tooltip({
   targetHeight,
   transform = { scale: 1, x: 0, y: 0 },
   onClose,
+  disableToggle,
 }: TooltipProps) {
   const [hidden, toggleHidden] = useTrigger(true)
   const ref = useRef<HTMLDivElement>(null)
@@ -94,8 +96,12 @@ function Tooltip({
     'click',
     (e) => {
       if (renderRef.first) return
+      if (disableToggle === e.target || disableToggle?.contains(e.target as Node | null)) {
+        return
+      }
       if (!(e.target === ref.current || ref.current?.contains(e.target as Node | null))) {
         toggleHidden()
+        onClose && onClose()
       }
     },
     [onClose]
