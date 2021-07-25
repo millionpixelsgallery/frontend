@@ -4,7 +4,6 @@ import { Row } from 'components/ui/Grid'
 import SocialIcon from 'components/ui/SocialIcon'
 import Text from 'components/ui/Text'
 import { marginTop } from 'utils/style/indents'
-import Link from 'components/ui/Link'
 
 export interface FooterProps extends FooterSCProps {
   className?: string
@@ -28,9 +27,9 @@ function Footer({ className, style, ...rest }: FooterProps) {
     <FooterSC className={className} style={style} {...rest}>
       <Row justify='between'>
         <Row gap={10}>
-          <Link to={{ pathname: 'https://twitter.com/MPG_NFT' }}>
+          <a href={'https://twitter.com/MPG_NFT'}>
             <SocialIcon src='/assets/twitter.svg' />
-          </Link>
+          </a>
           {/* <Link to='/'>
             <SocialIcon src='/assets/facebook.svg' />
           </Link>
