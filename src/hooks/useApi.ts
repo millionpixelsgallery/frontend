@@ -1,10 +1,10 @@
-import { createContext, useContext } from 'react'
-import { Web3Methods, Web3Providers } from 'lib/web3connect'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { ConnectionDetails, Web3Methods, Web3Providers } from 'lib/web3connect'
 
 interface IApiContext {
   methods?: Web3Methods
   loading?: boolean
-  connect(provider: Web3Providers): Promise<Web3Methods | undefined>
+  connect(provider?: Web3Providers): Promise<Web3Methods | undefined>
 }
 
 export const ApiContext = createContext<IApiContext>({
@@ -23,4 +23,16 @@ export function useApiMethods() {
 
 export function useApiConnect() {
   return useContext(ApiContext).connect
+}
+
+export function useApiConnection() {
+  const [details, setDetails] = useState<ConnectionDetails>()
+  const methods = useContext(ApiContext).methods
+  useEffect(() => {
+    if (methods) {
+      methods.connectionDetails().then((connection) => setDetails(connection))
+    }
+    return () => setDetails(undefined)
+  }, [methods])
+  return details
 }

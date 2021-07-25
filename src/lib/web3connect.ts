@@ -77,9 +77,14 @@ export type Pixels = {
   }
 }
 
+export type ConnectionDetails = {
+  address: string
+  chainId: string
+  isConnected: boolean
+}
 export class Web3Connect {
   static get cachedProvider() {
-    console.log('cached provider', web3Modal.cachedProvider)
+    console.log('cached provider:', web3Modal.cachedProvider)
     return Boolean(web3Modal.cachedProvider)
   }
 
@@ -92,9 +97,9 @@ export class Web3Connect {
   private contract: any
   private web3: any
   private account: any
-  private readonly onAccountChange: (w3c: Web3Methods) => void
+  private readonly onAccountChange: (w3c?: Web3Methods) => void
 
-  constructor(onAccountChange?: (w3c: Web3Methods) => void) {
+  constructor(onAccountChange?: (w3c?: Web3Methods) => void) {
     if (!onAccountChange) {
       this.onAccountChange = () => void 0
     } else {
@@ -140,8 +145,11 @@ export class Web3Connect {
 
     if (!accounts || accounts.length === 0) {
       if (this.methodsReady) {
+        //if user disconnected all accounts then next time, ask for provider again
+        web3Modal.clearCachedProvider()
+        this.onAccountChange(undefined)
         // eslint-disable-next-line no-restricted-globals
-        location?.reload()
+        // location?.reload()
         return
       }
       throw new Error(`Can't get accounts list`)
@@ -310,8 +318,23 @@ export class Web3Connect {
 }
 
 export class Web3Methods {
-  constructor(private contract: any, private web3: any, private account: any) {}
+  constructor(private contract: any, public web3: any, private account: any) {}
 
+  public async connectionDetails(): Promise<ConnectionDetails> {
+    const [isConnected, chainId, address] = await Promise.all([
+      this.web3.currentProvider.isConnected(),
+      this.web3.currentProvider.chainId,
+      this.web3.currentProvider.selectedAddress,
+    ])
+    return { isConnected, chainId, address }
+  }
+
+  public async switchMainnet(): Promise<void> {
+    return this.web3.currentProvider.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: '0x1' }],
+    })
+  }
   public async commit(area: Area, cb: () => void): Promise<string> {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 

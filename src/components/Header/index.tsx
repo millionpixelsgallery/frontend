@@ -1,13 +1,17 @@
-import { CSSProperties, memo } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
 import { HeaderSC, HeaderSCProps } from './styled'
 import SiteLogo from 'components/ui/SiteLogo'
 import Button from 'components/ui/Button'
 import { Row } from 'components/ui/Grid'
 import NavLink from 'components/ui/NavLink'
 import Link from 'components/ui/Link'
-import { marginBottom } from 'utils/style/indents'
+import Modal from 'components/ui/Modal'
+import ByPixelsSelectWallet from 'components/ByPixels/ByPixelsSelectWallet'
+
+import { marginBottom, padding } from 'utils/style/indents'
 import { usePixelsController } from 'hooks/usePixels'
 import { useHistory } from 'react-router-dom'
+import { useApiConnect, useApiConnection, useApiMethods } from 'hooks/useApi'
 
 export interface HeaderProps extends HeaderSCProps {
   className?: string
@@ -15,8 +19,36 @@ export interface HeaderProps extends HeaderSCProps {
 }
 
 function Header({ style }: HeaderProps) {
+  const [displayWalletModal, setDisplayWalletModal] = useState(false)
   const { setSelectionActive } = usePixelsController()
   const history = useHistory()
+  const connectionDetails = useApiConnection()
+  const connect = useApiConnect()
+  const web3Methods = useApiMethods()
+
+  const handleWalletAction = useCallback(() => {
+    console.log({ web3Methods })
+    if (connectionDetails?.isConnected && connectionDetails.chainId !== '0x1') {
+      web3Methods?.switchMainnet()
+      return console.log('switch to mainnet')
+    }
+    if (!connectionDetails?.isConnected) {
+      setDisplayWalletModal(true)
+    }
+  }, [connectionDetails, web3Methods])
+
+  const handleSelectWallet = useCallback(
+    async (wallet, onClose) => {
+      await connect(wallet).finally(() => {
+        onClose()
+      })
+    },
+    [connect]
+  )
+
+  const handleSelectWalletClose = useCallback(() => {
+    setDisplayWalletModal(false)
+  }, [setDisplayWalletModal])
 
   return (
     <HeaderSC style={style} justify='between' align='center'>
@@ -49,7 +81,26 @@ function Header({ style }: HeaderProps) {
         >
           BUY PIXELS
         </Button>
+        <Button
+          type='outlined_orange'
+          style={{
+            width: '250px',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+          onClick={handleWalletAction}
+        >
+          {connectionDetails?.isConnected ? connectionDetails.address : 'Connect Wallet'}
+          {connectionDetails?.chainId === '0x1' ? null : '\nSwitch to mainnet'}
+        </Button>
       </Row>
+      <Modal
+        component={ByPixelsSelectWallet}
+        componentProps={{ onSelect: handleSelectWallet, style: padding(50, 111, 58) }}
+        onClose={handleSelectWalletClose}
+        closableByEsc
+        visible={displayWalletModal}
+      />
     </HeaderSC>
   )
 }
