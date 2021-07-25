@@ -335,7 +335,10 @@ export class Web3Methods {
       params: [{ chainId: '0x1' }],
     })
   }
-  public async commit(area: Area, cb: () => void): Promise<string> {
+  public async commit(
+    area: Area,
+    txHashCallback: (hash: string) => void = () => undefined
+  ): Promise<string> {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
     if (isAvailable && area[2] > 0 && area[3] > 0) {
@@ -348,7 +351,7 @@ export class Web3Methods {
         await this.contract.methods
           .commitToPixels(hash)
           .send({ from: this.account })
-          .on('transactionHash', cb)
+          .on('transactionHash', txHashCallback)
         return random
       } catch (e) {
         console.warn('Commit already set', e)
@@ -359,7 +362,12 @@ export class Web3Methods {
     }
   }
 
-  public async buyPixels(area: Area, random: string, ipfs: string): Promise<Pixels> {
+  public async buyPixels(
+    area: Area,
+    random: string,
+    ipfs: string,
+    txHashCallback: (hash: string) => void = () => undefined
+  ): Promise<Pixels> {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
     if (isAvailable && area[2] > 0 && area[3] > 0) {
@@ -367,6 +375,7 @@ export class Web3Methods {
       await this.contract.methods
         .buyPixels(area, random, ipfs)
         .send({ from: this.account, value: price.raw })
+        .on('transactionHash', txHashCallback)
 
       const count = await this.contract.methods.getAreasCount().call()
 
@@ -382,10 +391,17 @@ export class Web3Methods {
     )
   }
 
-  public async setIpfs(index: number, ipfs: string) {
+  public async setIpfs(
+    index: number,
+    ipfs: string,
+    txHashCallback: (hash: string) => void = () => undefined
+  ) {
     const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
-      await this.contract.methods.setIPFSHash(index, ipfs).send({ from: this.account })
+      await this.contract.methods
+        .setIPFSHash(index, ipfs)
+        .send({ from: this.account })
+        .on('transactionHash', txHashCallback)
 
       return Web3Connect.getPixels(index)
     }
@@ -393,12 +409,18 @@ export class Web3Methods {
     throw new Error(`Pixels do not belong to you`)
   }
 
-  public async sellPixels(index: number, price: string, duration: number) {
+  public async sellPixels(
+    index: number,
+    price: string,
+    duration: number,
+    txHashCallback: (hash: string) => void = () => undefined
+  ) {
     const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner === this.account) {
       await this.contract.methods
         .sell(index, this.web3.utils.toWei(price, 'ether'), duration)
         .send({ from: this.account })
+        .on('transactionHash', txHashCallback)
 
       return Web3Connect.getPixels(index)
     }
@@ -406,17 +428,24 @@ export class Web3Methods {
     throw new Error(`Pixels do not belong to you`)
   }
 
-  public async buyPixelsForSale(index: number, ipfs: string) {
+  public async buyPixelsForSale(
+    index: number,
+    ipfs: string,
+    txHashCallback: (hash: string) => void = () => undefined
+  ) {
     const pixels = await Web3Connect.getPixels(index)
     if (pixels.owner !== this.account) {
       if (!pixels.sale || pixels.sale.end < Date.now() / 1000) {
         throw new Error(`Pixels not in sale`)
       }
       try {
-        await this.contract.methods.buy(index, ipfs).send({
-          from: this.account,
-          value: this.web3.utils.toWei(`${pixels.sale.price}`, 'ether'),
-        })
+        await this.contract.methods
+          .buy(index, ipfs)
+          .send({
+            from: this.account,
+            value: this.web3.utils.toWei(`${pixels.sale.price}`, 'ether'),
+          })
+          .on('transactionHash', txHashCallback)
 
         return Web3Connect.getPixels(index)
       } catch (e) {

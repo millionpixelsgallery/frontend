@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useState } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
 import { SellPixelsSC, SellPixelsSCProps } from './styled'
 import useValidationSchema from 'hooks/useValidationSchema'
 import useForm from 'hooks/useForm'
@@ -43,7 +43,13 @@ function SellPixels({
   const methods = useApiMethods()
   const [loading, setLoading] = useState('')
   const { fetchPixels } = usePixelsController()
-
+  const onTxHash = useCallback(
+    (hash) => {
+      console.log('got tx hash:', { hash })
+      setLoading('pending tx confirmation')
+    },
+    [setLoading]
+  )
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup) => ({
@@ -67,7 +73,7 @@ function SellPixels({
       if (values.duration === 'month') duration = 30
       onChangeDisabledControlButtons(true)
       try {
-        await methods?.sellPixels(index, values.price.replace(/[, ]+/g, ''), duration)
+        await methods?.sellPixels(index, values.price.replace(/[, ]+/g, ''), duration, onTxHash)
       } finally {
         onChangeDisabledControlButtons(false)
         setLoading('')

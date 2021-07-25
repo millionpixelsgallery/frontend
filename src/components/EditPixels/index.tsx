@@ -55,6 +55,13 @@ function EditPixels({
   const methods = useApiMethods()
   const { fetchPixels } = usePixelsController()
   const [loading, setLoading] = useState('')
+  const onTxHash = useCallback(
+    (hash) => {
+      console.log('got tx hash:', { hash })
+      setLoading('pending tx confirmation')
+    },
+    [setLoading]
+  )
   const formik = useForm({
     initialValues: {
       link: image.link,
@@ -80,7 +87,7 @@ function EditPixels({
           values.link
         )
         setLoading('Pending wallet confirm')
-        await methods?.setIpfs(data.index, ipfs)
+        await methods?.setIpfs(data.index, ipfs, onTxHash)
       } finally {
         onChangeDisabledControlButtons(false)
         setLoading('')

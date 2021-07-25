@@ -69,6 +69,13 @@ function ByPixels({
   const [loading, setLoading] = useState('')
   const methods = useApiMethods()
   const connect = useApiConnect()
+  const onTxHash = useCallback(
+    (hash) => {
+      console.log('got tx hash:', { hash })
+      setLoading('pending tx confirmation')
+    },
+    [setLoading]
+  )
   const formik = useForm({
     initialValues: initialValues,
     validationSchema: useValidationSchema((yup, E) => ({
@@ -90,16 +97,19 @@ function ByPixels({
           values.title,
           values.link
         )
-        setLoading('Pending wallet confirm')
 
         if (isReSell) {
-          await methods?.buyPixelsForSale(data.index as number, ipfs)
+          setLoading('Pending wallet confirm')
+          await methods?.buyPixelsForSale(data.index as number, ipfs, onTxHash)
         } else {
+          onTxHash('')
           const random = await commitPromise
+          setLoading('Pending wallet confirm')
           await methods?.buyPixels(
             [data.position.x, data.position.y, data.width, data.height],
             random,
-            ipfs
+            ipfs,
+            onTxHash
           )
         }
       } catch (e) {
@@ -132,7 +142,7 @@ function ByPixels({
           setLoading('Pending wallet confirm')
           const promise = methods.commit(
             [data.position.x, data.position.y, data.width, data.height],
-            () => {
+            (hash) => {
               setLoading('')
               onChangeStep(step + 1)
             }
