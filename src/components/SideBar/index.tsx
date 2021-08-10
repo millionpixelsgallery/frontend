@@ -47,11 +47,11 @@ function SideBar({ className, style, ...rest }: SideBarProps) {
           <img src='/assets/Component3.svg' alt='pixel price zone 1' />
         </Row>
         <Row style={margin(26, 0, 24, 0)}>
-          <InfoBlockPx title='1px' children='0.01' style={marginRight(15)} />
+          <InfoBlockPx title='1px' children='0.001' style={marginRight(15)} />
           <img src='/assets/Component4.svg' alt='pixel price zone 2' />
         </Row>
         <Row>
-          <InfoBlockPx title='1px' children='0.1' style={marginRight(15)} />
+          <InfoBlockPx title='1px' children='0.01' style={marginRight(15)} />
           <img src='/assets/Component5.svg' alt='pixel price zone 3' />
         </Row>
       </Col>

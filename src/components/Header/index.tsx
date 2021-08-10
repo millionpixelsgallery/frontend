@@ -87,11 +87,13 @@ function Header({ style }: HeaderProps) {
             width: '250px',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+            ...marginBottom(12)
+
           }}
           onClick={handleWalletAction}
         >
           {connectionDetails?.isConnected ? connectionDetails.address : 'Connect Wallet'}
-          {connectionDetails?.chainId === '0x1' ? null : '\nSwitch to mainnet'}
+          {!connectionDetails?.isConnected || connectionDetails?.chainId === '0x1' ? null : '\nSwitch to mainnet'}
         </Button>
       </Row>
       <Modal
