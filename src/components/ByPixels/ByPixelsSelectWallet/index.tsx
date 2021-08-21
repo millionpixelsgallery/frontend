@@ -1,4 +1,5 @@
-import { CSSProperties, memo, useCallback } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
+import LoadingOverlay from 'react-loading-overlay'
 import { ByPixelsSelectWalletSC, ByPixelsSelectWalletSCProps } from './styled'
 import Title from 'components/ui/Title'
 import { marginBottom, marginLeft, marginRight } from 'utils/style/indents'
@@ -35,84 +36,94 @@ function ByPixelsSelectWallet({
   const handleSelect = useCallback(
     (e) => {
       const wallet: WalletEnum = e.currentTarget.dataset.wallet
+      setLoading(true)
       onSelect(wallet, onClose)
     },
     [onSelect, onClose]
   )
 
+  const [isLoading, setLoading] = useState(false)
+
   return (
-    <ByPixelsSelectWalletSC className={className} style={style}>
-      <Col align={'center'}>
-        <Title style={{ ...marginBottom(50) }}>Select a Wallet</Title>
-        <Text style={marginBottom(100)} className={'text-center'}>
-          <span style={{ fontWeight: fullTitle ? 600 : undefined }}>
-            Please select a wallet to connect to Million pixels gallery.
-          </span>
-          {fullTitle && (
-            <>
-              <br />
-              <Text type={'L'}>
-                First, to Lock the wanted space, <br />
-                Then, to create your nft and complete your purchase.
-              </Text>
-            </>
-          )}
-        </Text>
-        <Col gap={30} style={marginBottom(162)}>
-          <Row gap={30}>
-            <Button
-              type={'outlined'}
-              width={200}
-              data-wallet={WalletEnum.Metamask}
-              onClick={handleSelect}
-            >
-              <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={metamask} alt={WalletEnum.Metamask} style={marginRight(25)} />
-                <span>METAMASK</span>
-              </Row>
-            </Button>
-            <Button
-              type={'outlined'}
-              width={200}
-              data-wallet={WalletEnum.Fortmatic}
-              onClick={handleSelect}
-            >
-              <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={fortmatic} alt={WalletEnum.Fortmatic} style={marginRight(25)} />
-                <span>Fortmatic</span>
-              </Row>
-            </Button>
-          </Row>
-          <Row gap={30}>
-            <Button
-              type={'outlined'}
-              width={200}
-              data-wallet={WalletEnum.Portis}
-              onClick={handleSelect}
-            >
-              <Row align={'center'} justify={'start'} style={marginLeft(23)}>
-                <img src={portis} alt={WalletEnum.Portis} style={marginRight(36)} />
-                <span>Portis</span>
-              </Row>
-            </Button>
-            <Button
-              type={'outlined'}
-              width={200}
-              data-wallet={WalletEnum.Torus}
-              onClick={handleSelect}
-            >
-              <Row align={'center'} justify={'start'} style={marginLeft(18)}>
-                <img src={torus} alt={WalletEnum.Torus} style={marginRight(29)} />
-                <span>TOrus</span>
-              </Row>
-            </Button>
-          </Row>
+    <LoadingOverlay
+      active={isLoading}
+      spinner
+      text='Loading...'
+      styles={{ overlay: (base) => ({ ...base, borderRadius: '23px', opacity: 0.7 }) }}
+    >
+      <ByPixelsSelectWalletSC className={className} style={style}>
+        <Col align={'center'}>
+          <Title style={{ ...marginBottom(50) }}>Select a Wallet</Title>
+          <Text style={marginBottom(100)} className={'text-center'}>
+            <span style={{ fontWeight: fullTitle ? 600 : undefined }}>
+              Please select a wallet to connect to Million pixels gallery.
+            </span>
+            {fullTitle && (
+              <>
+                <br />
+                <Text type={'L'}>
+                  First, to Lock the wanted space, <br />
+                  Then, to create your nft and complete your purchase.
+                </Text>
+              </>
+            )}
+          </Text>
+          <Col gap={30} style={marginBottom(162)}>
+            <Row gap={30}>
+              <Button
+                type={'outlined'}
+                width={200}
+                data-wallet={WalletEnum.Metamask}
+                onClick={handleSelect}
+              >
+                <Row align={'center'} justify={'start'} style={marginLeft(18)}>
+                  <img src={metamask} alt={WalletEnum.Metamask} style={marginRight(25)} />
+                  <span>METAMASK</span>
+                </Row>
+              </Button>
+              <Button
+                type={'outlined'}
+                width={200}
+                data-wallet={WalletEnum.Fortmatic}
+                onClick={handleSelect}
+              >
+                <Row align={'center'} justify={'start'} style={marginLeft(18)}>
+                  <img src={fortmatic} alt={WalletEnum.Fortmatic} style={marginRight(25)} />
+                  <span>Fortmatic</span>
+                </Row>
+              </Button>
+            </Row>
+            <Row gap={30}>
+              <Button
+                type={'outlined'}
+                width={200}
+                data-wallet={WalletEnum.Portis}
+                onClick={handleSelect}
+              >
+                <Row align={'center'} justify={'start'} style={marginLeft(23)}>
+                  <img src={portis} alt={WalletEnum.Portis} style={marginRight(36)} />
+                  <span>Portis</span>
+                </Row>
+              </Button>
+              <Button
+                type={'outlined'}
+                width={200}
+                data-wallet={WalletEnum.Torus}
+                onClick={handleSelect}
+              >
+                <Row align={'center'} justify={'start'} style={marginLeft(18)}>
+                  <img src={torus} alt={WalletEnum.Torus} style={marginRight(29)} />
+                  <span>Torus</span>
+                </Row>
+              </Button>
+            </Row>
+          </Col>
+          <Text type={'S'} lineHeight={28}>
+            * We do not own your private keys and cannot access your funds without your confirmation.
+          </Text>
         </Col>
-        <Text type={'S'} lineHeight={28}>
-          * We do not own your private keys and cannot access your funds without your confirmation.
-        </Text>
-      </Col>
-    </ByPixelsSelectWalletSC>
+      </ByPixelsSelectWalletSC>
+    </LoadingOverlay >
   )
 }
 
