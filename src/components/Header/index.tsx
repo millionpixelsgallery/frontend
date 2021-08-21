@@ -27,10 +27,8 @@ function Header({ style }: HeaderProps) {
   const web3Methods = useApiMethods()
 
   const handleWalletAction = useCallback(() => {
-    console.log({ web3Methods })
     if (connectionDetails?.isConnected && connectionDetails.chainId !== '0x1') {
-      web3Methods?.switchMainnet()
-      return console.log('switch to mainnet')
+      return web3Methods?.switchMainnet()
     }
     if (!connectionDetails?.isConnected) {
       setDisplayWalletModal(true)
@@ -55,7 +53,7 @@ function Header({ style }: HeaderProps) {
       <Link to='/'>
         <SiteLogo />
       </Link>
-      <Row align='center' gap={50}>
+      <Row align='center' gap={50} style={{ marginLeft: 50 }} >
         <Row gap={50}>
           <NavLink to='/gallery' className={'gallery'}>
             {' '}
