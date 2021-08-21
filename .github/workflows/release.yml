@@ -44,6 +44,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - run: echo "${{ secrets.DOTENV_DEV }}" >> .env
+      - name: 'set network env'
+        if: ${{ contains('production',github.ref) }}
+        run: sed -i 's/REACT_APP_NETWORK=development/REACT_APP_NETWORK=production/'
       - name: Load node v14
         uses: actions/setup-node@v1
         with:
@@ -88,6 +91,7 @@ jobs:
 
       # GitHub release with links
       - name: Create GitHub Release with tag ${{ needs.bump_version.outputs.new_tag }}
+        if: ${{ contains('production',github.ref) }}
         id: create_release
         uses: ncipollo/release-action@v1.8.4
         env:
