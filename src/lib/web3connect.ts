@@ -9,9 +9,12 @@ import { ethers } from 'ethers'
 import { abi } from './contract.json'
 
 const NETWORK = process.env.REACT_APP_NETWORK as string
+const isMainnet = NETWORK === 'production'
 let RPC: string = 'http://localhost:8545',
-  CONTRACT_ADDRESS: string = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
-const FORTMATIC_KEY = process.env.REACT_APP_FORTMATIC_KEY as string
+  CONTRACT_ADDRESS: string = process.env.REACT_APP_CONTRACT_ADDRESS as string
+const FORTMATIC_KEY = (
+  isMainnet ? process.env.REACT_APP_FORTMATIC_KEY_PROD : process.env.REACT_APP_FORTMATIC_KEY
+) as string
 const PORTIS_KEY = process.env.REACT_APP_PORTIS_KEY as string
 switch (NETWORK) {
   case 'local':
@@ -20,11 +23,10 @@ switch (NETWORK) {
     break
   case 'development':
     RPC = 'https://rinkeby.infura.io/v3/074defc86881430da33be9151f3beaf8'
-    CONTRACT_ADDRESS = '0xd3e09a504ffc4c2e4998bb12b44c47e5dce4cbea'
     break
   case 'production':
     RPC = 'https://mainnet.infura.io/v3/074defc86881430da33be9151f3beaf8'
-    CONTRACT_ADDRESS = '0xd3e09a504ffc4c2e4998bb12b44c47e5dce4cbea'
+    CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS_PROD as string
     break
 }
 
@@ -35,20 +37,24 @@ const web3Options = {
       package: Fortmatic,
       options: {
         key: FORTMATIC_KEY,
-        network: RPC,
+        network: isMainnet ? 'mainnet' : 'rinkeby',
       },
     },
     portis: {
       package: Portis,
       options: {
         id: PORTIS_KEY,
-        network: RPC,
+        network: isMainnet ? 'mainnet' : 'rinkeby',
+        config: {
+          nodeUrl: RPC,
+        },
       },
     },
     torus: {
       package: Torus,
       options: {
-        network: RPC,
+        config: { enableLogging: true },
+        networkParams: { host: isMainnet ? 'mainnet' : 'rinkeby' },
       },
     },
   },
@@ -120,12 +126,19 @@ export class Web3Connect {
         )
         return
       }
+      console.log({ provider })
       this.provider = provider
         ? await web3Modal.connectTo(provider === 'metamask' ? 'injected' : provider)
         : await web3Modal.connect()
     } catch (e) {
       console.log('Could not get a wallet connection', e)
       throw e
+    }
+    console.log('got provider:', { provider: this.provider })
+
+    if (provider === 'fortmatic') {
+      this.provider = this.provider.fm.getProvider()
+      console.log('fortmatic', this.provider.fm)
     }
     if (this.provider.on) {
       this.provider.on('accountsChanged', this._fetchAccountData.bind(this))
@@ -321,19 +334,29 @@ export class Web3Methods {
   constructor(private contract: any, public web3: any, private account: any) {}
 
   public async connectionDetails(): Promise<ConnectionDetails> {
+    const [selectedAddress] = (await this.web3.currentProvider.enable()) || []
     const [isConnected, chainId, address] = await Promise.all([
-      this.web3.currentProvider.isConnected(),
-      this.web3.currentProvider.chainId,
-      this.web3.currentProvider.selectedAddress,
+      !!selectedAddress,
+      this.web3.eth.getChainId(),
+      selectedAddress,
     ])
     return { isConnected, chainId, address }
   }
 
   public async switchMainnet(): Promise<void> {
-    return this.web3.currentProvider.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: '0x1' }],
-    })
+    if (this.web3.currentProvider._portis) {
+      return this.web3.currentProvider._portis.changeNetwork('mainnet')
+    }
+    if (this.web3.currentProvider.torus) {
+      return this.web3.currentProvider.torus.setProvider({ host: 'mainnet' })
+    }
+
+    if (this.web3.currentProvider.isMetaMask) {
+      return this.web3.currentProvider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x1' }],
+      })
+    }
   }
   public async commit(
     area: Area,
