@@ -54,7 +54,9 @@ jobs:
         with:
           node-version: '14'
       - name: Install deps
-        run: yarn install --frozen-lockfile
+        uses: bahmutov/npm-install@v1
+        with:
+          useYarn: true
       - name: Build app
         run: yarn build
 
