@@ -10,6 +10,7 @@ import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
 import portis from './assets/portis.png'
 import torus from './assets/torus.png'
+import walletconnect from './assets/walletconnect.png'
 
 export interface ByPixelsSelectWalletProps extends ByPixelsSelectWalletSCProps {
   className?: string
@@ -24,6 +25,7 @@ export enum WalletEnum {
   Fortmatic = 'fortmatic',
   Portis = 'portis',
   Torus = 'torus',
+  WalletConnect = 'walletconnect',
 }
 
 function ByPixelsSelectWallet({
@@ -97,12 +99,12 @@ function ByPixelsSelectWallet({
               <Button
                 type={'outlined'}
                 width={200}
-                data-wallet={WalletEnum.Portis}
+                data-wallet={WalletEnum.WalletConnect}
                 onClick={handleSelect}
               >
                 <Row align={'center'} justify={'start'} style={marginLeft(23)}>
-                  <img src={portis} alt={WalletEnum.Portis} style={marginRight(36)} />
-                  <span>Portis</span>
+                  <img src={walletconnect} alt={WalletEnum.WalletConnect} style={marginRight(36)} />
+                  <span>Wallet Connect</span>
                 </Row>
               </Button>
               <Button

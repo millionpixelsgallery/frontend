@@ -5,10 +5,12 @@ import Torus from '@toruslabs/torus-embed'
 import Web3 from 'web3'
 import { AbiItem } from 'web3-utils'
 import { ethers } from 'ethers'
+import WalletConnectProvider from '@walletconnect/web3-provider'
 
 import { abi } from './contract.json'
 
 const NETWORK = process.env.REACT_APP_NETWORK as string
+const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
 const isMainnet = NETWORK === 'production'
 let RPC: string = 'http://localhost:8545',
   CONTRACT_ADDRESS: string = process.env.REACT_APP_CONTRACT_ADDRESS as string
@@ -22,10 +24,10 @@ switch (NETWORK) {
     CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
     break
   case 'development':
-    RPC = 'https://rinkeby.infura.io/v3/074defc86881430da33be9151f3beaf8'
+    RPC = 'https://rinkeby.infura.io/v3/' + INFURA_KEY
     break
   case 'production':
-    RPC = 'https://mainnet.infura.io/v3/074defc86881430da33be9151f3beaf8'
+    RPC = 'https://mainnet.infura.io/v3/' + INFURA_KEY
     CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS_PROD as string
     break
 }
@@ -55,6 +57,12 @@ const web3Options = {
       options: {
         config: { enableLogging: true },
         networkParams: { host: isMainnet ? 'mainnet' : 'rinkeby' },
+      },
+    },
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        infuraId: INFURA_KEY, // required
       },
     },
   },

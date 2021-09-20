@@ -91,7 +91,7 @@ function Header({ style }: HeaderProps) {
           onClick={handleWalletAction}
         >
           {connectionDetails?.isConnected ? connectionDetails.address : 'Connect Wallet'}
-          {!connectionDetails?.isConnected || connectionDetails?.chainId === '0x1' ? null : '\nSwitch to mainnet'}
+          {!connectionDetails?.isConnected || parseInt(connectionDetails?.chainId) === 1 ? null : '\nSwitch to mainnet'}
         </Button>
       </Row>
       <Modal
