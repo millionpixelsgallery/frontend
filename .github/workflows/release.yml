@@ -39,7 +39,10 @@ jobs:
       # Basic env setup and app build
       # Result: built app in /dist
       - run: echo "subdomain=dev" >> $GITHUB_ENV     
-      - run: echo "${{ secrets.DOTENV }}" >> .env
+      - run: |
+          echo "${{ secrets.DOTENV }}" >> .env
+          cat .env
+          ls -la
       - name: Checkout
         uses: actions/checkout@v2
       - name: 'set network env'
