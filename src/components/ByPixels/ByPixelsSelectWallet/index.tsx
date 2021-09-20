@@ -8,7 +8,7 @@ import { Col, Row } from 'components/ui/Grid'
 import Button from 'components/ui/Button'
 import metamask from './assets/metamask.png'
 import fortmatic from './assets/fortmatic.png'
-import portis from './assets/portis.png'
+// import portis from './assets/portis.png'
 import torus from './assets/torus.png'
 import walletconnect from './assets/walletconnect.png'
 
