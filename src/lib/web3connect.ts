@@ -9,26 +9,32 @@ import WalletConnectProvider from '@walletconnect/web3-provider'
 
 import { abi } from './contract.json'
 
-const NETWORK = process.env.REACT_APP_NETWORK as string
+const ENV = process.env.REACT_APP_NETWORK as string
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
-const isMainnet = NETWORK === 'production'
+const isMainnet = ENV === 'production'
 let RPC: string = 'http://localhost:8545',
   CONTRACT_ADDRESS: string = process.env.REACT_APP_CONTRACT_ADDRESS as string
 const FORTMATIC_KEY = (
   isMainnet ? process.env.REACT_APP_FORTMATIC_KEY_PROD : process.env.REACT_APP_FORTMATIC_KEY
 ) as string
 const PORTIS_KEY = process.env.REACT_APP_PORTIS_KEY as string
-switch (NETWORK) {
+let NETWORK = 'local'
+let CHAIN_ID = 4447
+switch (ENV) {
   case 'local':
     RPC = 'http://localhost:8545'
     CONTRACT_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
     break
   case 'development':
     RPC = 'https://rinkeby.infura.io/v3/' + INFURA_KEY
+    NETWORK = 'rinkeby'
+    CHAIN_ID = 4
     break
   case 'production':
     RPC = 'https://mainnet.infura.io/v3/' + INFURA_KEY
     CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS_PROD as string
+    NETWORK = 'mainnet'
+    CHAIN_ID = 1
     break
 }
 
@@ -39,14 +45,14 @@ const web3Options = {
       package: Fortmatic,
       options: {
         key: FORTMATIC_KEY,
-        network: isMainnet ? 'mainnet' : 'rinkeby',
+        network: NETWORK,
       },
     },
     portis: {
       package: Portis,
       options: {
         id: PORTIS_KEY,
-        network: isMainnet ? 'mainnet' : 'rinkeby',
+        network: NETWORK,
         config: {
           nodeUrl: RPC,
         },
@@ -56,7 +62,7 @@ const web3Options = {
       package: Torus,
       options: {
         config: { enableLogging: true },
-        networkParams: { host: isMainnet ? 'mainnet' : 'rinkeby' },
+        networkParams: { host: NETWORK },
       },
     },
     walletconnect: {
@@ -95,6 +101,7 @@ export type ConnectionDetails = {
   address: string
   chainId: string
   isConnected: boolean
+  isCorrectNetwork: boolean
 }
 export class Web3Connect {
   static get cachedProvider() {
@@ -134,7 +141,7 @@ export class Web3Connect {
         )
         return
       }
-      console.log({ provider })
+      console.log({ provider, NETWORK, CONTRACT_ADDRESS })
       this.provider = provider
         ? await web3Modal.connectTo(provider === 'metamask' ? 'injected' : provider)
         : await web3Modal.connect()
@@ -339,6 +346,7 @@ export class Web3Connect {
 }
 
 export class Web3Methods {
+  network = NETWORK
   constructor(private contract: any, public web3: any, private account: any) {}
 
   public async connectionDetails(): Promise<ConnectionDetails> {
@@ -348,21 +356,22 @@ export class Web3Methods {
       this.web3.eth.getChainId(),
       selectedAddress,
     ])
-    return { isConnected, chainId, address }
+    const isCorrectNetwork = parseInt(chainId) === CHAIN_ID
+    return { isConnected, chainId, address, isCorrectNetwork }
   }
 
   public async switchMainnet(): Promise<void> {
     if (this.web3.currentProvider._portis) {
-      return this.web3.currentProvider._portis.changeNetwork('mainnet')
+      return this.web3.currentProvider._portis.changeNetwork(NETWORK)
     }
     if (this.web3.currentProvider.torus) {
-      return this.web3.currentProvider.torus.setProvider({ host: 'mainnet' })
+      return this.web3.currentProvider.torus.setProvider({ host: NETWORK })
     }
 
     if (this.web3.currentProvider.isMetaMask) {
       return this.web3.currentProvider.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x1' }],
+        params: [{ chainId: isMainnet ? '0x1' : '0x4' }],
       })
     }
   }
