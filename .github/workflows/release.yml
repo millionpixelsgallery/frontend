@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - prod
+      - production
       - staging
   # allow manual run
   workflow_dispatch:
@@ -26,7 +26,7 @@ jobs:
         uses: mathieudutour/github-tag-action@v5.5
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          release_branches: prod, staging
+          release_branches: production, staging
           pre_release_branches: main
           # release_branches: release.*,master
 
@@ -50,7 +50,7 @@ jobs:
           ls -la
           
       - name: 'set network env'
-        if: ${{ contains('prod',github.ref) }}
+        if: ${{ contains(github.ref,'production') }}
         run: |
           echo "RECORD_NAME=_dnslink" >> $GITHUB_ENV
           echo "subdomain=" >> $GITHUB_ENV     
@@ -103,7 +103,7 @@ jobs:
 
       # GitHub release with links
       - name: Create GitHub Release with tag ${{ needs.bump_version.outputs.new_tag }}
-        if: ${{ contains('production',github.ref) }}
+        if: ${{ contains(github.ref,'production') }}
         id: create_release
         uses: ncipollo/release-action@v1.8.4
         env:
