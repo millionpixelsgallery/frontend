@@ -41,7 +41,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       
+      - run: echo "RECORD_NAME=_dnslink.dev" >> $GITHUB_ENV     
       - run: echo "subdomain=dev" >> $GITHUB_ENV     
+
       - run: |
           echo "${{ secrets.DOTENV }}" >> .env
           cat .env
@@ -50,7 +52,8 @@ jobs:
       - name: 'set network env'
         if: ${{ contains('prod',github.ref) }}
         run: |
-          echo "subdomain=www" >> $GITHUB_ENV
+          echo "RECORD_NAME=_dnslink" >> $GITHUB_ENV
+          echo "subdomain=" >> $GITHUB_ENV     
           sed -i 's/REACT_APP_NETWORK=development/REACT_APP_NETWORK=production/' .env
       - run: echo "deploy_addr=${{ env.subdomain }}.${{ secrets.CLOUDFLARE_DOMAIN }}" >> $GITHUB_ENV
       - run: echo "deploy_tag=${{ needs.bump_version.outputs.new_tag }}" >> $GITHUB_ENV    
@@ -93,7 +96,7 @@ jobs:
             CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
             CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
             RECORD_DOMAIN: ${{ secrets.CLOUDFLARE_DOMAIN }}
-            RECORD_NAME: _dnslink.${{ env.subdomain }}
+            # RECORD_NAME: ${{ env.RECORD_NAME }}
         uses: textileio/cloudflare-update-dnslink@master
         with:
             cid: ${{ steps.upload.outputs.hash }}
