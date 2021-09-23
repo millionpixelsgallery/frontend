@@ -92,7 +92,6 @@ function ByPixels({
   onClose,
   firstBuy,
 }: ByPixelsProps) {
-  console.log({ data })
   const isReSell = data.index != null
   const [commitPromise, setCommitPromise] = useState(Promise.resolve(''))
   const pixels = usePixelsController()
@@ -101,7 +100,7 @@ function ByPixels({
   const connect = useApiConnect()
   const onTxHash = useCallback(
     (hash) => {
-      console.log('got tx hash:', { hash })
+      console.debug('got tx hash:', { hash })
       setLoading('pending tx confirmation')
     },
     [setLoading]
@@ -123,7 +122,7 @@ function ByPixels({
         let ipfs = pendingBuy.ipfs
         onChangeDisabledControlButtons(true)
         if (ipfs) {
-          console.log('skipping ipfs', pendingBuy.ipfs)
+          console.debug('skipping ipfs', pendingBuy.ipfs)
         } else {
           console.debug('uploading...', { values })
           setLoading('Uploading To IPFS')
@@ -173,21 +172,13 @@ function ByPixels({
 
   //restore previous state if process stopped in the middle
   useEffect(() => {
-    const setValues = async (values: any) => {
-      if (values.image) {
-        values.image = await base64ToFile(values.image, values.imageName)
-        console.debug({ values })
-      }
-      formik.setValues(values)
-    }
-
     //if no wallet
     if (!methods) {
       return onChangeStep(0)
     }
     const pendingBuy = getPendingBuy()
 
-    //if area changed reset
+    // if area changed reset
     const area = [data.position.x, data.position.y, data.width, data.height]
     if (pendingBuy.area && false === isEqual(area, pendingBuy.area)) {
       setPendingBuy({})
@@ -196,20 +187,34 @@ function ByPixels({
 
     //restore form saved values
     if (step === 1) {
-      const values = defaults(pick(pendingBuy, ['title', 'link', 'image']), defaultValues)
-      setValues(values).then((_) => {
-        //if has a pending commit
-        if (pendingBuy.commitHash) {
-          //if also uploaded to ipfs then skip to last step
-          if (pendingBuy.ipfs) {
-            return onChangeStep(3)
-          }
-
-          return onChangeStep(2)
+      //if has a pending commit
+      if (pendingBuy.commitHash) {
+        //if also uploaded to ipfs then skip to last step
+        if (pendingBuy.ipfs) {
+          return onChangeStep(3)
         }
-      })
+
+        return onChangeStep(2)
+      }
     }
   }, [step, data, formik])
+
+  useEffect(() => {
+    const setValues = async (values: any) => {
+      if (values.image) {
+        values.image = await base64ToFile(values.image, values.imageName)
+        console.debug({ values })
+      }
+      formik.setValues(values)
+    }
+
+    const pendingBuy = getPendingBuy()
+    const values = defaults(
+      pick(pendingBuy, ['title', 'link', 'image', 'imageName']),
+      defaultValues
+    )
+    setValues(values)
+  }, [])
 
   const handleSelectWallet = useCallback(async (wallet) => {
     await connect(wallet)
