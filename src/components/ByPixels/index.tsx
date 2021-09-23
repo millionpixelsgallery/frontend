@@ -189,7 +189,7 @@ function ByPixels({
 
     //if area changed reset
     const area = [data.position.x, data.position.y, data.width, data.height]
-    if (false === isEqual(area, pendingBuy.area)) {
+    if (pendingBuy.area && false === isEqual(area, pendingBuy.area)) {
       setPendingBuy({})
       onChangeStep(1)
     }
