@@ -8,6 +8,6 @@ export function getLocalCache<T>(name: string, defaultValue: T): T {
   }
 }
 
-export function setLocalCache(name: string, value: number) {
+export function setLocalCache(name: string, value: any) {
   localStorage.setItem(name, JSON.stringify(value))
 }

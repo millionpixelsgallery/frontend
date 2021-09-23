@@ -15,6 +15,8 @@ import { upload } from 'lib/nft'
 import { cratePlaceHolderFile } from 'utils/cratePlaceHolderFile'
 import { usePixelsController } from 'hooks/usePixels'
 import { urlRegExp } from 'utils/link'
+import { defaults, isEqual, pick } from 'lodash'
+import { getLocalCache, setLocalCache } from 'utils/cache'
 
 export interface ProductData {
   width: number
@@ -38,19 +40,47 @@ export interface ByPixelsProps extends ByPixelsSCProps {
   firstBuy?: boolean
 }
 
-const initialValues = {
+const defaultValues = {
   link: '',
   title: '',
-  image: null,
+  image: undefined,
+}
+
+type PendingBuy = {
+  ipfs?: string
+  commitHash?: string
+  image?: string
+  imageName?: string
+  title?: string
+  link?: string
+  area?: Array<number>
+  nonce: number
 }
 
 export type ByPixelsValues = {
   link: string
   title: string
-  image: null | File
+  image: undefined | File
 }
 
 export const supportedImageExtensions = ['jpeg', 'png', 'jpg']
+const getPendingBuy = () => getLocalCache('pendingBuy', {} as PendingBuy)
+const setPendingBuy = (data: object) => setLocalCache('pendingBuy', data)
+const fileToBase64 = async (file: File) => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+  })
+}
+
+const base64ToFile = async (dataUrl: string, fileName: string): Promise<File> => {
+  const mime = dataUrl.match(/:(.*?);/) || []
+  const res: Response = await fetch(dataUrl)
+  const blob: Blob = await res.blob()
+  return new File([blob], fileName, { type: mime[1] })
+}
 
 function ByPixels({
   className,
@@ -77,7 +107,7 @@ function ByPixels({
     [setLoading]
   )
   const formik = useForm({
-    initialValues: initialValues,
+    initialValues: defaultValues,
     validationSchema: useValidationSchema((yup, E) => ({
       title: yup.string().max(100),
       link: yup.string().max(750).matches(urlRegExp),
@@ -87,31 +117,47 @@ function ByPixels({
       }),
     })),
     onSubmit: async (values) => {
-      setLoading('Uploading To IPFS')
-      onChangeDisabledControlButtons(true)
       try {
-        const ipfs = await upload(
-          Boolean(values.image)
-            ? values.image!
-            : await cratePlaceHolderFile(data.width, data.height),
-          values.title,
-          values.link
-        )
-
+        const pendingBuy = getPendingBuy()
+        console.debug(pendingBuy)
+        let ipfs = pendingBuy.ipfs
+        onChangeDisabledControlButtons(true)
+        if (ipfs) {
+          console.log('skipping ipfs', pendingBuy.ipfs)
+        } else {
+          console.debug('uploading...', { values })
+          setLoading('Uploading To IPFS')
+          ipfs = await upload(
+            Boolean(values.image)
+              ? values.image!
+              : await cratePlaceHolderFile(data.width, data.height),
+            values.title,
+            values.link
+          )
+          pendingBuy.title = values.title
+          pendingBuy.link = values.link
+          pendingBuy.image = values.image && (await fileToBase64(values.image as unknown as File))
+          pendingBuy.imageName = values.image && (values.image as unknown as File).name
+          pendingBuy.ipfs = ipfs
+          setPendingBuy(pendingBuy)
+        }
         if (isReSell) {
           setLoading('Pending wallet confirm')
           await methods?.buyPixelsForSale(data.index as number, ipfs, onTxHash)
         } else {
           onTxHash('')
-          const random = await commitPromise
+          const hash = await commitPromise
           setLoading('Pending wallet confirm')
+          pendingBuy.commitHash = hash
+          setPendingBuy(pendingBuy)
           await methods?.buyPixels(
             [data.position.x, data.position.y, data.width, data.height],
-            random,
-            ipfs,
+            pendingBuy.nonce,
+            pendingBuy.ipfs as string,
             onTxHash
           )
         }
+        setPendingBuy({})
       } catch (e) {
         console.error('error while buying pixels', e)
       } finally {
@@ -124,11 +170,46 @@ function ByPixels({
       }
     },
   })
+
+  //restore previous state if process stopped in the middle
   useEffect(() => {
-    if (!methods) {
-      onChangeStep(0)
+    const setValues = async (values: any) => {
+      if (values.image) {
+        values.image = await base64ToFile(values.image, values.imageName)
+        console.debug({ values })
+      }
+      formik.setValues(values)
     }
-  }, [])
+
+    //if no wallet
+    if (!methods) {
+      return onChangeStep(0)
+    }
+    const pendingBuy = getPendingBuy()
+
+    //if area changed reset
+    const area = [data.position.x, data.position.y, data.width, data.height]
+    if (false === isEqual(area, pendingBuy.area)) {
+      setPendingBuy({})
+      onChangeStep(1)
+    }
+
+    //restore form saved values
+    if (step === 1) {
+      const values = defaults(pick(pendingBuy, ['title', 'link', 'image']), defaultValues)
+      setValues(values).then((_) => {
+        //if has a pending commit
+        if (pendingBuy.commitHash) {
+          //if also uploaded to ipfs then skip to last step
+          if (pendingBuy.ipfs) {
+            return onChangeStep(3)
+          }
+
+          return onChangeStep(2)
+        }
+      })
+    }
+  }, [step, data, formik])
 
   const handleSelectWallet = useCallback(async (wallet) => {
     await connect(wallet)
@@ -140,14 +221,24 @@ function ByPixels({
       case 1:
         if (methods && isReSell === false) {
           setLoading('Pending wallet confirm')
+          const pendingBuy = getPendingBuy()
+          const nonce = pendingBuy.nonce || Math.random() * 1e10
           const promise = methods.commit(
             [data.position.x, data.position.y, data.width, data.height],
-            (hash) => {
+            nonce,
+            (txHash) => {
+              setPendingBuy({
+                nonce,
+                area: [data.position.x, data.position.y, data.width, data.height],
+              })
               setLoading('')
               onChangeStep(step + 1)
             }
           )
-          promise.catch((_) => setLoading(''))
+          promise.catch((e: Error) => {
+            console.error('commit failed', e.message, e)
+            setLoading('')
+          })
           setCommitPromise(promise)
         } else onChangeStep(step + 1)
         break

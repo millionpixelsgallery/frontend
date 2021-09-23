@@ -319,18 +319,15 @@ export class Web3Connect {
       }
 
       const image = ipfs
-        ? await fetch(`https://cloudflare-ipfs.com/ipfs/${ipfs}/metadata.json`)
+        ? await fetch(`https://ipfs.io/ipfs/${ipfs}/metadata.json`)
             .then((r) => r.json())
             .then((j) => ({
               title: j.name,
               link: j.description,
-              image: j.image.replace('ipfs://', 'https://cloudflare-ipfs.com/ipfs/'),
+              image: j.image.replace('ipfs://', 'https://ipfs.io/ipfs/'),
             }))
             .catch((e) => {
-              console.log(
-                `Can't find image by the link: https://cloudflare-ipfs.com/ipfs/${ipfs}/`,
-                e
-              )
+              console.log(`Can't find image by the link: https://ipfs.io/ipfs/${ipfs}/`, e)
               return undefined
             })
         : undefined
@@ -377,22 +374,28 @@ export class Web3Methods {
   }
   public async commit(
     area: Area,
+    random: number,
     txHashCallback: (hash: string) => void = () => undefined
   ): Promise<string> {
     const { 1: isAvailable } = await this.contract.methods.isAreaAvailable(area).call()
 
     if (isAvailable && area[2] > 0 && area[3] > 0) {
       try {
-        const random = (Math.random() * 1e10).toFixed(0)
         const hash = ethers.utils.solidityKeccak256(
           ['uint32[4]', 'uint256', 'address'],
-          [area, random, this.account]
+          [area, random.toFixed(0), this.account]
         )
-        await this.contract.methods
-          .commitToPixels(hash)
-          .send({ from: this.account })
-          .on('transactionHash', txHashCallback)
-        return random
+        const commitBlock = await this.contract.methods.commits(hash).call().then(parseInt)
+        console.debug('existing commit result:', { area, random, commitBlock, commitHash: hash })
+        if (commitBlock === 0) {
+          await this.contract.methods
+            .commitToPixels(hash)
+            .send({ from: this.account })
+            .on('transactionHash', txHashCallback)
+        } else {
+          txHashCallback('')
+        }
+        return hash
       } catch (e) {
         console.warn('Commit already set', e)
         throw new Error('Commit failed')
@@ -404,7 +407,7 @@ export class Web3Methods {
 
   public async buyPixels(
     area: Area,
-    random: string,
+    random: number,
     ipfs: string,
     txHashCallback: (hash: string) => void = () => undefined
   ): Promise<Pixels> {
@@ -413,7 +416,7 @@ export class Web3Methods {
     if (isAvailable && area[2] > 0 && area[3] > 0) {
       const price = await Web3Connect.getPixelsCost(area)
       await this.contract.methods
-        .buyPixels(area, random, ipfs)
+        .buyPixels(area, random.toFixed(0), ipfs)
         .send({ from: this.account, value: price.raw })
         .on('transactionHash', txHashCallback)
 

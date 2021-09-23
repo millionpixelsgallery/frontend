@@ -66,7 +66,7 @@ function EditPixels({
     initialValues: {
       link: image.link,
       title: image.title,
-      image: null,
+      image: undefined,
     },
     validationSchema: useValidationSchema((yup, E) => ({
       title: yup.string().max(100),
