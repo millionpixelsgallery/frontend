@@ -165,7 +165,7 @@ function ByPixels({
         onClose()
         setLoading('')
         pixels.setSelectionActive(false)
-        await pixels.fetchPixels()
+        await pixels.fetchPixels(data.index)
       }
     },
   })

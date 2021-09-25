@@ -9,11 +9,12 @@ import {
 } from 'react'
 import { Pixels, Web3Connect } from 'lib/web3connect'
 import { useApiMethods } from 'hooks/useApi'
+import { getLocalCache, setLocalCache } from 'utils/cache'
+import { uniqBy } from 'lodash'
 
 interface IPixelsContext extends PixelsState {
   setSelectionActive(value?: boolean): void
-  fetchPixels(): Promise<void>
-  fetchMyPixels(): Promise<void>
+  fetchPixels(refreshIndex?: number): Promise<void>
 }
 
 type Action<N extends string, T extends object = never> = [T] extends [never]
@@ -53,12 +54,12 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
           return {
             ...state,
             pixels: action.pixels,
+            myPixels: action.pixels.filter((_) => _.owner === methods?.getAccount()),
             pixelsLoading: false,
           }
         case 'PIXELS_LOADING':
           return {
             ...state,
-            pixels: undefined,
             pixelsLoading: true,
           }
         case 'MY_PIXELS_CHANGE':
@@ -70,7 +71,6 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
         case 'MY_PIXELS_LOADING':
           return {
             ...state,
-            myPixels: undefined,
             myPixelsLoading: true,
           }
         default:
@@ -79,50 +79,59 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
     },
     {
       selectionActive: false,
-      pixels: undefined,
+      pixels: getLocalCache('pixels', [] as Array<Pixels>),
       pixelsLoading: false,
       myPixelsLoading: false,
-      myPixels: undefined,
+      myPixels: getLocalCache('pixels', [] as Array<Pixels>).filter(
+        (_) => _.owner === methods?.getAccount()
+      ),
     }
   )
 
-  const fetchMyPixels = useCallback(async () => {
-    if (!methods) return
-    dispatch({
-      type: 'MY_PIXELS_LOADING',
-    })
-    const pixels = await methods.getAllMyPixels().catch((e) => {
-      console.error(e)
-      return []
-    })
-    dispatch({
-      type: 'MY_PIXELS_CHANGE',
-      pixels,
-    })
-  }, [methods])
+  // const fetchMyPixels = useCallback(async () => {
+  //   if (!methods) return
+  //   dispatch({
+  //     type: 'MY_PIXELS_LOADING',
+  //   })
+  //   const pixels = await methods.getAllMyPixels().catch((e) => {
+  //     console.error(e)
+  //     return []
+  //   })
+  //   dispatch({
+  //     type: 'MY_PIXELS_CHANGE',
+  //     pixels,
+  //   })
+  // }, [methods])
 
-  const fetchPixels = useCallback(async () => {
-    if (state.myPixels) fetchMyPixels()
+  const fetchPixels = useCallback(async (refreshIndex?: number | undefined) => {
     dispatch({
       type: 'PIXELS_LOADING',
     })
-    const pixels = await Web3Connect.getAllPixels().catch((e) => {
+    //remove the item we want to refresh
+    const cached = (state.pixels || []).filter((_) => _.index != refreshIndex)
+
+    let pixels = await Web3Connect.getAllPixels(cached).catch((e) => {
       console.error(e)
-      return []
+      return [] as Pixels[]
     })
+    pixels = uniqBy(pixels.concat(cached), 'index') //use the latest fetched
+    setLocalCache('pixels', pixels)
     dispatch({
       type: 'PIXELS_CHANGE',
       pixels,
     })
-  }, [state.myPixels])
+  }, [])
 
   useEffect(() => {
     fetchPixels()
   }, [])
 
   useEffect(() => {
-    if (state.myPixels) {
-      fetchMyPixels()
+    if (methods && state.pixels) {
+      dispatch({
+        type: 'MY_PIXELS_CHANGE',
+        pixels: state.pixels.filter((_) => _.owner === methods.getAccount()),
+      })
     }
   }, [methods])
 
@@ -137,7 +146,6 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
           })
         },
         fetchPixels,
-        fetchMyPixels,
       }}
     >
       {children}

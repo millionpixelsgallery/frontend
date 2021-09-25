@@ -1,4 +1,4 @@
-import { CSSProperties, memo, useCallback, useEffect, useMemo } from 'react'
+import { CSSProperties, memo, useCallback, useMemo } from 'react'
 import { MyPixelsSC, MyPixelsSCProps } from './styled'
 import Title from 'components/ui/Title'
 import Text from 'components/ui/Text'
@@ -23,7 +23,7 @@ export interface MyPixelsProps extends MyPixelsSCProps {
 function MyPixels({ className, style, ...rest }: MyPixelsProps) {
   const { methods, connect, loading: apiLoading } = useApi()
   const history = useHistory()
-  const { setSelectionActive, fetchMyPixels, myPixels, myPixelsLoading } = usePixelsController()
+  const { setSelectionActive, myPixels, myPixelsLoading } = usePixelsController()
 
   const hasPixels = useMemo(() => Boolean(myPixels?.length), [myPixels])
 
@@ -41,9 +41,9 @@ function MyPixels({ className, style, ...rest }: MyPixelsProps) {
     if (!methodsRef.current) history.replace('/gallery')
   }, [history])
 
-  useEffect(() => {
-    if (methods && !myPixelsLoading && !myPixels) fetchMyPixels()
-  }, [methods])
+  // useEffect(() => {
+  //   if (methods && !myPixelsLoading && !myPixels) fetchMyPixels()
+  // }, [methods])
 
   return (
     <MyPixelsSC className={className} style={style} {...rest}>

@@ -78,7 +78,7 @@ function SellPixels({
         onChangeDisabledControlButtons(false)
         setLoading('')
         onClose()
-        await fetchPixels()
+        await fetchPixels(index)
       }
     },
   })

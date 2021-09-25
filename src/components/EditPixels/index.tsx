@@ -93,7 +93,7 @@ function EditPixels({
         setLoading('')
         onChangeStep(0)
         onClose()
-        await fetchPixels()
+        await fetchPixels(data.index)
       }
     },
   })

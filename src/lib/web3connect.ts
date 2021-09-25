@@ -8,6 +8,7 @@ import { ethers } from 'ethers'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 
 import { abi } from './contract.json'
+import { first, groupBy, isEmpty } from 'lodash'
 
 const ENV = process.env.REACT_APP_NETWORK as string
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY
@@ -37,6 +38,8 @@ switch (ENV) {
     CHAIN_ID = 1
     break
 }
+
+const IPFS_DOMAINS = ['ipfs.io', 'cloudflare-ipfs.com']
 
 const web3Options = {
   cacheProvider: true,
@@ -95,6 +98,7 @@ export type Pixels = {
     link: string
     image: string
   }
+  cacheDate?: number
 }
 
 export type ConnectionDetails = {
@@ -280,17 +284,20 @@ export class Web3Connect {
     }
   }
 
-  public static async getAllPixels() {
+  public static async getAllPixels(cached: Pixels[]) {
+    const indexToPixels = groupBy(cached, 'index')
     const pixels: Array<Promise<Pixels>> = []
     const count = await this.defaultContact.getAreasCount()
     for (let i = 0; i < count; i++) {
-      pixels.push(this.getPixels(i))
+      const cached = first(indexToPixels[i]) || ({} as Pixels)
+      if ((cached?.cacheDate || 0) < Date.now() - 30 * 60 * 1000)
+        pixels.push(this.getPixels(i, cached))
     }
 
-    return Promise.all(pixels)
+    return (await Promise.all(pixels)).filter((_) => !isEmpty(_))
   }
 
-  public static async getPixels(index: number): Promise<Pixels> {
+  public static async getPixels(index: number, cached: Pixels = {} as Pixels): Promise<Pixels> {
     let data: Pixels
     try {
       const [{ ipfs }, area, owner, isForSale] = await Promise.all([
@@ -318,24 +325,26 @@ export class Web3Connect {
         }
       }
 
-      const image = ipfs
-        ? await fetch(`https://ipfs.io/ipfs/${ipfs}/metadata.json`)
-            .then((r) => r.json())
-            .then((j) => ({
-              title: j.name,
-              link: j.description,
-              image: j.image.replace('ipfs://', 'https://ipfs.io/ipfs/'),
-            }))
-            .catch((e) => {
-              console.log(`Can't find image by the link: https://ipfs.io/ipfs/${ipfs}/`, e)
-              return undefined
-            })
-        : undefined
+      const ipfsDomain = IPFS_DOMAINS[Math.floor(Math.random() * 2)]
+      const image =
+        ipfs !== cached.ipfs
+          ? await fetch(`https://${ipfsDomain}/ipfs/${ipfs}/metadata.json`)
+              .then((r) => r.json())
+              .then((j) => ({
+                title: j.name,
+                link: j.description,
+                image: j.image.replace('ipfs://', `https://${ipfsDomain}/ipfs/`),
+              }))
+              .catch((e) => {
+                console.log(`Can't find image by the link: https://${ipfsDomain}/ipfs/${ipfs}/`, e)
+                return undefined
+              })
+          : cached.image
 
-      data = { index, ipfs, sale, area, owner, image }
+      data = { index, ipfs, sale, area, owner, image, cacheDate: Date.now() }
     } catch (e) {
-      console.log(e)
-      throw new Error(`Area ${index} is not available`)
+      console.log(`Area ${index} is not available`, e)
+      data = {} as Pixels
     }
 
     return data
@@ -429,7 +438,7 @@ export class Web3Methods {
   }
 
   public async getAllMyPixels() {
-    return Web3Connect.getAllPixels().then((pixels) =>
+    return Web3Connect.getAllPixels({} as Pixels[]).then((pixels) =>
       pixels.filter(({ owner }) => this.account === owner)
     )
   }
