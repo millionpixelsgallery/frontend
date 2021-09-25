@@ -58,10 +58,10 @@ function Footer({ className, style, ...rest }: FooterProps) {
           lineHeight='17px'
           className={'copyright'}
         >
-          <div>© Copyright 2021 millionpixelsgallery.eth.link. All rights reserved. </div>
+          <div>© Copyright 2021 millionpixelsgallery.com. All rights reserved. </div>
           <div>
-            millionpixelsgallery.eth.link cannot be held responsible for content on linked sites.
-            Images shown on millionpixelsgallery.eth.link are copyrighted by their owners.
+            millionpixelsgallery.com cannot be held responsible for content on linked sites. Images
+            shown on millionpixelsgallery.com are copyrighted by their owners.
           </div>
         </Text>
       </Row>

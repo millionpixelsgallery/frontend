@@ -38,6 +38,7 @@ export const ModalSC = styled.div<ModalSCProps>`
     fill: none;
     stroke: #5e72eb;
     stroke-width: 3px;
+    z-index: 1;
   }
 
   .close {
@@ -45,6 +46,7 @@ export const ModalSC = styled.div<ModalSCProps>`
     right: 25px;
     top: 28px;
     fill: #5e72eb;
+    z-index: 1;
   }
 
   button:disabled {
