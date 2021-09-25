@@ -136,7 +136,7 @@ function SellPixels({
         disabled={!(formik.isValid && formik.dirty)}
         onClick={formik.submitForm}
         loading={loading}
-        width={200}
+        style={{ minWidth: '200px' }}
       >
         LIST FOR SALE
       </Button>

@@ -131,7 +131,6 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
 
   const handleTooltipClose = useCallback(() => setTooltipPixel(undefined), [])
 
-  console.log({ tooltipPixel, pixels })
   return (
     <ViewportWrapperSC className={className} style={style}>
       <ViewportSC>
@@ -148,6 +147,7 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
                 y,
                 width,
                 height,
+                selected: tooltipPixel?.index === pixel.index,
                 selling: sellMode ? Boolean(sale && sale.end > Date.now() / 1000) : undefined,
                 src: sellMode ? undefined : image?.image,
                 clickable: selectionActive

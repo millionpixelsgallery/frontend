@@ -118,27 +118,40 @@ interface RectProps {
   lineStyle?: [width: number, color?: number, alpha?: number, alignment?: number, native?: boolean]
   clickable?: boolean
   onClick?: (data: { x: number; y: number; width: number; height: number }) => void
+  sprite?: Sprite
 }
 
-function Rect({ container, x, y, width, height, fill, lineStyle, clickable, onClick }: RectProps) {
+function Rect({
+  container,
+  x,
+  y,
+  width,
+  height,
+  fill,
+  lineStyle,
+  clickable,
+  onClick,
+  sprite,
+}: RectProps) {
   const [graphic, destroy] = useMemo(() => {
     const graphic = new Graphics()
     graphic.beginFill(...(Array.isArray(fill) ? fill : [fill]))
     if (lineStyle) graphic.lineStyle(...lineStyle)
-    graphic.drawRect(x, y, width, height)
+    if (sprite) graphic.drawRect(0, 0, width, height)
+    else graphic.drawRect(x, y, width, height)
     graphic.endFill()
     graphic.interactive = clickable
     graphic.buttonMode = clickable
     if (onClick) graphic.on('click', () => onClick({ x, y, width, height }))
-    container.addChild(graphic)
-
+    if (sprite) sprite.addChild(graphic)
+    else container.addChild(graphic)
     return [
       graphic,
       () => {
         graphic.destroy()
       },
     ] as const
-  }, [])
+  }, [lineStyle, fill])
 
   useMemo(() => {
     if (graphic) {
@@ -147,7 +160,7 @@ function Rect({ container, x, y, width, height, fill, lineStyle, clickable, onCl
     }
   }, [clickable])
 
-  useEffect(() => destroy, [])
+  useEffect(() => destroy, [lineStyle, fill])
 
   return null
 }
@@ -161,9 +174,12 @@ interface PixelsProps extends Pick<RectProps, 'clickable' | 'onClick'> {
   height: number
   src?: string
   selling?: boolean
+  selected?: boolean
 }
+
 function Pixels(props: PixelsProps) {
-  const { container, x, y, width, height, selling, src, render, clickable, onClick } = props
+  const { container, x, y, width, height, selling, src, render, clickable, onClick, selected } =
+    props
 
   const onSale = useRef(typeof selling === 'boolean')
   if (onSale.current) {
@@ -220,7 +236,21 @@ function Pixels(props: PixelsProps) {
       // eslint-disable-next-line
     }, [sprite])
 
-    return null
+    return sprite ? (
+      <Rect
+        container={container}
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill={[0xffffff, 0]}
+        // fill={selling ? [0xa9f99e, 0.5] : [0xfe504f, 0.5]}
+        lineStyle={selected ? [1, 0x5e72eb, 1, 0] : [0, 0, 0, 0]}
+        clickable={clickable}
+        onClick={onClick}
+        sprite={sprite}
+      />
+    ) : null
   }
 }
 
