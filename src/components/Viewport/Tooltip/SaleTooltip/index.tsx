@@ -1,6 +1,5 @@
-import { CSSProperties, memo, useCallback, useMemo, useState } from 'react'
+import { CSSProperties, memo, useCallback, useState } from 'react'
 import { SaleTooltipSC, SaleTooltipSCProps } from 'components/Viewport/Tooltip/SaleTooltip/styled'
-import { usePixelsController } from 'hooks/usePixels'
 import { marginBottom, marginLeft, marginTop } from 'utils/style/indents'
 import Link from 'components/ui/Link'
 import Button from 'components/ui/Button'
@@ -10,21 +9,16 @@ import Modal from 'components/ui/Modal'
 import { useApiMethods } from 'hooks/useApi'
 import { prepareLink } from 'utils/link'
 import cn from 'classnames'
+import { Pixels } from 'lib/web3connect'
 
 export interface SaleTooltipProps extends SaleTooltipSCProps {
   className?: string
   style?: CSSProperties
-  x: number
-  y: number
+  pixel?: Pixels
   onClose: () => void
 }
 
-function SaleTooltip({ className, style, x, y, onClose, ...rest }: SaleTooltipProps) {
-  const { pixels } = usePixelsController()
-  const pixel = useMemo(
-    () => pixels?.find((pixel) => pixel.area[0] === x && pixel.area[1] === y),
-    [pixels]
-  )
+function SaleTooltip({ className, style, pixel, onClose, ...rest }: SaleTooltipProps) {
   const [step, setStep] = useState(1)
   const [disabledControlButtons, setDisabledControlButtons] = useState(false)
   const handleBack = useCallback(() => {

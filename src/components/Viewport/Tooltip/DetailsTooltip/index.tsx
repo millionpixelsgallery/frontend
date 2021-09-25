@@ -1,27 +1,21 @@
-import { CSSProperties, memo, useMemo } from 'react'
+import { CSSProperties, memo } from 'react'
 import {
   DetailsTooltipSC,
   DetailsTooltipSCProps,
 } from 'components/Viewport/Tooltip/DetailsTooltip/styled'
-import { usePixelsController } from 'hooks/usePixels'
 import Link from 'components/ui/Link'
 import { marginBottom } from 'utils/style/indents'
 import { prepareLink } from 'utils/link'
 import cn from 'classnames'
+import { Pixels } from 'lib/web3connect'
 
 export interface DetailsTooltipProps extends DetailsTooltipSCProps {
   className?: string
   style?: CSSProperties
-  x: number
-  y: number
+  pixel?: Pixels
 }
 
-function DetailsTooltip({ className, style, x, y, ...rest }: DetailsTooltipProps) {
-  const { pixels } = usePixelsController()
-  const pixel = useMemo(
-    () => pixels?.find((pixel) => pixel.area[0] === x && pixel.area[1] === y),
-    [pixels]
-  )
+function DetailsTooltip({ className, style, pixel, ...rest }: DetailsTooltipProps) {
   return (
     <DetailsTooltipSC className={className} style={style} {...rest}>
       <div className='pixel-title text-nowrap' style={marginBottom(8)}>

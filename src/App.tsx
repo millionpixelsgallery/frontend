@@ -51,7 +51,7 @@ function App() {
         />
         <Layout>
           <Switch>
-            <Route path='/gallery'>
+            <Route path='/gallery/:selectedPixel?'>
               <Viewport key='gallery' />
             </Route>
             <Route path='/my-pixels' component={MyPixels} />

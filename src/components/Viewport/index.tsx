@@ -18,6 +18,8 @@ import { usePixelsController } from 'hooks/usePixels'
 import BuyTooltip from 'components/Viewport/Tooltip/BuyTooltip'
 import SellTooltip from 'components/Viewport/Tooltip/SaleTooltip'
 import DetailsTooltip from 'components/Viewport/Tooltip/DetailsTooltip'
+import { useParams } from 'react-router'
+import { Pixels } from 'lib/web3connect'
 
 export interface ViewportProps {
   className?: string
@@ -29,9 +31,12 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
   const { selectionActive, pixels, setSelectionActive } = usePixelsController()
   const contentRef = useRef<HTMLDivElement>(null)
   const selectRef = useRef<any>(null)
+  const params: any = useParams()
 
+  const [tooltipPixel, setTooltipPixel] = useState<Pixels | undefined>()
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   const [panzoom, setPanzoom] = useState<PanZoom>()
+
   useLayoutEffect(() => {
     const instance = createPanzoom(contentRef.current!, {
       minZoom: 1,
@@ -54,6 +59,12 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
     return () => instance.dispose()
   }, [])
 
+  useEffect(() => {
+    if (params.selectedPixel && pixels) {
+      const pixel = pixels.find((_) => _.index === params.selectedPixel)
+      pixel && setTooltipPixel(pixel)
+    }
+  }, [params.selectedPixel, pixels])
   const [selectCords, setSelectCords] = useState<[x1: number, y1: number, x2: number, y2: number]>([
     10, 10, 110, 80,
   ])
@@ -100,14 +111,12 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
   const selectWidth = Math.round(x2 - x1)
   const selectHeight = Math.round(y2 - y1)
 
-  const [tooltipCords, setTooltipCords] = useState<[number, number, number, number]>()
-
-  const onPixelsClick = useCallback(({ x, y, width, height }) => {
-    setTooltipCords([x, y, width, height])
+  const onPixelsClick = useCallback((pixel) => {
+    setTooltipPixel(pixel)
   }, [])
 
   useEffect(() => {
-    setTooltipCords(undefined)
+    setTooltipPixel(undefined)
     if (selectionActive) panzoom?.zoomAbs(0, 0, 1)
   }, [selectionActive])
 
@@ -120,14 +129,20 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
 
   const hideSelection = () => setSelectionActive(false)
 
-  const handleTooltipClose = useCallback(() => setTooltipCords(undefined), [])
+  const handleTooltipClose = useCallback(() => setTooltipPixel(undefined), [])
 
+  console.log({ tooltipPixel, pixels })
   return (
     <ViewportWrapperSC className={className} style={style}>
       <ViewportSC>
         <ViewportContentSC ref={contentRef}>
           <Canvas
-            pixels={pixels?.map(({ area: [x, y, width, height], sale, image }) => {
+            pixels={pixels?.map((pixel) => {
+              const {
+                area: [x, y, width, height],
+                sale,
+                image,
+              } = pixel
               return {
                 x,
                 y,
@@ -140,7 +155,7 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
                   : sellMode
                   ? Boolean(sale && sale.end > Date.now() / 1000)
                   : true,
-                onClick: onPixelsClick,
+                onClick: () => onPixelsClick(pixel),
               }
             })}
           />
@@ -158,20 +173,20 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
               ref={selectRef}
             />
           )}
-          {tooltipCords && !selectionActive && (
+          {tooltipPixel && !selectionActive && (
             <Tooltip
-              key={tooltipCords.join()}
-              targetX={tooltipCords[0]}
-              targetY={tooltipCords[1]}
-              targetWidth={tooltipCords[2]}
-              targetHeight={tooltipCords[3]}
+              key={tooltipPixel.index}
+              targetX={tooltipPixel.area[0]}
+              targetY={tooltipPixel.area[1]}
+              targetWidth={tooltipPixel.area[2]}
+              targetHeight={tooltipPixel.area[3]}
               transform={transform}
               onClose={handleTooltipClose}
             >
               {sellMode ? (
-                <SellTooltip x={tooltipCords[0]} y={tooltipCords[1]} onClose={handleTooltipClose} />
+                <SellTooltip pixel={tooltipPixel} onClose={handleTooltipClose} />
               ) : (
-                <DetailsTooltip x={tooltipCords[0]} y={tooltipCords[1]} />
+                <DetailsTooltip pixel={tooltipPixel} />
               )}
             </Tooltip>
           )}

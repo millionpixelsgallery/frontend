@@ -14,7 +14,7 @@ import { uniqBy } from 'lodash'
 
 interface IPixelsContext extends PixelsState {
   setSelectionActive(value?: boolean): void
-  fetchPixels(refreshIndex?: number): Promise<void>
+  fetchPixels(refreshIndex?: string): Promise<void>
 }
 
 type Action<N extends string, T extends object = never> = [T] extends [never]
@@ -103,12 +103,12 @@ export function PixelsProvider({ children }: { children?: ReactNode | ReactNodeA
   //   })
   // }, [methods])
 
-  const fetchPixels = useCallback(async (refreshIndex?: number | undefined) => {
+  const fetchPixels = useCallback(async (refreshIndex?: string | undefined) => {
     dispatch({
       type: 'PIXELS_LOADING',
     })
     //remove the item we want to refresh
-    const cached = (state.pixels || []).filter((_) => _.index != refreshIndex)
+    const cached = (state.pixels || []).filter((_) => _.index !== refreshIndex)
 
     let pixels = await Web3Connect.getAllPixels(cached).catch((e) => {
       console.error(e)

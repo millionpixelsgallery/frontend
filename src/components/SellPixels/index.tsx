@@ -17,7 +17,7 @@ import { usePixelsController } from 'hooks/usePixels'
 export interface SellPixelsProps extends SellPixelsSCProps {
   className?: string
   style?: CSSProperties
-  index: number
+  index: string
   onChangeDisabledControlButtons: (disabled: boolean) => void
   onClose: () => void
 }

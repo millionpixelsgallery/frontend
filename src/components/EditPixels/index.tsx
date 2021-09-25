@@ -16,7 +16,7 @@ import { urlRegExp } from 'utils/link'
 export interface EditProductData {
   width: number
   height: number
-  index: number
+  index: string
   position: {
     x: number
     y: number

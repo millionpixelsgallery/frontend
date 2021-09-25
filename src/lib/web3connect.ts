@@ -88,7 +88,7 @@ export type Sale = {
   end: number
 }
 export type Pixels = {
-  index: number
+  index: string
   sale?: Sale
   ipfs: string
   area: Area
@@ -291,13 +291,13 @@ export class Web3Connect {
     for (let i = 0; i < count; i++) {
       const cached = first(indexToPixels[i]) || ({} as Pixels)
       if ((cached?.cacheDate || 0) < Date.now() - 30 * 60 * 1000)
-        pixels.push(this.getPixels(i, cached))
+        pixels.push(this.getPixels(i.toString(), cached))
     }
 
     return (await Promise.all(pixels)).filter((_) => !isEmpty(_))
   }
 
-  public static async getPixels(index: number, cached: Pixels = {} as Pixels): Promise<Pixels> {
+  public static async getPixels(index: string, cached: Pixels = {} as Pixels): Promise<Pixels> {
     let data: Pixels
     try {
       const [{ ipfs }, area, owner, isForSale] = await Promise.all([
@@ -429,9 +429,9 @@ export class Web3Methods {
         .send({ from: this.account, value: price.raw })
         .on('transactionHash', txHashCallback)
 
-      const count = await this.contract.methods.getAreasCount().call()
+      const count = await this.contract.methods.getAreasCount().call().then(parseInt)
 
-      return Web3Connect.getPixels(count - 1)
+      return Web3Connect.getPixels((count - 1).toString())
     } else {
       throw new Error('Area is not available')
     }
@@ -444,7 +444,7 @@ export class Web3Methods {
   }
 
   public async setIpfs(
-    index: number,
+    index: string,
     ipfs: string,
     txHashCallback: (hash: string) => void = () => undefined
   ) {
@@ -462,7 +462,7 @@ export class Web3Methods {
   }
 
   public async sellPixels(
-    index: number,
+    index: string,
     price: string,
     duration: number,
     txHashCallback: (hash: string) => void = () => undefined
@@ -481,7 +481,7 @@ export class Web3Methods {
   }
 
   public async buyPixelsForSale(
-    index: number,
+    index: string,
     ipfs: string,
     txHashCallback: (hash: string) => void = () => undefined
   ) {

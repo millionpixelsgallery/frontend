@@ -26,7 +26,7 @@ export interface ProductData {
     y: number
   }
   price: number
-  index?: number
+  index?: string
 }
 
 export interface ByPixelsProps extends ByPixelsSCProps {
@@ -142,7 +142,7 @@ function ByPixels({
         }
         if (isReSell) {
           setLoading('Pending wallet confirm')
-          await methods?.buyPixelsForSale(data.index as number, ipfs, onTxHash)
+          await methods?.buyPixelsForSale(data.index as string, ipfs, onTxHash)
         } else {
           onTxHash('')
           const hash = await commitPromise
