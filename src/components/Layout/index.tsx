@@ -13,6 +13,7 @@ import Header from 'components/Header'
 import SideBar from 'components/SideBar'
 import Footer from 'components/Footer'
 import { useEventListener } from 'hooks/useEventListener'
+import UpdateApp from 'components/UpdateApp'
 
 export interface LayoutProps extends LayoutSCProps {
   className?: string
@@ -46,6 +47,7 @@ function Layout({ className, style, children, ...rest }: LayoutProps) {
             <Header />
             {children}
             <Footer />
+            <UpdateApp />
           </div>
           <SideBar className={'sideBlockRight'} />
         </Row>
