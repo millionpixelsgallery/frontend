@@ -7,13 +7,21 @@ const UpdateApp: FC = () => {
   const [showReload, setShowReload] = React.useState(false)
   const [waitingWorker, setWaitingWorker] = React.useState<ServiceWorker | null>(null)
 
+  const onSW = (registration: ServiceWorkerRegistration) => {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        registration.update()
+      }
+    })
+  }
+
   const onSWUpdate = (registration: ServiceWorkerRegistration) => {
     setShowReload(true)
     setWaitingWorker(registration.waiting)
   }
 
   useEffect(() => {
-    serviceWorker.register({ onUpdate: onSWUpdate })
+    serviceWorker.register({ onUpdate: onSWUpdate, onSuccess: onSW })
   }, [])
 
   const reloadPage = () => {
