@@ -42,7 +42,7 @@ const UpdateApp: FC = () => {
           backgroundColor: 'white',
           color: 'black',
         }}
-        message={<Text>A new version is available!</Text>}
+        message={<Text>A New Version Is Available!</Text>}
         action={
           <Button color='inherit' onClick={reloadPage}>
             Reload
