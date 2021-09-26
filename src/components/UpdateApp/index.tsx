@@ -31,7 +31,7 @@ const UpdateApp: FC = () => {
     >
       <SnackbarContent
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: 'white',
           color: 'black',
         }}
         message={<Text>A new version is available!</Text>}
