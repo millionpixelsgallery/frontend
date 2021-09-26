@@ -29,6 +29,13 @@ jobs:
           release_branches: production, staging
           pre_release_branches: main
           # release_branches: release.*,master
+      - name:  'Automated Version Bump'
+        uses:  'phips28/gh-action-bump-version@master'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          target-branch: 'master'
+          default: 'patch'          
 
   deploy:
     name: Deploy Release

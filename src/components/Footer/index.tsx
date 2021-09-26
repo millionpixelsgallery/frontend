@@ -4,7 +4,7 @@ import { Row } from 'components/ui/Grid'
 import SocialIcon from 'components/ui/SocialIcon'
 import Text from 'components/ui/Text'
 import { marginTop } from 'utils/style/indents'
-
+import { version } from '../../../package.json'
 export interface FooterProps extends FooterSCProps {
   className?: string
   style?: CSSProperties
@@ -58,7 +58,7 @@ function Footer({ className, style, ...rest }: FooterProps) {
           lineHeight='17px'
           className={'copyright'}
         >
-          <div>© Copyright 2021 millionpixelsgallery.com. All rights reserved. </div>
+          <div>© Copyright 2021 millionpixelsgallery.com. All rights reserved. v{version} </div>
           <div>
             millionpixelsgallery.com cannot be held responsible for content on linked sites. Images
             shown on millionpixelsgallery.com are copyrighted by their owners.
