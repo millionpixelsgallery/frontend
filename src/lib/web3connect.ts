@@ -1,5 +1,4 @@
 import Web3Modal, { getInjectedProvider } from 'web3modal'
-import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
 import Torus from '@toruslabs/torus-embed'
 import Web3 from 'web3'
@@ -18,7 +17,7 @@ let RPC: string = 'http://localhost:8545',
 const FORTMATIC_KEY = (
   isMainnet ? process.env.REACT_APP_FORTMATIC_KEY_PROD : process.env.REACT_APP_FORTMATIC_KEY
 ) as string
-const PORTIS_KEY = process.env.REACT_APP_PORTIS_KEY as string
+// const PORTIS_KEY = process.env.REACT_APP_PORTIS_KEY as string
 let NETWORK = 'local'
 let CHAIN_ID = 4447
 switch (ENV) {
@@ -51,16 +50,16 @@ const web3Options = {
         network: NETWORK,
       },
     },
-    portis: {
-      package: Portis,
-      options: {
-        id: PORTIS_KEY,
-        network: NETWORK,
-        config: {
-          nodeUrl: RPC,
-        },
-      },
-    },
+    // portis: {
+    //   package: Portis,
+    //   options: {
+    //     id: PORTIS_KEY,
+    //     network: NETWORK,
+    //     config: {
+    //       nodeUrl: RPC,
+    //     },
+    //   },
+    // },
     torus: {
       package: Torus,
       options: {
