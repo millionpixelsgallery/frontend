@@ -20,6 +20,7 @@ import SellTooltip from 'components/Viewport/Tooltip/SaleTooltip'
 import DetailsTooltip from 'components/Viewport/Tooltip/DetailsTooltip'
 import { useParams } from 'react-router'
 import { Pixels } from 'lib/web3connect'
+import { useGA4 } from 'lib/ga4'
 
 export interface ViewportProps {
   className?: string
@@ -36,6 +37,8 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
   const [tooltipPixel, setTooltipPixel] = useState<Pixels | undefined>()
   const [transform, setTransform] = useState<Transform | undefined>(undefined)
   const [panzoom, setPanzoom] = useState<PanZoom>()
+
+  const ga4 = useGA4()
 
   useLayoutEffect(() => {
     const instance = createPanzoom(contentRef.current!, {
@@ -111,9 +114,15 @@ function Viewport({ className, style, sellMode }: ViewportProps) {
   const selectWidth = Math.round(x2 - x1)
   const selectHeight = Math.round(y2 - y1)
 
-  const onPixelsClick = useCallback((pixel) => {
-    setTooltipPixel(pixel)
-  }, [])
+  const onPixelsClick = useCallback(
+    (pixel) => {
+      setTooltipPixel(pixel)
+      if (ga4) {
+        ga4.pageview(`/gallery/${pixel.index}`)
+      }
+    },
+    [ga4]
+  )
 
   useEffect(() => {
     setTooltipPixel(undefined)

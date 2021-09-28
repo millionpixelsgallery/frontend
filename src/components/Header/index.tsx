@@ -73,7 +73,7 @@ function Header({ style }: HeaderProps) {
           width={150}
           style={marginBottom(12)}
           onClick={() => {
-            history.push('/gallery')
+            history.push('/buy')
             setSelectionActive(true)
           }}
         >
